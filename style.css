@@ -54,3 +54,39 @@ button, input, textarea {
 .preserve-3d { transform-style: preserve-3d; }
 .backface-hidden { backface-visibility: hidden; }
 .rotate-y-180 { transform: rotateY(180deg); }
+
+/* --- תיקון כותרת ולוגו --- */
+
+/* מבטיח שהלוגו והשם יהיו בשמאל והכפתור בימין */
+.header-container {
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+/* סידור פנימי של הלוגו (תמונה משמאל לטקסט) */
+.logo-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* שקיפות לכפתור מצב לילה */
+button[onclick*="toggleNightMode"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* תיקון צבעים למצב לילה */
+body.night-mode {
+    background-color: #0f172a !important;
+}
+
+.night-mode .bg-white {
+    background-color: #1e293b !important;
+    color: white !important;
+}
