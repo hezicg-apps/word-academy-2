@@ -55,6 +55,15 @@ function toggleNightMode() {
     document.body.classList.toggle('night-mode', state.nightMode);
     render();
 }
+function loadFromLocal() {
+    const saved = localStorage.getItem('wordAcademyState');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        state.masteryScore = parsed.masteryScore || 0;
+        state.nightMode = !!parsed.nightMode;
+        if (state.nightMode) document.body.classList.add('night-mode');
+    }
+}
 // --- בלוק 2: ניהול נתונים וקריאת URL (שמירה על לינקים קיימים) ---
 
 function decodeBase64(str) {
