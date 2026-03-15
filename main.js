@@ -122,136 +122,120 @@ function saveToLocal() {
         nightMode: state.nightMode
     }));
 }
-// --- בלוק 3: פונקציית ה-render ומסכי כניסה ---
+// --- בלוק 3 מעודכן: Header ומסכי כניסה ---
 
 function render() {
     const app = document.getElementById('app');
-    const loader = document.getElementById('loading-screen');
-    
-    // הסתרת מסך הטעינה במידה והוא קיים
-    if (loader) loader.style.display = 'none';
-    
-    // ניקוי המסך לפני ציור מחדש
     app.innerHTML = '';
 
-    // מסך 1: ברוכים הבאים (Welcome)
+    // הוספת Header קבוע לכל המסכים
+    const header = document.createElement('div');
+    header.className = "flex justify-between items-center p-4 mb-4";
+    header.innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="flex flex-col text-left">
+                <div class="flex items-center gap-2">
+                    <img src="logo.svg" alt="WA" class="h-10">
+                    <span class="text-blue-600 font-black text-xl tracking-tight">WORD ADVENTURE</span>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 mt-[-5px]">תרגול אוצר מילים בכיף 🦉</span>
+            </div>
+        </div>
+        <button onclick="toggleNightMode()" class="text-2xl">${state.nightMode ? '🌙' : '☀️'}</button>
+    `;
+    app.appendChild(header);
+
+    const content = document.createElement('div');
+    app.appendChild(content);
+
     if (state.screen === 'welcome') {
-        app.innerHTML = `
+        content.innerHTML = `
             <div class="flex flex-col items-center text-center space-y-8 mt-10 p-4">
-                <div class="space-y-2">
-                    <h2 class="text-4xl font-black text-blue-600">Word Academy</h2>
-                    <p class="text-slate-500 font-bold text-lg">מוכנים להרפתקה באנגלית?</p>
-                </div>
-                
-                <div class="w-full space-y-4 bg-white p-6 rounded-[2.5rem] shadow-xl border-b-4 border-blue-200">
-                    <input type="text" id="classCodeInput" placeholder="קוד כיתה (אם יש)" 
-                           class="w-full p-4 border-2 border-slate-100 rounded-2xl text-center font-bold focus:border-blue-400 outline-none text-lg">
-                    
-                    <button onclick="startApp()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-blue-700 transition">
-                        בואו נתחיל! 🚀
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-b-4 border-blue-100 w-full max-w-sm">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6">ברוכים הבאים!</h2>
+                    <button onclick="state.screen='flashcards'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-blue-700 transition mb-4">
+                        כניסה כאורח 🚀
                     </button>
+                    <p class="text-sm text-slate-400 font-bold">או שהתחילו ללמוד מהלינק שלכם</p>
                 </div>
-                <p class="text-sm text-slate-400 font-medium italic italic">האות a נראית כאן בדיוק כמו בכתב יד!</p>
             </div>
         `;
         return;
     }
 
-    // מסך 2: הזנת מילים (Input)
-    if (state.screen === 'input') {
-        app.innerHTML = `
-            <div class="p-6 space-y-6">
-                <div class="text-center space-y-2">
-                    <h2 class="text-3xl font-black text-slate-800">יצירת רשימה</h2>
-                    <p class="text-slate-500 font-bold text-sm">הדביקו מילים בפורמט: מילה - תרגום</p>
-                </div>
-                <textarea id="wordInput" class="w-full h-64 p-6 border-2 border-slate-200 rounded-[2rem] focus:border-blue-500 outline-none shadow-inner font-medium text-lg" 
-                    placeholder="apple - תפוח\nbanana - בננה"></textarea>
-                <button onclick="handleManualInput()" 
-                    class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-blue-700 transition">
-                    צור רשימה והתחל ✍️
-                </button>
-            </div>
-        `;
-        return;
-    }
-
-    // קריאה לפונקציית המשך (שאותה נבנה בבלוקים הבאים)
-    renderAppScreens(app);
+    renderAppScreens(content);
 }
 
-function handleManualInput() {
-    const val = document.getElementById('wordInput').value;
-    if (val) {
-        parseWords('רשימה חדשה\n' + val);
-        state.screen = 'flashcards';
-        render();
-    }
-}
+// --- בלוק 4 מעודכן: כרטיסיות לימוד אינטראקטיביות ---
 
-function startApp() {
-    const codeInput = document.getElementById('classCodeInput');
-    if (codeInput) {
-        state.classCode = codeInput.value.trim();
-    }
-    
-    if (state.words.length > 0) {
-        state.screen = 'flashcards';
-    } else {
-        state.screen = 'input';
-    }
-    render();
-}
-// --- בלוק 4: מסך כרטיסיות הלמידה (Flashcards) ---
+let learningState = { currentIndex: 0, isFlipped: false, knownWords: [] };
 
-function renderAppScreens(app) {
+function renderAppScreens(container) {
     if (state.words.length === 0) return;
 
-    // מסך 3: כרטיסיות למידה
     if (state.screen === 'flashcards') {
-        app.innerHTML = `
-            <div class="p-6 space-y-8">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-black text-slate-800">${state.listName}</h3>
-                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">למידה</span>
+        const word = state.words[learningState.currentIndex];
+        const progress = Math.round((learningState.knownWords.length / state.words.length) * 100);
+
+        container.innerHTML = `
+            <div class="p-4 space-y-6 text-center">
+                <div class="space-y-1">
+                    <h3 class="text-2xl font-black text-slate-800">${state.listName}</h3>
+                    <p class="text-blue-600 font-bold">לימוד מילים (${learningState.knownWords.length}/${state.words.length})</p>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 overflow-y-auto max-h-[60vh] p-2">
-                    ${state.words.map((w, i) => `
-                        <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-slate-50 flex justify-between items-center group hover:border-blue-200 transition">
-                            <div class="flex flex-col">
-                                <span class="eng-text text-2xl text-blue-600 font-bold" lang="en">${w.eng}</span>
-                                <span class="text-slate-400 font-bold text-sm">${w.heb}</span>
-                            </div>
-                            <button onclick="speak('${w.eng.replace(/'/g, "\\'")}')" class="bg-slate-50 p-3 rounded-2xl hover:bg-blue-50 transition text-xl">
-                                🔊
-                            </button>
+                <div onclick="learningState.isFlipped = !learningState.isFlipped; render();" 
+                     class="relative w-full aspect-[4/3] max-w-sm mx-auto cursor-pointer perspective-1000">
+                    <div class="w-full h-full transition-all duration-500 preserve-3d ${learningState.isFlipped ? 'rotate-y-180' : ''}">
+                        <div class="absolute inset-0 bg-white border-4 border-blue-100 rounded-[2.5rem] flex flex-col items-center justify-center shadow-xl backface-hidden">
+                            <span class="text-blue-100 font-bold mb-4">לחצו על הכרטיסייה לסיבוב 🔄</span>
+                            <h2 class="eng-text text-5xl font-black text-blue-600" lang="en">${word.eng}</h2>
+                            <button onclick="event.stopPropagation(); speak('${word.eng}')" class="mt-4 text-4xl">🔊</button>
                         </div>
-                    `).join('')}
+                        <div class="absolute inset-0 bg-blue-50 border-4 border-blue-200 rounded-[2.5rem] flex items-center justify-center shadow-xl backface-hidden rotate-y-180">
+                            <h2 class="text-5xl font-black text-slate-800">${word.heb}</h2>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-4 pt-4">
-                    <button onclick="startQuiz()" 
-                        class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-xl shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-3">
-                        אני מוכן למבחן! 🏆
+                <div class="flex gap-4 max-w-sm mx-auto">
+                    <button onclick="nextWord(false)" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center gap-2">
+                        <span>⌛</span> עוד לא
                     </button>
-                    <button onclick="state.screen='input'; render();" class="w-full text-slate-400 font-bold text-sm">
-                        עריכת רשימת המילים
+                    <button onclick="nextWord(true)" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center gap-2">
+                        <span>✅</span> יודע
                     </button>
                 </div>
+
+                ${learningState.knownWords.length === state.words.length ? `
+                    <button onclick="state.screen='quiz'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl animate-bounce">
+                        אני מוכן לאתגר! 🏆
+                    </button>
+                ` : ''}
             </div>
         `;
         return;
     }
-
-    // כאן יבואו הבלוקים הבאים בתוך הפונקציה...
-    renderQuizScreen(app);
+    renderQuizScreen(container);
 }
 
-function startQuiz() {
-    state.screen = 'quiz';
-    state.quizIndex = 0;
-    state.correctAnswers = 0;
+function nextWord(known) {
+    if (known && !learningState.knownWords.includes(learningState.currentIndex)) {
+        learningState.knownWords.push(learningState.currentIndex);
+    }
+    
+    // מעבר למילה הבאה (דילוג על מילים שיודעים)
+    let nextIndex = (learningState.currentIndex + 1) % state.words.length;
+    
+    // אם נשארו מילים שלא יודעים, נחפש אותן
+    if (learningState.knownWords.length < state.words.length) {
+        while (learningState.knownWords.includes(nextIndex)) {
+            nextIndex = (nextIndex + 1) % state.words.length;
+        }
+    }
+
+    learningState.currentIndex = nextIndex;
+    learningState.isFlipped = false;
     render();
 }
 
@@ -334,91 +318,43 @@ function checkQuizAnswer(idx, selected, correct) {
     }, 1500);
 }
 
-// --- בלוק 6: מסך דיווח ותפריט משחקים ---
+// --- בלוק 6 מעודכן: מסך סיום ודיווח ---
 
-function renderReportScreen(app) {
+function renderReportScreen(container) {
     if (state.screen !== 'report') {
-        renderMenuScreen(app);
+        renderMenuScreen(container);
         return;
     }
 
-    app.innerHTML = `
-        <div class="p-6 text-center space-y-8 mt-4">
-            <div class="space-y-2">
-                <h2 class="text-6xl font-black text-blue-600">${state.masteryScore}%</h2>
-                <p class="text-xl font-bold text-slate-700">כל הכבוד! סיימת את המבחן</p>
+    container.innerHTML = `
+        <div class="p-6 text-center space-y-6">
+            <div class="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-yellow-400 relative overflow-hidden">
+                <div class="text-4xl mb-2">✨ כל הכבוד! ✨</div>
+                <div class="text-slate-500 font-bold mb-4">${state.listName}</div>
+                <div class="text-7xl font-black text-yellow-400 mb-2">${state.masteryScore}%</div>
+                <div class="text-xl font-bold text-slate-700">ענית נכון על ${state.correctAnswers} מתוך ${state.words.length}</div>
             </div>
 
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-b-4 border-blue-200 space-y-4">
-                <p class="text-sm font-bold text-slate-500 italic">רשמו את הפרטים כדי לפתוח את המשחקים:</p>
-                <input type="text" id="studentName" placeholder="שם מלא" class="w-full p-4 border-2 border-slate-100 rounded-2xl text-center font-bold outline-none focus:border-blue-400">
-                <input type="text" id="studentClass" placeholder="כיתה (למשל: ד'2)" class="w-full p-4 border-2 border-slate-100 rounded-2xl text-center font-bold outline-none focus:border-blue-400">
-                <button onclick="submitReport(${state.masteryScore})" class="w-full bg-green-500 text-white py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-green-600 transition">
-                    שלח דיווח ופתח משחקים 🎮
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function submitReport(score) {
-    const name = document.getElementById('studentName').value;
-    const className = document.getElementById('studentClass').value;
-
-    if (!name || !className) {
-        alert("נא למלא שם וכיתה כדי להמשיך");
-        return;
-    }
-
-    state.studentName = name;
-    state.screen = 'menu';
-    triggerConfetti();
-    render();
-}
-
-function renderMenuScreen(app) {
-    if (state.screen !== 'menu') {
-        // כאן יבואו פונקציות הציור של המשחקים בבלוקים הבאים
-        renderMemory(app);
-        return;
-    }
-
-    app.innerHTML = `
-        <div class="p-6 space-y-8">
-            <div class="text-center">
-                <h2 class="text-3xl font-black text-slate-800">מרכז המשחקים</h2>
-                <p class="text-slate-500 font-bold">כל הכבוד ${state.studentName}! בחר משחק:</p>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4">
-                <button onclick="initMemoryGame()" class="bg-white p-6 rounded-[2rem] shadow-md border-b-4 border-blue-400 flex items-center justify-between group hover:scale-[1.02] transition">
-                    <span class="text-4xl">🧠</span>
-                    <div class="text-right flex-1 px-4">
-                        <h4 class="font-black text-xl text-slate-800">משחק זיכרון</h4>
-                        <p class="text-xs text-slate-400 font-bold font-bold">התאמת מילה לתרגום</p>
-                    </div>
-                </button>
-
-                <button onclick="initConnect4()" class="bg-white p-6 rounded-[2rem] shadow-md border-b-4 border-red-400 flex items-center justify-between group hover:scale-[1.02] transition">
-                    <span class="text-4xl">🔴</span>
-                    <div class="text-right flex-1 px-4">
-                        <h4 class="font-black text-xl text-slate-800">4 בשורה</h4>
-                        <p class="text-xs text-slate-400 font-bold font-bold">אסטרטגיה מול המחשב</p>
-                    </div>
-                </button>
-
-                <button onclick="initWordQuest()" class="bg-white p-6 rounded-[2rem] shadow-md border-b-4 border-green-400 flex items-center justify-between group hover:scale-[1.02] transition">
-                    <span class="text-4xl">🕵️</span>
-                    <div class="text-right flex-1 px-4">
-                        <h4 class="font-black text-xl text-slate-800">הקוד הסודי</h4>
-                        <p class="text-xs text-slate-400 font-bold font-bold">ניחוש מילים בסגנון Wordle</p>
-                    </div>
+            <div class="bg-blue-50 p-6 rounded-[2.5rem] border-2 border-blue-100 space-y-4">
+                <p class="text-blue-800 font-bold">דיווח למורה:</p>
+                <input type="text" id="studentName" placeholder="שם מלא" class="w-full p-4 rounded-2xl border-none shadow-inner text-center font-bold">
+                <select id="studentClass" class="w-full p-4 rounded-2xl border-none shadow-inner text-center font-bold appearance-none bg-white">
+                    <option>בחר כיתה...</option>
+                    <option>ג'1</option><option>ג'2</option><option>ד'1</option><option>ד'2</option>
+                </select>
+                <button onclick="submitReport(${state.masteryScore})" class="w-full bg-green-500 text-white py-4 rounded-2xl font-black text-lg shadow-md hover:bg-green-600 transition flex items-center justify-center gap-2">
+                    <span>✅</span> שלח תוצאה
                 </button>
             </div>
 
-            <button onclick="state.screen='flashcards'; render();" class="w-full py-4 text-slate-400 font-bold hover:text-blue-500 transition underline underline-offset-4">
-                חזרה לכרטיסיות הלמידה
-            </button>
+            <div class="flex flex-col gap-3">
+                <button onclick="state.screen='flashcards'; learningState.knownWords=[]; render();" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg flex items-center justify-center gap-2">
+                    <span>🔄</span> תרגול חוזר
+                </button>
+                <button onclick="state.screen='menu'; render();" class="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2">
+                    <span>🏠</span> חזרה לתפריט
+                </button>
+            </div>
         </div>
     `;
 }
