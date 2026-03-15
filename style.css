@@ -1,92 +1,146 @@
-/* style.css - השלמות עיצוב ואנימציות */
-
+/* הגדרות כלליות ופונטים */
 :root {
-    --primary-blue: #2563eb;
-    --error-red: #ef4444;
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --bg-light: #f8fafc;
+    --card-light: #ffffff;
+    --text-main: #1e293b;
+    --night-bg: #0f172a;
+    --night-card: #1e293b;
 }
 
-/* אנימציית רעידה לטעות במבחן */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    transition: background-color 0.3s ease;
+    direction: rtl;
+    overflow-x: hidden;
 }
 
-.animate-shake {
-    animation: shake 0.4s ease-in-out;
+body.night-mode {
+    background-color: var(--night-bg);
+    color: #f1f5f9;
 }
 
-/* אפקט היפוך חלק לקלפי הזיכרון */
+/* טיפוגרפיה לאנגלית */
+.eng-text {
+    direction: ltr;
+    display: inline-block;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-pop {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* עיצוב כרטיסיות (Flashcards) */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
 .rotate-y-180 {
     transform: rotateY(180deg);
 }
 
-/* עיצוב גלילה עדין לרשימת המילים */
-::-webkit-scrollbar {
-    width: 6px;
+/* עיצוב לוח 4 בשורה */
+.grid-cols-7 {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
 }
 
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+/* כפתורים ואינפוטים */
+button {
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
+button:active {
+    transform: scale(0.95);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+button:disabled {
+    cursor: not-allowed;
 }
 
-/* התאמה למובייל - מניעת זום בלחיצה כפולה */
-button, input, textarea {
-    touch-action: manipulation;
+input, textarea, select {
+    border: 2px solid #e2e8f0;
+    transition: border-color 0.2s;
+    font-size: 1rem;
 }
 
-/* שיפור תצוגת הלוח ב-4 בשורה */
-.aspect-square {
-    aspect-ratio: 1 / 1;
+input:focus, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
 }
 
-.perspective-1000 { perspective: 1000px; }
-.preserve-3d { transform-style: preserve-3d; }
-.backface-hidden { backface-visibility: hidden; }
-.rotate-y-180 { transform: rotateY(180deg); }
-
-/* --- תיקון כותרת ולוגו --- */
-
-/* מבטיח שהלוגו והשם יהיו בשמאל והכפתור בימין */
-.header-container {
-    display: flex !important;
-    flex-direction: row-reverse !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    width: 100%;
-}
-
-/* סידור פנימי של הלוגו (תמונה משמאל לטקסט) */
-.logo-group {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-}
-
-/* שקיפות לכפתור מצב לילה */
-button[onclick*="toggleNightMode"] {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* תיקון צבעים למצב לילה */
-body.night-mode {
-    background-color: #0f172a !important;
-}
-
+/* מצב לילה - התאמות רכיבים */
 .night-mode .bg-white {
-    background-color: #1e293b !important;
-    color: white !important;
+    background-color: var(--night-card) !important;
+    color: white;
+}
+
+.night-mode .text-slate-800 {
+    color: #f1f5f9;
+}
+
+.night-mode .border-slate-100, 
+.night-mode .border-blue-100 {
+    border-color: #334155 !important;
+}
+
+/* עיצוב משחק הזיכרון */
+.memory-card {
+    transition: transform 0.3s;
+}
+
+.memory-card:hover {
+    transform: translateY(-2px);
+}
+
+/* עיצוב הקוד הסודי (Wordle style) */
+.grid-cols-custom {
+    display: grid;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* התאמה למובייל */
+@media (max-width: 480px) {
+    .text-5xl { font-size: 2.5rem; }
+    .text-6xl { font-size: 3rem; }
+    .p-10 { padding: 1.5rem; }
+}
+
+/* אפקט נחיתה לאסימון */
+.bg-red-500, .bg-yellow-400 {
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
 }
