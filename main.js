@@ -339,3 +339,220 @@ function parseWordsFromURL() {
 
 window.addEventListener('load', () => { parseWordsFromURL(); render(); });
 
+function initConnect4() {
+    state.connect4 = {
+        board: Array(6).fill(null).map(() => Array(7).fill(null)),
+        turn: 1,
+        q: null,
+        canDrop: false,
+        isAnswering: true
+    };
+    state.winner = null;
+    state.screen = 'connect4';
+    prepC4Question();
+    render();
+}
+
+function prepC4Question() {
+    const q = state.words[Math.floor(Math.random() * state.words.length)];
+    let choices = state.words.filter(w => w.eng !== q.eng).sort(() => 0.5 - Math.random()).slice(0, 3).map(w => w.heb);
+    choices.push(q.heb);
+    state.connect4.q = { ...q, choices: shuffle(choices) };
+}
+
+function renderConnect4(container) {
+    const g = state.connect4;
+    container.innerHTML = `
+        <div class="p-4 flex flex-col items-center animate-fade-in text-center">
+            <div class="w-full flex justify-between items-center mb-4">
+                <button onclick="state.screen='menu'; render();" class="text-red-500 font-black">⬅️ יציאה</button>
+                <div class="font-black ${g.turn === 1 ? 'text-red-500' : 'text-yellow-500'}">
+                    תור: ${g.turn === 1 ? '🔴 שלך' : '🟡 מחשב'}
+                </div>
+            </div>
+
+            <div class="bg-blue-700 p-2 rounded-3xl shadow-2xl grid grid-cols-7 gap-1 w-full max-w-[340px] border-b-8 border-blue-900">
+                ${g.board[0].map((_, col) => `
+                    <div onclick="handleC4Drop(${col})" class="h-8 flex justify-center items-center cursor-pointer hover:bg-white/20 rounded-full">
+                        ${g.canDrop && g.turn === 1 ? '👇' : ''}
+                    </div>
+                `).join('')}
+                ${g.board.map(row => row.map(cell => `
+                    <div class="aspect-square bg-blue-800 rounded-full flex items-center justify-center">
+                        ${cell === 1 ? '<div class="w-4/5 h-4/5 bg-red-500 rounded-full shadow-lg"></div>' : 
+                          cell === 2 ? '<div class="w-4/5 h-4/5 bg-yellow-400 rounded-full shadow-lg"></div>' : ''}
+                    </div>
+                `).join('')).join('')}
+            </div>
+
+            ${g.isAnswering ? `
+                <div class="mt-4 bg-white p-6 rounded-[2rem] shadow-xl w-full max-w-sm border-t-4 border-blue-500">
+                    <h3 class="eng-text text-3xl font-black text-center text-blue-600 mb-4">${g.q.eng}</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${g.q.choices.map(choice => `<button onclick="handleC4Answer('${choice}')" class="bg-slate-50 p-3 rounded-xl font-bold border-2 border-slate-100">${choice}</button>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${state.winner ? `<div class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-6"><div class="bg-white p-8 rounded-[3rem] text-center"><h2 class="text-3xl font-black mb-4">${state.winner === 'Player' ? 'ניצחת! 🏆' : 'המחשב ניצח 🤖'}</h2><button onclick="initConnect4()" class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black">שחק שוב</button></div></div>` : ''}
+        </div>
+    `;
+}
+
+function handleC4Answer(selected) {
+    if (selected === state.connect4.q.heb) {
+        state.connect4.isAnswering = false;
+        state.connect4.canDrop = true;
+        render();
+    } else {
+        alert("לא נכון, נסה שוב!");
+        prepC4Question();
+        render();
+    }
+}
+
+function handleC4Drop(col) {
+    const g = state.connect4;
+    if (!g.canDrop || state.winner) return;
+
+    for (let r = 5; r >= 0; r--) {
+        if (!g.board[r][col]) {
+            g.board[r][col] = 1;
+            g.canDrop = false;
+            if (checkC4Win(r, col, 1)) { state.winner = 'Player'; triggerConfetti(); }
+            else { g.turn = 2; setTimeout(handleAiTurn, 600); }
+            render(); return;
+        }
+    }
+}
+
+function handleAiTurn() {
+    const g = state.connect4;
+    let available = [];
+    for (let c = 0; c < 7; c++) if (!g.board[0][c]) available.push(c);
+    if (available.length > 0) {
+        let col = available[Math.floor(Math.random() * available.length)];
+        for (let r = 5; r >= 0; r--) {
+            if (!g.board[r][col]) {
+                g.board[r][col] = 2;
+                if (checkC4Win(r, col, 2)) state.winner = 'AI';
+                break;
+            }
+        }
+    }
+    g.turn = 1; g.isAnswering = true; prepC4Question(); render();
+}
+
+function checkC4Win(r, c, p) {
+    const b = state.connect4.board;
+    const directions = [[0,1],[1,0],[1,1],[1,-1]];
+    for (let [dr, dc] of directions) {
+        let count = 1;
+        for (let step of [1, -1]) {
+            let nr = r + dr * step, nc = c + dc * step;
+            while (nr >= 0 && nr < 6 && nc >= 0 && nc < 7 && b[nr][nc] === p) { count++; nr += dr * step; nc += dc * step; }
+        }
+        if (count >= 4) return true;
+    }
+    return false;
+}
+
+function initWordQuest() {
+    const targetWord = state.words[Math.floor(Math.random() * state.words.length)];
+    state.wordQuest = {
+        target: targetWord.eng.toUpperCase(),
+        heb: targetWord.heb,
+        guesses: [],
+        currentGuess: '',
+        maxAttempts: 6,
+        isGameOver: false
+    };
+    state.screen = 'wordquest';
+    render();
+}
+
+function renderWordQuest(container) {
+    const q = state.wordQuest;
+    container.innerHTML = `
+        <div class="p-4 space-y-6 text-center animate-fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="state.screen='menu'; render();" class="text-blue-600 font-bold">⬅️ חזרה</button>
+                <div class="text-slate-400 font-bold italic">רמז: ${q.heb}</div>
+            </div>
+
+            <div class="grid gap-2 max-w-[300px] mx-auto">
+                ${Array(q.maxAttempts).fill(null).map((_, rowIndex) => {
+                    const guess = q.guesses[rowIndex] || (rowIndex === q.guesses.length ? q.currentGuess : '');
+                    return `
+                        <div class="grid grid-cols-${q.target.length} gap-2" style="direction: ltr;">
+                            ${Array(q.target.length).fill(null).map((_, charIndex) => {
+                                const char = guess[charIndex] || '';
+                                let color = 'bg-white border-slate-200';
+                                if (q.guesses[rowIndex]) {
+                                    if (q.target[charIndex] === char) color = 'bg-green-500 text-white border-green-600';
+                                    else if (q.target.includes(char)) color = 'bg-yellow-400 text-white border-yellow-500';
+                                    else color = 'bg-slate-400 text-white border-slate-500';
+                                }
+                                return `<div class="aspect-square border-2 rounded-lg flex items-center justify-center font-black text-xl uppercase ${color}">${char}</div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+
+            ${!q.isGameOver ? `
+                <div class="mt-8 flex flex-wrap justify-center gap-1 max-w-sm mx-auto" style="direction: ltr;">
+                    ${"QWERTYUIOPASDFGHJKLZXCVBNM".split('').map(letter => `
+                        <button onclick="handleWQKey('${letter}')" class="bg-white p-3 rounded-lg font-bold shadow-sm border border-slate-100 hover:bg-blue-50">${letter}</button>
+                    `).join('')}
+                    <button onclick="handleWQKey('Backspace')" class="bg-slate-100 p-3 rounded-lg font-bold">⌫</button>
+                    <button onclick="handleWQKey('Enter')" class="bg-blue-600 text-white px-6 rounded-lg font-bold">ENTER</button>
+                </div>
+            ` : `
+                <div class="p-6 bg-white rounded-3xl shadow-xl">
+                    <h3 class="text-2xl font-black mb-4">${q.guesses[q.guesses.length-1] === q.target ? 'כל הכבוד! 🎉' : 'אופס...'}</h3>
+                    <p class="mb-6">המילה הייתה: <b class="text-blue-600">${q.target}</b></p>
+                    <button onclick="initWordQuest()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">שחק שוב</button>
+                </div>
+            `}
+        </div>
+    `;
+}
+
+function handleWQKey(key) {
+    const q = state.wordQuest;
+    if (q.isGameOver) return;
+    if (key === 'Enter') {
+        if (q.currentGuess.length === q.target.length) {
+            q.guesses.push(q.currentGuess);
+            if (q.currentGuess === q.target) { q.isGameOver = true; triggerConfetti(); }
+            else if (q.guesses.length >= q.maxAttempts) q.isGameOver = true;
+            q.currentGuess = '';
+        }
+    } else if (key === 'Backspace') {
+        q.currentGuess = q.currentGuess.slice(0, -1);
+    } else if (q.currentGuess.length < q.target.length && /^[a-zA-Z]$/.test(key)) {
+        q.currentGuess += key.toUpperCase();
+    }
+    render();
+}
+
+function decodeBase64(str) { try { return decodeURIComponent(escape(atob(str))); } catch (e) { return ''; } }
+function parseWordsFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const wParam = params.get('w');
+    if (wParam) {
+        const decoded = decodeBase64(wParam);
+        if (decoded) {
+            const lines = decoded.split('\n');
+            state.listName = lines[0] || 'אוצר המילים שלי';
+            state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
+                const [eng, heb] = l.split('-').map(s => s.trim());
+                return { eng, heb };
+            });
+        }
+    }
+}
+
+window.addEventListener('load', () => { parseWordsFromURL(); render(); });
+window.addEventListener('keydown', (e) => { if (state.screen === 'wordquest') handleWQKey(e.key); });
