@@ -122,16 +122,18 @@ function saveToLocal() {
         nightMode: state.nightMode
     }));
 }
-// --- בלוק 3 מעודכן: Header ומסכי כניסה ---
+--- בלוק 3 ו בלוק 4 מאוחדים ---
+
+    // --- בלוק 3 ו-4 מאוחדים ומתוקנים (בלי שגיאות תחביר) ---
 
 function render() {
     const app = document.getElementById('app');
     const loader = document.getElementById('loading-screen');
-    if (loader) loader.style.display = 'none'; // מעלים את מסך הטעינה
+    if (loader) loader.style.display = 'none'; 
     
     app.innerHTML = '';
 
-    // בניית ה-Header החדש לפי העיצוב שלך
+    // Header
     const header = document.createElement('div');
     header.className = "flex justify-between items-center p-6 bg-white border-b border-slate-100";
     header.innerHTML = `
@@ -139,7 +141,7 @@ function render() {
             <img src="logo.svg" alt="WA" class="h-12 w-12 object-contain">
             <div class="flex flex-col text-left">
                 <span class="text-blue-600 font-black text-2xl leading-none">Word Academy</span>
-                <span class="text-[11px] font-bold text-slate-400 mt-1">תרגול אוצר מילים בכיף 🦉</span>
+                <span class="text-[11px] font-bold text-slate-400 mt-1 text-left">תרגול אוצר מילים בכיף 🦉</span>
             </div>
         </div>
         <button onclick="toggleNightMode()" class="p-2 rounded-2xl bg-slate-50 hover:bg-slate-100 transition text-2xl">
@@ -148,7 +150,6 @@ function render() {
     `;
     app.appendChild(header);
 
-    // אזור התוכן המרכזי
     const content = document.createElement('div');
     content.id = "main-content";
     app.appendChild(content);
@@ -165,27 +166,16 @@ function render() {
                 </div>
             </div>
         `;
-        return;
+    } else {
+        renderAppScreens(content);
     }
-
-    // קריאה למסכים האחרים
-    renderAppScreens(content);
 }
-
-    renderAppScreens(content);
-}
-
-// --- בלוק 4 מעודכן: כרטיסיות לימוד אינטראקטיביות ---
-
-let learningState = { currentIndex: 0, isFlipped: false, knownWords: [] };
 
 function renderAppScreens(container) {
     if (state.words.length === 0) return;
 
     if (state.screen === 'flashcards') {
         const word = state.words[learningState.currentIndex];
-        const progress = Math.round((learningState.knownWords.length / state.words.length) * 100);
-
         container.innerHTML = `
             <div class="p-4 space-y-6 text-center">
                 <div class="space-y-1">
@@ -197,9 +187,9 @@ function renderAppScreens(container) {
                      class="relative w-full aspect-[4/3] max-w-sm mx-auto cursor-pointer perspective-1000">
                     <div class="w-full h-full transition-all duration-500 preserve-3d ${learningState.isFlipped ? 'rotate-y-180' : ''}">
                         <div class="absolute inset-0 bg-white border-4 border-blue-100 rounded-[2.5rem] flex flex-col items-center justify-center shadow-xl backface-hidden">
-                            <span class="text-blue-100 font-bold mb-4">לחצו על הכרטיסייה לסיבוב 🔄</span>
+                            <span class="text-blue-200 text-xs font-bold mb-4">לחצו על הכרטיסייה לסיבוב 🔄</span>
                             <h2 class="eng-text text-5xl font-black text-blue-600" lang="en">${word.eng}</h2>
-                            <button onclick="event.stopPropagation(); speak('${word.eng}')" class="mt-4 text-4xl">🔊</button>
+                            <button onclick="event.stopPropagation(); speak('${word.eng.replace(/'/g, "\\'")}')" class="mt-4 text-4xl">🔊</button>
                         </div>
                         <div class="absolute inset-0 bg-blue-50 border-4 border-blue-200 rounded-[2.5rem] flex items-center justify-center shadow-xl backface-hidden rotate-y-180">
                             <h2 class="text-5xl font-black text-slate-800">${word.heb}</h2>
@@ -208,44 +198,27 @@ function renderAppScreens(container) {
                 </div>
 
                 <div class="flex gap-4 max-w-sm mx-auto">
-                    <button onclick="nextWord(false)" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center gap-2">
-                        <span>⌛</span> עוד לא
-                    </button>
-                    <button onclick="nextWord(true)" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center gap-2">
-                        <span>✅</span> יודע
-                    </button>
+                    <button onclick="nextWord(false)" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg">⌛ עוד לא</button>
+                    <button onclick="nextWord(true)" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg">✅ יודע</button>
                 </div>
 
                 ${learningState.knownWords.length === state.words.length ? `
-                    <button onclick="state.screen='quiz'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl animate-bounce">
+                    <button onclick="state.screen='quiz'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl animate-bounce mt-4">
                         אני מוכן לאתגר! 🏆
                     </button>
                 ` : ''}
             </div>
         `;
-        return;
+    } else if (state.screen === 'quiz') {
+        renderQuizScreen(container);
+    } else if (state.screen === 'report') {
+        renderReportScreen(container);
+    } else if (state.screen === 'menu') {
+        renderMenuScreen(container);
+    } else {
+        // קריאה למשחקים
+        renderMemory(container);
     }
-    renderQuizScreen(container);
-}
-
-function nextWord(known) {
-    if (known && !learningState.knownWords.includes(learningState.currentIndex)) {
-        learningState.knownWords.push(learningState.currentIndex);
-    }
-    
-    // מעבר למילה הבאה (דילוג על מילים שיודעים)
-    let nextIndex = (learningState.currentIndex + 1) % state.words.length;
-    
-    // אם נשארו מילים שלא יודעים, נחפש אותן
-    if (learningState.knownWords.length < state.words.length) {
-        while (learningState.knownWords.includes(nextIndex)) {
-            nextIndex = (nextIndex + 1) % state.words.length;
-        }
-    }
-
-    learningState.currentIndex = nextIndex;
-    learningState.isFlipped = false;
-    render();
 }
 
 // --- בלוק 5: מנגנון המבחן (Quiz) ---
