@@ -126,42 +126,51 @@ function saveToLocal() {
 
 function render() {
     const app = document.getElementById('app');
+    const loader = document.getElementById('loading-screen');
+    if (loader) loader.style.display = 'none'; // מעלים את מסך הטעינה
+    
     app.innerHTML = '';
 
-    // הוספת Header קבוע לכל המסכים
+    // בניית ה-Header החדש לפי העיצוב שלך
     const header = document.createElement('div');
-    header.className = "flex justify-between items-center p-4 mb-4";
+    header.className = "flex justify-between items-center p-6 bg-white border-b border-slate-100";
     header.innerHTML = `
         <div class="flex items-center gap-3">
+            <img src="logo.svg" alt="WA" class="h-12 w-12 object-contain">
             <div class="flex flex-col text-left">
-                <div class="flex items-center gap-2">
-                    <img src="logo.svg" alt="WA" class="h-10">
-                    <span class="text-blue-600 font-black text-xl tracking-tight">WORD ADVENTURE</span>
-                </div>
-                <span class="text-[10px] font-bold text-slate-400 mt-[-5px]">תרגול אוצר מילים בכיף 🦉</span>
+                <span class="text-blue-600 font-black text-2xl leading-none">Word Academy</span>
+                <span class="text-[11px] font-bold text-slate-400 mt-1">תרגול אוצר מילים בכיף 🦉</span>
             </div>
         </div>
-        <button onclick="toggleNightMode()" class="text-2xl">${state.nightMode ? '🌙' : '☀️'}</button>
+        <button onclick="toggleNightMode()" class="p-2 rounded-2xl bg-slate-50 hover:bg-slate-100 transition text-2xl">
+            ${state.nightMode ? '🌙' : '☀️'}
+        </button>
     `;
     app.appendChild(header);
 
+    // אזור התוכן המרכזי
     const content = document.createElement('div');
+    content.id = "main-content";
     app.appendChild(content);
 
     if (state.screen === 'welcome') {
         content.innerHTML = `
-            <div class="flex flex-col items-center text-center space-y-8 mt-10 p-4">
-                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-b-4 border-blue-100 w-full max-w-sm">
-                    <h2 class="text-2xl font-black text-slate-800 mb-6">ברוכים הבאים!</h2>
-                    <button onclick="state.screen='flashcards'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-blue-700 transition mb-4">
-                        כניסה כאורח 🚀
+            <div class="flex flex-col items-center text-center space-y-8 mt-16 p-6">
+                <div class="bg-white p-10 rounded-[3rem] shadow-xl border-b-8 border-blue-100 w-full">
+                    <h2 class="text-3xl font-black text-slate-800 mb-2">מוכנים?</h2>
+                    <p class="text-slate-500 font-bold mb-8">ההרפתקה שלכם מתחילה כאן</p>
+                    <button onclick="state.screen='flashcards'; render();" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black text-2xl shadow-lg hover:scale-[1.02] active:scale-95 transition">
+                        בואו נתחיל! 🚀
                     </button>
-                    <p class="text-sm text-slate-400 font-bold">או שהתחילו ללמוד מהלינק שלכם</p>
                 </div>
             </div>
         `;
         return;
     }
+
+    // קריאה למסכים האחרים
+    renderAppScreens(content);
+}
 
     renderAppScreens(content);
 }
