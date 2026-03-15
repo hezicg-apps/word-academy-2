@@ -32,18 +32,22 @@ function render() {
     app.innerHTML = ''; 
 
     const isDark = state.nightMode;
-    const header = document.createElement('div');
-    header.className = `flex justify-between items-center p-6 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'} border-b sticky top-0 z-50 transition-all`;
+    
+    // יצירת הכותרת עם תיקון הסדר (לוגו בשמאל, כפתור בימין)
+    const header = document.createElement('header');
+    // הוספנו row-reverse כדי שהלוגו והשם יהיו בצד שמאל במבנה עברי
+    header.className = `flex flex-row-reverse justify-between items-center p-6 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'} border-b sticky top-0 z-50 transition-all`;
     
     header.innerHTML = `
         <div class="flex items-center gap-3" style="direction: ltr; text-align: left;">
-            <img src="logo.svg" alt="WA" class="h-12 w-12 object-contain">
+            <img src="logo.svg" alt="WA" class="h-12 w-12 object-contain" style="background: transparent;">
             <div class="flex flex-col items-start">
-                <span class="text-blue-600 font-black text-2xl leading-none">Word Academy</span>
+                <span class="text-blue-600 font-black text-2xl leading-none" style="font-family: 'Heebo', sans-serif;">Word Academy</span>
                 <span class="text-[11px] font-bold text-slate-400 mt-1">תרגול אוצר מילים בכיף 🦉</span>
             </div>
         </div>
-        <button onclick="toggleNightMode()" class="p-2 rounded-2xl ${isDark ? 'bg-slate-800 text-yellow-400' : 'bg-slate-50 text-slate-600'} transition-all text-2xl border ${isDark ? 'border-slate-700' : 'border-slate-100'}">
+        
+        <button onclick="toggleNightMode()" class="p-2 rounded-2xl transition-all text-2xl border ${isDark ? 'bg-slate-800 text-yellow-400 border-slate-700' : 'bg-slate-50 text-slate-600 border-slate-100'}">
             ${isDark ? '☀️' : '🌙'}
         </button>
     `;
@@ -53,10 +57,16 @@ function render() {
     content.className = "w-full max-w-4xl mx-auto p-4";
     app.appendChild(content);
 
+    // ניתוב מסכים
     if (state.words.length === 0 && !window.location.search.includes('w=')) {
-        content.innerHTML = `<div class="p-10 text-center"><h2 class="text-2xl font-black">אנא בחרו יחידת לימוד באתר הבית 🚀</h2></div>`;
+        content.innerHTML = `
+            <div class="p-10 text-center space-y-6">
+                <h2 class="text-2xl font-black">אנא בחרו יחידת לימוד באתר הבית 🚀</h2>
+                <button onclick="state.screen='input'; render();" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">או לחצו כאן ליצירת רשימה חדשה</button>
+            </div>`;
     } else {
         const screens = {
+            input: renderInputScreen, // הוספנו אפשרות למסך הזנה
             welcome: renderWelcomeScreen,
             flashcards: renderFlashcardsScreen,
             quiz: renderQuizScreen,
@@ -66,6 +76,9 @@ function render() {
             connect4: renderConnect4,
             wordquest: renderWordQuest
         };
+        if (screens[state.screen]) screens[state.screen](content);
+    }
+}
         if (screens[state.screen]) screens[state.screen](content);
     }
 }
@@ -485,3 +498,53 @@ window.addEventListener('load', () => {
 window.addEventListener('keydown', (e) => {
     if (state.screen === 'wordquest') handleWQKey(e.key);
 });
+
+function renderInputScreen(container) {
+    container.innerHTML = `
+        <div class="p-6 space-y-6 animate-fade-in">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-b-8 border-blue-100">
+                <h2 class="text-2xl font-black text-slate-800 mb-4 text-center">יצירת רשימה חדשה 📝</h2>
+                <p class="text-slate-500 text-sm mb-4 text-center italic">כתבו שם לרשימה בשורה הראשונה, ואז מילים במבנה: אנגלית - עברית</p>
+                
+                <textarea id="wordInput" class="w-full h-64 p-4 border-2 border-slate-100 rounded-2xl focus:border-blue-400 outline-none font-medium" 
+                    placeholder="חיות\ndog - כלב\ncat - חתול"></textarea>
+                
+                <div class="flex gap-3 mt-6">
+                    <button onclick="saveNewList()" class="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                        צור משחק! ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveNewList() {
+    const text = document.getElementById('wordInput').value.trim();
+    if (!text) return alert("נא להזין מילים");
+
+    const lines = text.split('\n');
+    state.listName = lines[0];
+    state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
+        const [eng, heb] = l.split('-').map(s => s.trim());
+        return { eng, heb };
+    });
+
+    if (state.words.length === 0) return alert("לא נמצאו מילים במבנה הנכון (אנגלית - עברית)");
+
+    // יצירת קישור שיתוף אוטומטי
+    const encoded = btoa(unescape(encodeURIComponent(text)));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?w=${encoded}`;
+    
+    // מעבר למסך ברוכים הבאים
+    state.screen = 'welcome';
+    render();
+    
+    // מציע למשתמש להעתיק את הקישור שנוצר
+    setTimeout(() => {
+        if(confirm("הרשימה נוצרה! האם תרצה להעתיק את קישור השיתוף לוואטסאפ?")) {
+            navigator.clipboard.writeText(shareUrl);
+            alert("הקישור הועתק! עכשיו אפשר לשלוח אותו למי שרוצים.");
+        }
+    }, 500);
+}
