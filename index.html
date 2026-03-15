@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Word Academy - Adventure</title>
     
@@ -17,12 +18,20 @@
         /* טעינת הגופנים הדידקטיים שביקשת */
         @import url('https://fonts.googleapis.com/css2?family=Andika&family=Varela+Round&display=swap');
         
-        body { 
-            font-family: 'Varela Round', sans-serif; 
-            transition: background-color 0.3s; 
-            overflow-x: hidden; 
-            touch-action: manipulation; 
-        }
+      <body>
+    <div id="loading-screen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+        <div class="flex gap-2 mb-4">
+            <div class="w-3 h-3 bg-blue-600 rounded-full animate-bounce"></div>
+            <div class="w-3 h-3 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div class="w-3 h-3 bg-blue-200 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        </div>
+        <p class="text-blue-600 font-bold">מעלה את ההרפתקה...</p>
+    </div>
+
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl relative overflow-hidden"></div>
+
+    <script src="main.js"></script>
+</body>
         
         /* הגדרה קפדנית לאנגלית: ה-a תמיד תהיה בכתב יד */
         .eng-text, .ltr-content, [lang="en"] { 
