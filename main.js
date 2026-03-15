@@ -87,7 +87,19 @@ function handleReportAndContinue() {
         </div>`;
 }
 
-// --- בלוק 2: מנוע הרינדור וה-Header ---
+// --- בלוק 2: Header מעודכן ופונקציית לילה ---
+
+function toggleNightMode() {
+    state.nightMode = !state.nightMode;
+    if (state.nightMode) {
+        document.body.classList.add('night-mode');
+        document.documentElement.style.setProperty('--bg-main', '#0f172a');
+    } else {
+        document.body.classList.remove('night-mode');
+        document.documentElement.style.setProperty('--bg-main', '#f8fafc');
+    }
+    render();
+}
 
 function render() {
     const app = document.getElementById('app');
@@ -95,18 +107,22 @@ function render() {
     if (loader) loader.style.display = 'none';
     app.innerHTML = '';
 
-    // Header - עיצוב מותאם אישית: לוגו ושם משמאל, יום/לילה מימין
+    // הגדרת הגופן Heebo לכל האפליקציה
+    app.style.fontFamily = "'Heebo', sans-serif";
+
+    // Header: לוגו ושם משמאל (שמאל לימין), כפתור מימין
     const header = document.createElement('div');
     header.className = "flex justify-between items-center p-6 bg-white border-b border-slate-100";
+    // שימוש ב-ltr כדי שהלוגו והטקסט יהיו משמאל לימין בתוך הבלוק שלהם
     header.innerHTML = `
-        <div class="flex items-center gap-3 text-left">
+        <div class="flex items-center gap-3" style="direction: ltr;">
             <img src="logo.svg" alt="WA" class="h-12 w-12 object-contain">
-            <div class="flex flex-col">
+            <div class="flex flex-col items-start">
                 <span class="text-blue-600 font-black text-2xl leading-none">Word Academy</span>
                 <span class="text-[11px] font-bold text-slate-400 mt-1">תרגול אוצר מילים בכיף 🦉</span>
             </div>
         </div>
-        <button onclick="toggleNightMode()" class="p-2 rounded-2xl bg-slate-50 hover:bg-slate-100 transition text-2xl">
+        <button onclick="toggleNightMode()" class="p-2 rounded-2xl bg-slate-50 hover:bg-slate-100 transition text-2xl shadow-sm border border-slate-100">
             ${state.nightMode ? '🌙' : '☀️'}
         </button>
     `;
@@ -116,7 +132,7 @@ function render() {
     content.id = "main-content";
     app.appendChild(content);
 
-    // ניתוב מסכים
+    // ניתוב מסכים מתוקן - מוודא שאין "היעלמות"
     if (state.screen === 'welcome') {
         renderWelcomeScreen(content);
     } else if (state.screen === 'flashcards') {
@@ -127,17 +143,37 @@ function render() {
         renderReportScreen(content);
     } else if (state.screen === 'menu') {
         renderMenuScreen(content);
-    } else {
-        renderGameScreens(content); // משחקי הזיכרון, 4 בשורה וכו'
+    } else if (state.screen === 'memory') {
+        renderMemory(content);
+    } else if (state.screen === 'connect4') {
+        renderConnect4(content);
+    } else if (state.screen === 'wordquest') {
+        renderWordQuest(content);
     }
 }
 
-// --- בלוק 3: כרטיסיות לימוד (Flip Cards) ---
+// --- בלוק 3: מסך פתיחה וכרטיסיות ---
 
-let learningState = { currentIndex: 0, isFlipped: false, knownWords: [] };
+function renderWelcomeScreen(container) {
+    container.innerHTML = `
+        <div class="flex flex-col items-center text-center space-y-8 mt-16 p-6 animate-fade-in">
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl border-b-8 border-blue-100 w-full max-w-md">
+                <h2 class="text-3xl font-black text-slate-800 mb-2">מוכנים?</h2>
+                <p class="text-slate-500 font-bold mb-8">ההרפתקה שלכם מתחילה כאן</p>
+                <button onclick="state.screen='flashcards'; render();" 
+                    class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black text-2xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    בואו נתחיל! 🚀
+                </button>
+            </div>
+        </div>
+    `;
+}
 
 function renderFlashcardsScreen(container) {
-    if (state.words.length === 0) return;
+    if (state.words.length === 0) {
+        container.innerHTML = `<p class="p-10 text-center font-bold text-slate-400">טוען מילים... אם זה לא קורה, וודא שיש מילים בכתובת האתר</p>`;
+        return;
+    }
     const word = state.words[learningState.currentIndex];
 
     container.innerHTML = `
@@ -150,17 +186,11 @@ function renderFlashcardsScreen(container) {
             <div onclick="learningState.isFlipped = !learningState.isFlipped; render();" 
                  class="relative w-full aspect-[4/3] max-w-sm mx-auto cursor-pointer perspective-1000">
                 <div class="w-full h-full transition-all duration-500 preserve-3d ${learningState.isFlipped ? 'rotate-y-180' : ''}">
-                    
                     <div class="absolute inset-0 bg-white border-4 border-blue-100 rounded-[2.5rem] flex flex-col items-center justify-center shadow-xl backface-hidden">
-                        <div class="bg-blue-50 px-4 py-1 rounded-full text-blue-400 text-xs font-bold mb-4 flex items-center gap-2">
-                            <span>🔄</span> לחצו על הכרטיסייה לסיבוב
-                        </div>
-                        <h2 class="eng-text text-5xl font-black text-blue-600" lang="en">${word.eng}</h2>
-                        <button onclick="event.stopPropagation(); speak('${word.eng}')" class="mt-6 p-4 bg-slate-50 rounded-full hover:bg-blue-50 transition shadow-sm">
-                            <span class="text-3xl">🔊</span>
-                        </button>
+                        <span class="text-blue-200 text-xs font-bold mb-4 flex items-center gap-2">🔄 לחצו לסיבוב</span>
+                        <h2 class="text-5xl font-black text-blue-600" lang="en">${word.eng}</h2>
+                        <button onclick="event.stopPropagation(); speak('${word.eng}')" class="mt-6 text-4xl hover:scale-110 transition">🔊</button>
                     </div>
-
                     <div class="absolute inset-0 bg-blue-50 border-4 border-blue-200 rounded-[2.5rem] flex items-center justify-center shadow-xl backface-hidden rotate-y-180">
                         <h2 class="text-5xl font-black text-slate-800">${word.heb}</h2>
                     </div>
@@ -168,43 +198,17 @@ function renderFlashcardsScreen(container) {
             </div>
 
             <div class="flex gap-4 max-w-sm mx-auto">
-                <button onclick="nextLearningWord(false)" class="flex-1 bg-orange-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-orange-700 transition active:scale-95 flex items-center justify-center gap-2">
-                    <span>⌛</span> עוד לא
-                </button>
-                <button onclick="nextLearningWord(true)" class="flex-1 bg-green-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg hover:bg-green-700 transition active:scale-95 flex items-center justify-center gap-2">
-                    <span>✅</span> יודע
-                </button>
+                <button onclick="nextLearningWord(false)" class="flex-1 bg-orange-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition">⌛ עוד לא</button>
+                <button onclick="nextLearningWord(true)" class="flex-1 bg-green-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition">✅ יודע</button>
             </div>
 
             ${learningState.knownWords.length === state.words.length ? `
-                <div class="pt-4">
-                    <button onclick="state.screen='quiz'; render();" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-2xl shadow-xl animate-bounce border-b-4 border-blue-800">
-                        אני מוכן לאתגר! 🏆
-                    </button>
-                </div>
+                <button onclick="state.screen='quiz'; render();" class="w-full max-w-sm bg-blue-600 text-white py-5 rounded-2xl font-black text-2xl shadow-xl animate-bounce">
+                    אני מוכן לאתגר! 🏆
+                </button>
             ` : ''}
         </div>
     `;
-}
-
-function nextLearningWord(isKnown) {
-    if (isKnown && !learningState.knownWords.includes(learningState.currentIndex)) {
-        learningState.knownWords.push(learningState.currentIndex);
-    }
-
-    // בחירת המילה הבאה (מדלג על מה שכבר יודעים אם יש כאלו)
-    let nextIndex = (learningState.currentIndex + 1) % state.words.length;
-    
-    // אם לא סיימנו הכל, נחפש את המילה הבאה שעדיין לא "ידועה"
-    if (learningState.knownWords.length < state.words.length) {
-        while (learningState.knownWords.includes(nextIndex)) {
-            nextIndex = (nextIndex + 1) % state.words.length;
-        }
-    }
-
-    learningState.currentIndex = nextIndex;
-    learningState.isFlipped = false;
-    render();
 }
 
 // --- בלוק 4: מנגנון הבוחן (Quiz) ---
