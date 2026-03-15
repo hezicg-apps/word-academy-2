@@ -1,0 +1,51 @@
+/* style.css - השלמות עיצוב ואנימציות */
+
+:root {
+    --primary-blue: #2563eb;
+    --error-red: #ef4444;
+}
+
+/* אנימציית רעידה לטעות במבחן */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+/* אפקט היפוך חלק לקלפי הזיכרון */
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+/* עיצוב גלילה עדין לרשימת המילים */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* התאמה למובייל - מניעת זום בלחיצה כפולה */
+button, input, textarea {
+    touch-action: manipulation;
+}
+
+/* שיפור תצוגת הלוח ב-4 בשורה */
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
