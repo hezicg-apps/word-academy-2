@@ -144,3 +144,35 @@ input:focus, textarea:focus {
 .bg-red-500, .bg-yellow-400 {
     box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
 }
+
+/* התאמות למחשב - מסכים מעל 1024 פיקסלים */
+@media (min-width: 1024px) {
+    /* הגדלת גובה ה-Header כולו */
+    header {
+        padding: 1.5rem 3rem !important; /* הגדלת המרווח הפנימי */
+    }
+
+    /* הגדלת הלוגו */
+    header img {
+        height: 80px !important; /* כמעט כפול מהגודל המקורי */
+        width: 80px !important;
+    }
+
+    /* הגדלת שם האתר (הכותרת הכחולה) */
+    header .text-blue-600 {
+        font-size: 3.5rem !important; /* הגדלה משמעותית */
+        letter-spacing: -1px;
+    }
+
+    /* הגדלת הסלוגן */
+    header .text-slate-400 {
+        font-size: 1.2rem !important; /* טקסט ברור יותר מתחת לשם */
+        margin-top: 0.5rem !important;
+    }
+
+    /* הגדלת כפתור מצב הלילה שיתאים לגובה החדש */
+    header button {
+        padding: 1rem !important;
+        font-size: 2rem !important;
+    }
+}
