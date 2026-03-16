@@ -65,7 +65,7 @@ function render() {
     header.innerHTML = `
         <div class="flex items-center gap-2">
             <span class="text-xl font-black text-blue-600">Word Academy</span>
-            <img src="logo.png" alt="Logo" class="w-8 h-8 object-contain">
+            <img src="logo.svg" alt="Logo" class="w-8 h-8 object-contain">
         </div>
         <button onclick="toggleNightMode()" class="p-2 text-xl">${isDark ? '☀️' : '🌙'}</button>
     `;
