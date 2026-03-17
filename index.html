@@ -3,25 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy - Word Adventure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
+    <title>Word Adventure - 4 In A Row</title>
     <style>
-        body { font-family: 'Assistant', sans-serif; transition: background 0.3s; }
-        .night-mode { background-color: #0f172a; color: white; }
-        .perspective-1000 { perspective: 1000px; }
-        .preserve-3d { transform-style: preserve-3d; }
-        .backface-hidden { backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
-        @keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
-        .animate-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        body { font-family: sans-serif; background-color: #f0f9ff; text-align: center; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px; border-radius: 10px; margin-bottom: 20px; }
+        .logo-placeholder { font-weight: bold; color: #2563eb; }
+        
+        #setup-screen, #game-screen { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+        textarea { width: 90%; height: 100px; margin-bottom: 10px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+        .btn { background: #2563eb; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        
+        .board { background: #2563eb; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 10px; border-radius: 10px; width: 300px; margin: 20px auto; }
+        .cell { width: 35px; height: 35px; background: #1e3a8a; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .token { width: 80%; height: 80%; border-radius: 50%; }
+        .red { background: #ef4444; }
+        .yellow { background: #facc15; }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <div id="app"></div>
-    <script src="main.js"></script>
+<body>
+
+<div class="header">
+    <div class="logo-placeholder">Word Adventure</div>
+    <img src="logo.svg" alt="logo" style="height:30px;" onerror="this.style.display='none'">
+</div>
+
+<div id="setup-screen">
+    <h2>הזנת מילים</h2>
+    <textarea id="wordInput">רשימה 1
+Apple - תפוח
+Dog - כלב
+Cat - חתול
+Sun - שמש</textarea>
+    <button class="btn" onclick="startGame()">התחל משחק</button>
+</div>
+
+<div id="game-screen" class="hidden">
+    <div id="status">לחץ על "שאלה"</div>
+    <button class="btn" style="margin-top:10px" onclick="ask()">קבל שאלה ❓</button>
+    <div id="board" class="board"></div>
+</div>
+
+<script>
+    let state = { words: [], board: Array(6).fill(null).map(() => Array(7).fill(null)), turn: 1, canDrop: false };
+
+    function startGame() {
+        const val = document.getElementById('wordInput').value;
+        const lines = val.split('\n');
+        state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
+            const [eng, heb] = l.split('-').map(s => s.trim());
+            return { eng, heb };
+        });
+
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        
+        const boardEl = document.getElementById('board');
+        for (let r = 0; r < 6; r++) {
+            for (let c = 0; c < 7; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `c-${r}-${c}`;
+                cell.onclick = () => drop(c);
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    function ask() {
+        const q = state.words[Math.floor(Math.random() * state.words.length)];
+        const ans = prompt(`תרגם לעברית: ${q.eng}`);
+        if (ans === q.heb) {
+            state.canDrop = true;
+            document.getElementById('status').innerText = "נכון! בחר עמודה";
+        } else {
+            alert("טעות!");
+            state.turn = state.turn === 1 ? 2 : 1;
+            document.getElementById('status').innerText = `תור השחקן ה${state.turn === 1 ? 'אדום' : 'צהוב'}`;
+        }
+    }
+
+    function drop(c) {
+        if (!state.canDrop) return;
+        for (let r = 5; r >= 0; r--) {
+            if (!state.board[r][c]) {
+                state.board[r][c] = state.turn;
+                document.getElementById(`c-${r}-${c}`).innerHTML = `<div class="token ${state.turn === 1 ? 'red' : 'yellow'}"></div>`;
+                state.canDrop = false;
+                state.turn = state.turn === 1 ? 2 : 1;
+                document.getElementById('status').innerText = `תור השחקן ה${state.turn === 1 ? 'אדום' : 'צהוב'}`;
+                return;
+            }
+        }
+    }
+</script>
 </body>
 </html>
