@@ -9,71 +9,72 @@
         :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; --green: #22c55e; --red: #ef4444; }
         body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; }
         
-        .header { background: white; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .site-name { font-size: 32px; font-weight: 700; color: var(--blue); }
+        /* Header קבוע לכל המסכים */
+        .header { background: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .site-name { font-size: 28px; font-weight: 700; color: var(--blue); }
+        .logo-img { height: 40px; display: block; }
 
         .container { max-width: 500px; margin: 20px auto; padding: 10px; }
-        .card-box { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; }
+        .card-box { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; }
         
         h3 { color: var(--blue); margin-top: 0; font-size: 24px; }
-        .step-info { font-size: 14px; color: #64748b; margin-bottom: 10px; }
+        .step-info { font-size: 14px; color: #64748b; margin-bottom: 10px; font-weight: bold; }
 
-        /* Inputs */
-        textarea { width: 100%; height: 180px; border-radius: 15px; padding: 15px; font-size: 18px; border: 2px solid #e2e8f0; resize: none; box-sizing: border-box; }
-        
-        /* Buttons */
-        .btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 20px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
-        .btn:active { transform: scale(0.98); }
-        .btn-option { background: #f1f5f9; color: var(--navy); border: 2px solid #e2e8f0; margin-bottom: 15px; } /* ריווח תשובות */
+        /* כפתורים וריווח */
+        .btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 20px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 12px; font-family: inherit; }
+        .btn-option { background: #f1f5f9; color: var(--navy); border: 2px solid #e2e8f0; margin-bottom: 18px; } /* ריווח מוגדל */
         .correct { background: var(--green) !important; color: white !important; border-color: var(--green); }
         .wrong { background: var(--red) !important; color: white !important; border-color: var(--red); }
 
-        /* Flashcards */
+        /* כרטיסיות */
         .flip-card { width: 280px; height: 180px; perspective: 1000px; margin: 20px auto; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 20px; border: 4px solid var(--blue); font-size: 36px; font-weight: bold; background: white; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 20px; border: 4px solid var(--blue); font-size: 36px; font-weight: bold; background: white; box-sizing: border-box; }
         .card-back { transform: rotateY(180deg); color: var(--blue); background: #eff6ff; }
 
-        /* 4 In A Row Game */
-        .game-controls { display: flex; justify-content: space-between; align-items: center; width: 300px; margin: 10px auto; font-weight: bold; }
+        /* 4 בשורה */
+        .game-nav { display: flex; justify-content: space-between; align-items: center; width: 300px; margin: 10px auto; }
         .arrows-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 300px; margin: 5px auto; }
-        .arrow-col { cursor: pointer; color: var(--blue); font-size: 18px; transition: 0.2s; padding-bottom: 5px; }
-        .arrow-col:hover { transform: translateY(3px); }
+        .arrow-item { cursor: pointer; color: var(--blue); font-size: 20px; font-weight: bold; padding: 5px; }
         
-        .board { background: var(--navy); display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 8px; border-radius: 15px; width: 300px; margin: 0 auto; position: relative; overflow: hidden; }
-        .cell { aspect-ratio: 1; background: #312e81; border-radius: 50%; position: relative; z-index: 2; }
+        .board { background: var(--navy); display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 8px; border-radius: 15px; width: 300px; margin: 0 auto; position: relative; overflow: hidden; height: 260px; }
+        .cell { aspect-ratio: 1; background: #312e81; border-radius: 50%; z-index: 2; }
         
-        /* Token Animation */
-        .token { width: 90%; height: 90%; border-radius: 50%; position: absolute; left: 5%; transition: top 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95); z-index: 1; }
-        .token.red { background: var(--red); }
-        .token.yellow { background: var(--accent); }
+        /* אסימון נופל */
+        .token { width: 34px; height: 34px; border-radius: 50%; position: absolute; transition: top 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95); z-index: 1; }
+        .red-t { background: var(--red); box-shadow: inset 0 -3px rgba(0,0,0,0.2); }
+        .yellow-t { background: var(--accent); box-shadow: inset 0 -3px rgba(0,0,0,0.2); }
 
-        /* Modal השאלה */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; }
+        /* Modal שאלה */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 400px; }
 
         .hidden { display: none; }
-        .turn-dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+        textarea { width: 100%; height: 200px; border-radius: 15px; padding: 15px; font-size: 20px; border: 2px solid #cbd5e1; resize: none; box-sizing: border-box; font-family: inherit; }
     </style>
 </head>
 <body>
 
-<div class="header"><div class="site-name">Word Adventure</div></div>
+<div class="header">
+    <div class="site-name">Word Adventure</div>
+    <img src="logo.svg" alt="Logo" class="logo-img" onerror="this.style.opacity='0'">
+</div>
 
 <div class="container">
     <div id="screen-input" class="card-box">
         <h3>יצירת רשימה חדשה ✨</h3>
-        <textarea id="wordInput" placeholder="שם הרשימה&#10;Apple - תפוח&#10;Banana - בננה"></textarea>
+        <textarea id="wordInput" placeholder="שם הרשימה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
         <button class="btn" onclick="initApp()">מתחילים ללמוד</button>
     </div>
 
     <div id="screen-cards" class="card-box hidden">
-        <div class="step-info">שלב 1: מכירים את המילים</div>
-        <h3>זמן ללמוד! 🧠</h3>
-        <div class="flip-card" id="card-obj" onclick="this.classList.toggle('flipped')">
+        <div class="step-info">זמן ללמוד! 🧠</div>
+        <div class="flip-card" id="card-element" onclick="this.classList.toggle('flipped')">
             <div class="flip-card-inner">
-                <div class="card-face card-front" id="card-eng"></div>
+                <div class="card-face">
+                    <span id="card-eng"></span>
+                </div>
                 <div class="card-face card-back" id="card-heb"></div>
             </div>
         </div>
@@ -84,43 +85,47 @@
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
-        <div class="step-info" id="quiz-progress">מילה 1 מתוך 5</div>
+        <div class="step-info" id="quiz-count"></div>
         <h3>אתגר המילים 🏆</h3>
-        <div id="quiz-word" style="font-size:32px; font-weight:bold; margin-bottom:20px;"></div>
+        <div id="quiz-word" style="font-size:36px; font-weight:bold; margin-bottom:25px; color:var(--blue);"></div>
         <div id="quiz-options"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
-        <h3>הציון שלך: <span id="final-score">0</span>%</h3>
-        <button id="btn-game-access" class="btn hidden" onclick="initGame()">למתחם המשחקים 🎮</button>
-        <button class="btn btn-option" onclick="location.reload()">רשימה חדשה</button>
+        <div style="display:flex; justify-content: space-between; font-size:14px; margin-bottom:15px; font-weight:bold;">
+            <span onclick="location.reload()" style="color:var(--blue); cursor:pointer;">+ רשימה חדשה</span>
+            <span style="color:var(--green); cursor:pointer;">שיתוף 🔗</span>
+        </div>
+        <h2>הציון שלך: <span id="final-score" style="color:var(--blue)">0</span>%</h2>
+        <button id="btn-game" class="btn hidden" onclick="initGame()">מתחם המשחקים 🎮</button>
+        <button class="btn btn-option" onclick="startQuiz()">תרגול נוסף לשיפור הציון</button>
     </div>
 
     <div id="screen-game" class="card-box hidden">
-        <button class="btn" onclick="openGameModal()">שאלה חדשה ❓</button>
+        <button class="btn" onclick="openGameQuestion()">שאלה חדשה ❓</button>
         
-        <div class="game-controls">
-            <span onclick="showScreen('screen-summary')" style="color:var(--red); cursor:pointer;">❌ יציאה</span>
-            <span>תור: <div id="turn-indicator" class="turn-dot" style="background:var(--red)"></div></span>
+        <div class="game-nav">
+            <span onclick="showScreen('screen-summary')" style="color:var(--red); cursor:pointer; font-weight:bold;">❌ יציאה</span>
+            <span style="font-weight:bold;">תור: <div id="turn-dot" style="width:15px; height:15px; border-radius:50%; display:inline-block; background:var(--red); vertical-align:middle;"></div></span>
         </div>
 
-        <div class="arrows-row" id="arrow-buttons"></div>
-        <div class="board" id="board"></div>
+        <div class="arrows-row" id="arrow-row"></div>
+        <div class="board" id="board-container"></div>
     </div>
 </div>
 
-<div id="game-modal" class="modal">
+<div id="q-modal" class="modal">
     <div class="modal-content">
-        <div id="modal-q-text" style="font-size:24px; font-weight:bold; margin-bottom:20px;"></div>
-        <div id="modal-q-options"></div>
+        <div id="modal-eng" style="font-size:28px; font-weight:bold; margin-bottom:20px; color:var(--blue);"></div>
+        <div id="modal-options"></div>
     </div>
 </div>
 
 <script>
     let state = {
-        words: [], queue: [], currentIdx: 0, score: 0, 
+        words: [], queue: [], currentIdx: 0, score: 0,
         board: Array(6).fill(null).map(() => Array(7).fill(null)),
-        turn: 1, canDrop: false, listName: '', firstTry: true
+        turn: 1, canDrop: false, firstTry: true
     };
 
     function showScreen(id) {
@@ -131,8 +136,8 @@
     function initApp() {
         const lines = document.getElementById('wordInput').value.trim().split('\n');
         state.words = lines.slice(1).map(l => {
-            const [eng, heb] = l.split('-').map(s => s.trim());
-            return { eng, heb };
+            const [e, h] = l.split('-').map(s => s.trim());
+            return { eng: e, heb: h };
         });
         state.queue = [...state.words];
         updateCard();
@@ -141,14 +146,14 @@
 
     function updateCard() {
         if(state.queue.length === 0) return startQuiz();
-        document.getElementById('card-obj').classList.remove('flipped');
+        document.getElementById('card-element').classList.remove('flipped');
         document.getElementById('card-eng').innerText = state.queue[0].eng;
         document.getElementById('card-heb').innerText = state.queue[0].heb;
     }
 
     function nextCard(known) {
-        const word = state.queue.shift();
-        if(!known) state.queue.push(word);
+        const w = state.queue.shift();
+        if(!known) state.queue.push(w);
         updateCard();
     }
 
@@ -160,38 +165,35 @@
 
     function renderQuiz() {
         const q = state.words[state.currentIdx];
-        document.getElementById('quiz-progress').innerText = `מילה ${state.currentIdx + 1} מתוך ${state.words.length}`;
+        document.getElementById('quiz-count').innerText = `מילה ${state.currentIdx+1} מתוך ${state.words.length}`;
         document.getElementById('quiz-word').innerText = q.eng;
         
-        const options = [q.heb, ...state.words.filter(w => w.heb !== q.heb).map(w => w.heb)]
-                        .sort(() => 0.5 - Math.random()).slice(0, 4);
-
+        const opts = [q.heb, ...state.words.filter(w=>w.heb!==q.heb).map(w=>w.heb)].sort(()=>0.5-Math.random()).slice(0,4);
         const container = document.getElementById('quiz-options');
         container.innerHTML = '';
-        options.forEach(opt => {
+        
+        opts.forEach(o => {
             const b = document.createElement('button');
             b.className = 'btn btn-option';
-            b.innerText = opt;
+            b.innerText = o;
             b.onclick = () => {
-                if(opt === q.heb) {
+                if(o === q.heb) {
                     b.classList.add('correct');
                     if(state.firstTry) state.score++;
                     setTimeout(() => {
-                        state.currentIdx++;
-                        state.firstTry = true;
+                        state.currentIdx++; state.firstTry = true;
                         if(state.currentIdx < state.words.length) renderQuiz();
                         else finishQuiz();
-                    }, 1000);
+                    }, 800);
                 } else {
-                    b.classList.add('wrong');
                     state.firstTry = false;
-                    // הצגת התשובה הנכונה לרגע
+                    b.classList.add('wrong');
                     Array.from(container.children).forEach(btn => {
                         if(btn.innerText === q.heb) btn.classList.add('correct');
                     });
                     setTimeout(() => {
                         Array.from(container.children).forEach(btn => btn.classList.remove('wrong', 'correct'));
-                    }, 1000);
+                    }, 1200);
                 }
             };
             container.appendChild(b);
@@ -199,86 +201,74 @@
     }
 
     function finishQuiz() {
-        const percent = Math.round((state.score / state.words.length) * 100);
-        document.getElementById('final-score').innerText = percent;
-        if(percent >= 70) document.getElementById('btn-game-access').classList.remove('hidden');
+        const pct = Math.round((state.score / state.words.length) * 100);
+        document.getElementById('final-score').innerText = pct;
+        if(pct >= 70) document.getElementById('btn-game').classList.remove('hidden');
         showScreen('screen-summary');
     }
 
-    // --- לוגיקת המשחק ---
-
+    // --- 4 בשורה ---
     function initGame() {
         showScreen('screen-game');
-        const boardElem = document.getElementById('board');
-        boardElem.innerHTML = '';
+        state.board = Array(6).fill(null).map(() => Array(7).fill(null));
+        document.getElementById('board-container').innerHTML = '';
         for(let i=0; i<42; i++) {
             const c = document.createElement('div'); c.className = 'cell';
-            boardElem.appendChild(c);
+            document.getElementById('board-container').appendChild(c);
         }
-        const arrowRow = document.getElementById('arrow-buttons');
-        arrowRow.innerHTML = '';
+        const arrows = document.getElementById('arrow-row');
+        arrows.innerHTML = '';
         for(let i=0; i<7; i++) {
-            const a = document.createElement('div'); a.className = 'arrow-col';
+            const a = document.createElement('div'); a.className = 'arrow-item';
             a.innerHTML = `▼<br>${i+1}`;
             a.onclick = () => dropToken(i);
-            arrowRow.appendChild(a);
+            arrows.appendChild(a);
         }
-        state.board = Array(6).fill(null).map(() => Array(7).fill(null));
-        state.canDrop = false;
     }
 
-    function openGameModal() {
+    function openGameQuestion() {
         const q = state.words[Math.floor(Math.random()*state.words.length)];
-        document.getElementById('modal-q-text').innerText = `איך אומרים: ${q.eng}?`;
-        const container = document.getElementById('modal-q-options');
+        document.getElementById('modal-eng').innerText = q.eng;
+        const container = document.getElementById('modal-options');
         container.innerHTML = '';
+        const opts = [q.heb, ...state.words.filter(w=>w.heb!==q.heb).map(w=>w.heb)].sort(()=>0.5-Math.random()).slice(0,4);
         
-        const opts = [q.heb, ...state.words.filter(w => w.heb !== q.heb).map(w => w.heb)]
-                     .sort(() => 0.5 - Math.random()).slice(0, 4);
-
         opts.forEach(o => {
             const b = document.createElement('button'); b.className = 'btn btn-option'; b.innerText = o;
             b.onclick = () => {
                 if(o === q.heb) {
                     b.classList.add('correct');
                     setTimeout(() => {
-                        document.getElementById('game-modal').style.display = 'none';
+                        document.getElementById('q-modal').style.display = 'none';
                         state.canDrop = true;
                     }, 600);
-                } else {
-                    b.classList.add('wrong');
-                }
+                } else { b.classList.add('wrong'); }
             };
             container.appendChild(b);
         });
-        document.getElementById('game-modal').style.display = 'flex';
+        document.getElementById('q-modal').style.display = 'flex';
     }
 
-    function dropToken(col) {
+    function dropToken(c) {
         if(!state.canDrop) return;
-        let row = -1;
-        for(let r=5; r>=0; r--) {
-            if(!state.board[r][col]) { row = r; break; }
-        }
-        if(row === -1) return;
+        let r = -1;
+        for(let i=5; i>=0; i--) { if(!state.board[i][c]) { r = i; break; } }
+        if(r === -1) return;
 
-        state.board[row][col] = state.turn;
-        
-        // יצירת האסימון והנפשה
-        const token = document.createElement('div');
-        token.className = `token ${state.turn === 1 ? 'red' : 'yellow'}`;
-        token.style.top = "-50px"; // מתחיל מעל הלוח
-        token.style.left = (col * 14.28 + 1) + "%"; // מיקום עמודה
-        document.getElementById('board').appendChild(token);
+        state.board[r][c] = state.turn;
+        const t = document.createElement('div');
+        t.className = `token ${state.turn === 1 ? 'red-t' : 'yellow-t'}`;
+        t.style.left = (c * 42.8 + 8) + "px"; // מיקום מדויק בעמודה
+        t.style.top = "-40px";
+        document.getElementById('board-container').appendChild(t);
 
-        // חישוב המרחק לנפילה (כל תא הוא כ-45 פיקסלים + מרווחים)
         setTimeout(() => {
-            token.style.top = (row * 48 + 8) + "px"; 
+            t.style.top = (r * 42.8 + 8) + "px"; // נפילה לתא הנכון
         }, 50);
 
         state.canDrop = false;
         state.turn = state.turn === 1 ? 2 : 1;
-        document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
+        document.getElementById('turn-dot').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
     }
 </script>
 </body>
