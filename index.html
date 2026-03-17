@@ -6,68 +6,89 @@
     <title>Word Adventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f0f9ff; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; }
+        :root { --bg: #f0f9ff; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; }
         body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; }
         
         .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .logo { height: 35px; }
 
-        .container { max-width: 500px; margin: 20px auto; padding: 15px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; }
+        .container { max-width: 500px; margin: 20px auto; padding: 15px; position: relative; }
+        .card-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 2px solid #e2e8f0; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
-        .btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: inherit; }
+        .btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: inherit; transition: 0.2s; }
         .btn-green { background: #22c55e; }
         .btn-red { background: #ef4444; }
+        .btn-secondary { background: #e2e8f0; color: var(--navy); }
+
+        /* כרטיסייה מסתובבת */
+        .flip-card { background-color: transparent; width: 280px; height: 180px; perspective: 1000px; margin-bottom: 20px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; border: 3px solid var(--blue); font-size: 32px; font-weight: bold; background: white; box-sizing: border-box; }
+        .flip-card-back { background: var(--bg); color: var(--blue); transform: rotateY(180deg); }
 
         /* 4 בשורה */
         .board { background: var(--blue); display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 8px; border-radius: 12px; width: 280px; margin: 15px auto; }
         .cell { aspect-ratio: 1; background: #1e3a8a; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .token { width: 80%; height: 80%; border-radius: 50%; }
+        .token { width: 80%; height: 80%; border-radius: 50%; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .token.show { transform: scale(1); }
         .red { background: #ef4444; }
         .yellow { background: #facc15; }
 
         .hidden { display: none; }
-        textarea { width: 100%; height: 120px; border-radius: 10px; padding: 10px; font-family: inherit; margin-bottom: 10px; box-sizing: border-box; }
+        textarea { width: 100%; height: 120px; border-radius: 10px; padding: 10px; font-family: inherit; margin-bottom: 10px; box-sizing: border-box; border: 2px solid #cbd5e1; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <img src="logo.svg" alt="logo" class="logo" onerror="this.style.display='none'">
-    <div style="font-weight: bold;">Word Adventure</div>
+    <div style="font-weight: bold; color: var(--blue);">Word Adventure</div>
 </div>
 
 <div class="container">
-    <div id="screen-input" class="card">
-        <h2>הזנת מילים</h2>
+    <div id="screen-input" class="card-box">
+        <h2 style="margin-top:0">מה נלמד היום?</h2>
         <textarea id="wordInput" placeholder="שם הרשימה&#10;Apple - תפוח&#10;Dog - כלב"></textarea>
-        <button class="btn" onclick="initProcess()">מתחילים ללמוד!</button>
+        <button class="btn" onclick="initProcess()">התחל למידה</button>
     </div>
 
-    <div id="screen-cards" class="card hidden">
-        <h3 id="card-eng" style="font-size: 40px; margin: 20px 0;">Word</h3>
-        <div id="card-heb" class="hidden" style="font-size: 30px; color: var(--blue); margin-bottom: 20px;">תרגום</div>
-        <button class="btn btn-secondary" onclick="document.getElementById('card-heb').classList.toggle('hidden')">הצג תרגום</button>
-        <button class="btn" onclick="nextCard()">המילה הבאה</button>
+    <div id="screen-cards" class="card-box hidden">
+        <p id="card-progress" style="font-size: 14px; margin-bottom: 10px;">מילה 1 מתוך ...</p>
+        <div class="flip-card" id="card-flip" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner">
+                <div class="flip-card-front" id="card-eng">Word</div>
+                <div class="flip-card-back" id="card-heb">תרגום</div>
+            </div>
+        </div>
+        <p style="font-size: 14px; color: #64748b;">לחצו על הכרטיס כדי להפוך</p>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <button class="btn btn-red" onclick="handleCardFeedback(false)">עוד מעט אדע</button>
+            <button class="btn btn-green" onclick="handleCardFeedback(true)">יודע!</button>
+        </div>
     </div>
 
-    <div id="screen-quiz" class="card hidden">
-        <div id="quiz-eng" style="font-size: 35px; font-weight: bold; margin-bottom: 20px;">Word</div>
-        <div id="quiz-options"></div>
+    <div id="screen-quiz" class="card-box hidden">
+        <h3 id="quiz-eng" style="font-size: 32px; margin-bottom: 20px;">Word</h3>
+        <div id="quiz-options" style="width: 100%;"></div>
     </div>
 
-    <div id="screen-game" class="card hidden">
-        <div id="game-status" style="font-weight: bold; margin-bottom: 10px;">לחצו על השאלה</div>
-        <button class="btn" onclick="gameAsk()">קבל שאלה ❓</button>
+    <div id="screen-game" class="card-box hidden">
+        <div id="game-status" style="font-weight: bold; margin-bottom: 10px;">תור השחקן האדום</div>
+        <button class="btn" id="btn-ask" onclick="gameAsk()">קבל שאלה ❓</button>
         <div class="board" id="board"></div>
+        <button class="btn btn-secondary" onclick="location.reload()" style="font-size: 14px; padding: 8px;">התחל הכל מהתחלה</button>
     </div>
 </div>
 
 <script>
     let state = {
-        words: [], index: 0, 
+        words: [], // רשימה מקורית
+        learningQueue: [], // תור למידה דינמי
+        quizIndex: 0,
         board: Array(6).fill(null).map(() => Array(7).fill(null)), 
-        turn: 1, canDrop: false
+        turn: 1, 
+        canDrop: false
     };
 
     function showScreen(id) {
@@ -82,61 +103,73 @@
             const [eng, heb] = l.split('-').map(s => s.trim());
             return { eng, heb };
         });
-        if(state.words.length < 3) return alert("הזן לפחות 3 מילים");
-        state.index = 0;
+        
+        if(state.words.length < 3) return alert("נא להזין לפחות 3 מילים");
+        
+        state.learningQueue = [...state.words];
         updateCard();
         showScreen('screen-cards');
     }
 
-    // לוגיקה כרטיסיות
+    // --- לוגיקה כרטיסיות ---
     function updateCard() {
-        document.getElementById('card-eng').innerText = state.words[state.index].eng;
-        document.getElementById('card-heb').innerText = state.words[state.index].heb;
-        document.getElementById('card-heb').classList.add('hidden');
+        if (state.learningQueue.length === 0) {
+            startQuiz();
+            return;
+        }
+        document.getElementById('card-flip').classList.remove('flipped');
+        document.getElementById('card-eng').innerText = state.learningQueue[0].eng;
+        document.getElementById('card-heb').innerText = state.learningQueue[0].heb;
+        document.getElementById('card-progress').innerText = `נותרו עוד ${state.learningQueue.length} מילים ללמוד`;
     }
 
-    function nextCard() {
-        state.index++;
-        if(state.index < state.words.length) updateCard();
-        else startQuiz();
+    function handleCardFeedback(isKnown) {
+        const currentWord = state.learningQueue.shift();
+        if (!isKnown) {
+            // אם לא יודע, המילה חוזרת לסוף התור
+            state.learningQueue.push(currentWord);
+        }
+        updateCard();
     }
 
-    // לוגיקה בוחן
+    // --- לוגיקה בוחן ---
     function startQuiz() {
-        state.index = 0;
+        state.quizIndex = 0;
         showScreen('screen-quiz');
         renderQuiz();
     }
 
     function renderQuiz() {
-        const q = state.words[state.index];
+        const q = state.words[state.quizIndex];
         document.getElementById('quiz-eng').innerText = q.eng;
-        const opts = [q.heb, ...state.words.filter(w => w.heb !== q.heb).map(w => w.heb)].sort(() => 0.5 - Math.random()).slice(0, 4);
+        
+        // יצירת מסיחים
+        const others = state.words.filter(w => w.heb !== q.heb).map(w => w.heb);
+        const opts = [q.heb, ...others.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         
         const container = document.getElementById('quiz-options');
         container.innerHTML = '';
         opts.forEach(o => {
             const b = document.createElement('button');
-            b.className = 'btn';
-            b.style.background = 'white'; b.style.color = 'var(--navy)'; b.style.border = '2px solid #e2e8f0';
+            b.className = 'btn btn-secondary';
             b.innerText = o;
             b.onclick = () => {
                 if(o === q.heb) {
-                    b.style.background = '#22c55e'; b.style.color = 'white';
+                    b.classList.replace('btn-secondary', 'btn-green');
                     setTimeout(() => {
-                        state.index++;
-                        if(state.index < state.words.length) renderQuiz();
+                        state.quizIndex++;
+                        if(state.quizIndex < state.words.length) renderQuiz();
                         else initGame();
-                    }, 500);
+                    }, 600);
                 } else {
-                    b.style.background = '#ef4444'; b.style.color = 'white';
+                    b.classList.replace('btn-secondary', 'btn-red');
                 }
             };
             container.appendChild(b);
         });
     }
 
-    // לוגיקה משחק 4 בשורה
+    // --- לוגיקה משחק 4 בשורה ---
     function initGame() {
         showScreen('screen-game');
         const b = document.getElementById('board');
@@ -152,13 +185,15 @@
     }
 
     function gameAsk() {
-        const q = state.words[Math.floor(Math.random()*state.words.length)];
-        const ans = prompt(`תרגם לעברית: ${q.eng}`);
-        if(ans && ans.trim().toLowerCase() === q.heb.trim().toLowerCase()) {
+        const q = state.words[Math.floor(Math.random() * state.words.length)];
+        const ans = prompt(`כיצד אומרים באנגלית: ${q.heb}?`);
+        
+        if(ans && ans.trim().toLowerCase() === q.eng.trim().toLowerCase()) {
             state.canDrop = true;
             document.getElementById('game-status').innerText = "נכון! בחר עמודה בלוח";
+            document.getElementById('btn-ask').classList.add('hidden');
         } else {
-            alert("טעות... התור עובר");
+            alert(`טעות. התשובה הנכונה היא: ${q.eng}`);
             state.turn = state.turn === 1 ? 2 : 1;
             updateStatus();
         }
@@ -169,10 +204,20 @@
         for(let r=5; r>=0; r--) {
             if(!state.board[r][c]) {
                 state.board[r][c] = state.turn;
-                document.getElementById(`c-${r}-${c}`).innerHTML = `<div class="token ${state.turn===1?'red':'yellow'}"></div>`;
-                state.canDrop = false;
-                state.turn = state.turn === 1 ? 2 : 1;
-                updateStatus();
+                const token = document.createElement('div');
+                token.className = `token ${state.turn === 1 ? 'red' : 'yellow'}`;
+                document.getElementById(`c-${r}-${c}`).appendChild(token);
+                setTimeout(() => token.classList.add('show'), 10);
+                
+                if(checkWin(r, c)) {
+                    document.getElementById('game-status').innerText = `מזל טוב! השחקן ה${state.turn===1?'אדום':'צהוב'} ניצח!`;
+                    state.canDrop = false;
+                } else {
+                    state.canDrop = false;
+                    state.turn = state.turn === 1 ? 2 : 1;
+                    updateStatus();
+                    document.getElementById('btn-ask').classList.remove('hidden');
+                }
                 return;
             }
         }
@@ -180,6 +225,23 @@
 
     function updateStatus() {
         document.getElementById('game-status').innerText = `תור השחקן ה${state.turn===1?'אדום':'צהוב'}. לחצו על השאלה.`;
+        document.getElementById('game-status').style.color = state.turn === 1 ? '#ef4444' : '#eab308';
+    }
+
+    function checkWin(r, c) {
+        const p = state.board[r][c];
+        const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+        for (let [dr, dc] of dirs) {
+            let count = 1;
+            for (let s of [1, -1]) {
+                let nr = r + dr*s, nc = c + dc*s;
+                while (nr>=0 && nr<6 && nc>=0 && nc<7 && state.board[nr][nc] === p) {
+                    count++; nr += dr*s; nc += dc*s;
+                }
+            }
+            if (count >= 4) return true;
+        }
+        return false;
     }
 </script>
 </body>
