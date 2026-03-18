@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Adventure - Final Version</title>
+    <title>Word Adventure - Fixed & Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; --green: #22c55e; --red: #ef4444; --gray: #94a3b8; }
@@ -28,10 +28,26 @@
         .card-box { 
             background: white; padding: 20px; border-radius: 24px; border: 2px solid #e2e8f0; 
             width: 100%; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
+            position: relative;
         }
 
-        .nav-links { width: 100%; display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .nav-item { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
+        /* Flip Card Logic */
+        .flip-card { width: 280px; height: 180px; perspective: 1000px; margin: 15px 0; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { 
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
+            display: flex; align-items: center; justify-content: center; border-radius: 24px; 
+            border: 4px solid var(--blue); font-size: 32px; font-weight: bold; background: white; 
+            padding: 20px; box-sizing: border-box; 
+        }
+        .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
+
+        .speak-btn { 
+            background: #f1f5f9; border: none; border-radius: 50%; width: 45px; height: 45px; 
+            cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center;
+            position: absolute; top: 10px; left: 10px; z-index: 10;
+        }
 
         .btn { 
             background: var(--blue); color: white; border: none; padding: 14px; border-radius: 16px; 
@@ -42,7 +58,6 @@
         .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
         .btn-locked { background: var(--gray); cursor: not-allowed; opacity: 0.7; }
 
-        /* Connect 4 */
         .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 280px; margin: 10px auto; }
         .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
         .filled-red { background-color: var(--red) !important; } 
@@ -50,12 +65,15 @@
         .scan-red { background-color: var(--red) !important; } 
         .scan-yellow { background-color: var(--accent) !important; }
 
-        .arrows-container { display: flex; flex-direction: column; align-items: center; width: 280px; margin: 0 auto; }
-        .num-row, .arrow-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 100%; text-align: center; }
+        .arrows-container { display: flex; flex-direction: column; align-items: center; width: 280px; }
+        .arrow-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 100%; text-align: center; }
         .arrow-item { cursor: pointer; color: var(--blue); font-size: 20px; }
 
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 85%; max-width: 350px; position: relative; }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 85%; max-width: 350px; position: relative; overflow: hidden; }
+        .turn-stripe { width: 100%; height: 10px; position: absolute; top: 0; left: 0; }
+        .stripe-red { background: var(--red); }
+        .stripe-yellow { background: var(--accent); }
 
         .hidden { display: none; }
         textarea { width: 100%; height: 140px; border-radius: 15px; padding: 12px; font-family: inherit; font-size: 16px; border: 2px solid #cbd5e1; box-sizing: border-box; }
@@ -75,8 +93,8 @@
 
 <div class="container">
     <div id="screen-input" class="card-box">
-        <h2 style="margin-top:0;">מה לומדים היום? ✨</h2>
-        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
+        <h2 style="margin:0;">מה לומדים היום? ✨</h2>
+        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש" style="margin-top:15px;"></textarea>
         <button class="btn" onclick="processInput()">יוצאים לדרך</button>
     </div>
 
@@ -85,46 +103,49 @@
             <a href="https://word-academy-8b91d.web.app/" class="nav-item">🏠 בית</a>
             <span class="nav-item" onclick="shareCurrentList()" style="color:var(--green)">שיתוף 🔗</span>
         </div>
-        <div id="card-obj" class="card-box" style="min-height:160px; font-size:32px; font-weight:bold; border:4px solid var(--blue); cursor:pointer;" onclick="toggleCard()">
-            <div id="card-text"></div>
+        <div class="flip-card" id="card-wrap" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <button class="speak-btn" onclick="speakWord(event)">🔊</button>
+                    <span id="txt-eng"></span>
+                </div>
+                <div class="flip-card-back" id="txt-heb"></div>
+            </div>
         </div>
-        <div style="display:flex; gap:10px; width:100%; margin-top:20px;">
+        <div style="display:flex; gap:10px; width:100%;">
             <button class="btn btn-red" onclick="handleCardMove(false)">עוד לא</button>
             <button class="btn btn-green" onclick="handleCardMove(true)">יודע!</button>
         </div>
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
-        <h2 style="color:var(--blue); margin-bottom:0;">אתגר המילים</h2>
-        <div id="quiz-unit-name" style="font-weight:bold; margin-top:5px;"></div>
-        <div id="quiz-progress" style="font-size:14px; color:#64748b; margin-bottom:15px;"></div>
-        <div id="quiz-q" style="font-size:36px; font-weight:bold; margin-bottom:20px;"></div>
-        <div id="quiz-options" style="width:100%; display:flex; flex-direction:column; gap:10px;"></div>
+        <h2 style="color:var(--blue); margin:0;">אתגר המילים</h2>
+        <div id="quiz-unit-name" style="font-weight:bold; margin:5px 0;"></div>
+        <div id="quiz-progress" style="font-size:14px; color:#64748b; margin-bottom:10px;"></div>
+        <div id="quiz-q" style="font-size:36px; font-weight:bold; margin-bottom:15px;"></div>
+        <div id="quiz-options" style="width:100%; display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
         <div class="nav-links">
             <span class="nav-item" onclick="shareCurrentList()" style="color:var(--green)">שיתוף רשימה 🔗</span>
         </div>
-        <h2 style="margin-top:0;">הציון שלך:</h2>
+        <h2 style="margin:0;">הציון שלך:</h2>
         <div id="final-pct" style="font-size:60px; font-weight:bold; color:var(--blue);">0%</div>
         <button class="btn btn-green" onclick="sharePersonalScore()">שתף הישג 📱</button>
-        <div id="lock-status" style="margin:15px 0; font-weight:bold;"></div>
-        <div id="game-area" style="width:100%;">
-            <button id="btn-game-go" class="btn hidden" onclick="startConnect4()">למתחם המשחקים 🎮</button>
-            <button id="btn-game-locked" class="btn btn-locked">המשחקים נעולים (צריך 70%) 🔒</button>
-        </div>
+        <div id="lock-status" style="margin:10px 0; font-weight:bold;"></div>
+        <button id="btn-game-go" class="btn hidden" onclick="startConnect4()">למתחם המשחקים 🎮</button>
+        <button id="btn-game-locked" class="btn btn-locked">המשחקים נעולים (צריך 70%) 🔒</button>
         <button class="btn btn-secondary" onclick="location.reload()">תרגול חוזר 🔄</button>
     </div>
 
     <div id="screen-game" class="card-box hidden">
         <div class="nav-links">
             <span class="nav-item" onclick="showScreen('screen-summary')">❌ יציאה</span>
-            <span style="font-weight:bold;">תור: <div id="turn-indicator" style="background:var(--red);"></div></span>
+            <span style="font-weight:bold;">תור: <div id="turn-indicator"></div></span>
         </div>
-        <button class="btn" id="btn-ask" onclick="askGameQ()" style="margin-top:0;">לחצו לשאלה</button>
+        <button class="btn" id="btn-ask" onclick="askGameQ()" style="margin-top:5px; margin-bottom:10px;">לחצו לשאלה</button>
         <div class="arrows-container">
-            <div class="num-row"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div></div>
             <div class="arrow-row" id="arrow-row"></div>
         </div>
         <div class="board" id="c4-board"></div>
@@ -134,11 +155,18 @@
 <div id="modal" class="modal"><div class="modal-content" id="modal-body"></div></div>
 
 <script>
-    let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false, isFlipped: false };
+    let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false };
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+    }
+
+    function speakWord(e) {
+        if(e) e.stopPropagation();
+        const msg = new SpeechSynthesisUtterance(state.queue[0].eng);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
     }
 
     function processInput() {
@@ -155,21 +183,14 @@
 
     function renderCard() {
         if(state.queue.length === 0) return startQuiz();
-        state.isFlipped = false;
-        document.getElementById('card-text').innerText = state.queue[0].eng;
-        document.getElementById('card-obj').style.background = "white";
-        document.getElementById('card-obj').style.color = "var(--navy)";
-    }
-
-    function toggleCard() {
-        state.isFlipped = !state.isFlipped;
-        const txt = document.getElementById('card-text');
-        txt.innerText = state.isFlipped ? state.queue[0].heb : state.queue[0].eng;
-        document.getElementById('card-obj').style.background = state.isFlipped ? "#eff6ff" : "white";
+        document.getElementById('card-wrap').classList.remove('flipped');
+        document.getElementById('txt-eng').innerText = state.queue[0].eng;
+        document.getElementById('txt-heb').innerText = state.queue[0].heb;
     }
 
     function handleCardMove(known) {
-        const word = state.queue.shift(); if(!known) state.queue.push(word); renderCard();
+        const word = state.queue.shift(); if(!known) state.queue.push(word); 
+        setTimeout(renderCard, 300); // השהייה קלה כדי לאפשר לכרטיסייה להתאפס
     }
 
     function startQuiz() {
@@ -200,15 +221,10 @@
     function finalize() {
         const pct = Math.round((state.score/state.words.length)*100);
         document.getElementById('final-pct').innerText = pct + "%";
-        if(pct >= 70) {
-            document.getElementById('lock-status').innerText = "המשחקים פתוחים! 🔓";
-            document.getElementById('btn-game-go').classList.remove('hidden');
-            document.getElementById('btn-game-locked').classList.add('hidden');
-        } else {
-            document.getElementById('lock-status').innerText = "צריך 70% כדי לשחק 🔒";
-            document.getElementById('btn-game-go').classList.add('hidden');
-            document.getElementById('btn-game-locked').classList.remove('hidden');
-        }
+        const isPassed = pct >= 70;
+        document.getElementById('lock-status').innerText = isPassed ? "המשחקים פתוחים! 🔓" : "צריך 70% כדי לשחק 🔒";
+        document.getElementById('btn-game-go').classList.toggle('hidden', !isPassed);
+        document.getElementById('btn-game-locked').classList.toggle('hidden', isPassed);
         showScreen('screen-summary');
     }
 
@@ -228,9 +244,11 @@
     }
 
     function askGameQ() {
+        if(state.canDrop) return;
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const body = document.getElementById('modal-body');
-        body.innerHTML = `<h2 style="margin-top:10px;">${q.eng}</h2>`;
+        const colorClass = state.turn === 1 ? 'stripe-red' : 'stripe-yellow';
+        body.innerHTML = `<div class="turn-stripe ${colorClass}"></div><h2 style="margin-top:20px;">${q.eng}</h2>`;
         const others = state.words.filter(w => w.heb !== q.heb).map(w => w.heb);
         const opts = [q.heb, ...others.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         opts.forEach(o => {
@@ -238,7 +256,7 @@
             b.onclick = () => {
                 if(o === q.heb) {
                     b.classList.add('correct');
-                    setTimeout(() => { document.getElementById('modal').style.display='none'; state.canDrop = true; document.getElementById('btn-ask').classList.add('hidden'); }, 600);
+                    setTimeout(() => { document.getElementById('modal').style.display='none'; state.canDrop = true; document.getElementById('btn-ask').disabled = true; }, 600);
                 } else {
                     b.classList.add('wrong');
                     Array.from(body.querySelectorAll('button')).find(x => x.innerText === q.heb).classList.add('correct');
@@ -255,6 +273,7 @@
         let targetRow = -1;
         for(let i=5; i>=0; i--) { if(!state.board[i][col]) { targetRow = i; break; } }
         if(targetRow === -1) return;
+        
         state.canDrop = false;
         const color = state.turn === 1 ? 'red' : 'yellow';
         for(let i=0; i<=targetRow; i++) {
@@ -269,12 +288,16 @@
             document.getElementById('modal-body').innerHTML = `<h2>ניצחון! 🎉</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">שוב?</button><button class="btn btn-secondary" onclick="document.getElementById('modal').style.display='none';">סגור</button>`;
             document.getElementById('modal').style.display = 'flex';
         } else {
-            state.turn = state.turn === 1 ? 2 : 1; updateTurnUI();
-            document.getElementById('btn-ask').classList.remove('hidden');
+            state.turn = state.turn === 1 ? 2 : 1; 
+            updateTurnUI();
+            document.getElementById('btn-ask').disabled = false;
         }
     }
 
-    function updateTurnUI() { document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)'; }
+    function updateTurnUI() { 
+        document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)'; 
+    }
+
     function checkWin(r, c) {
         const p = state.turn; const check = (dr, dc) => {
             let cnt = 1;
