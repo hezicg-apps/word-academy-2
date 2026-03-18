@@ -28,14 +28,14 @@
         .card-box { 
             background: white; padding: 15px; border-radius: 24px; border: 2px solid #e2e8f0; 
             width: 100%; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
-            position: relative;
+            position: relative; margin-bottom: 10px;
         }
 
         .top-nav { display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; }
         .nav-link { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
 
         textarea { 
-            width: 100%; height: 220px; border-radius: 15px; padding: 15px; 
+            width: 100%; height: 200px; border-radius: 15px; padding: 15px; 
             font-family: inherit; font-size: 18px; line-height: 1.6; 
             border: 2px solid #cbd5e1; box-sizing: border-box; resize: none; margin-top: 15px;
             text-align: left; direction: ltr;
@@ -52,10 +52,24 @@
         }
         .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
 
-        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; transition: background 0.3s; }
+        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-green { background: var(--green); }
         .btn-red { background: var(--red); }
         .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
+        
+        /* אזור בחירת המשחקים */
+        .games-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; margin-top: 15px; }
+        .game-card { 
+            background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; 
+            padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px;
+            transition: 0.2s; text-align: right;
+        }
+        .game-card:hover { border-color: var(--blue); background: #eff6ff; }
+        .game-icon { font-size: 24px; background: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .game-info b { display: block; font-size: 16px; }
+        .game-info span { font-size: 13px; color: #64748b; }
+        .locked { opacity: 0.6; cursor: not-allowed; }
 
         .board { background: var(--blue); padding: 6px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 270px; margin: 5px auto; }
         .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
@@ -120,14 +134,32 @@
         </div>
         <h2 style="margin:0;">הציון שלך:</h2>
         <div id="final-pct" style="font-size:50px; font-weight:bold; color:var(--blue);">0%</div>
-        <button class="btn btn-green" onclick="sharePersonalScore()">שתף הישג 📱</button>
-        <div id="lock-status" style="margin:5px 0; font-weight:bold;"></div>
-        <button id="btn-game-go" class="btn hidden" onclick="startConnect4()">למשחקים 🎮</button>
-        <button id="btn-game-locked" class="btn btn-locked">המשחקים נעולים 🔒</button>
+        
+        <div id="games-section" style="width:100%;">
+            <h3 style="margin-top:20px; text-align:right;">בחר משחק:</h3>
+            <div class="games-grid">
+                <div class="game-card" id="game-c4" onclick="handleGameClick('c4')">
+                    <div class="game-icon">🔴</div>
+                    <div class="game-info">
+                        <b>4 בשורה (Connect 4)</b>
+                        <span id="c4-status">צריך 70% כדי לפתוח</span>
+                    </div>
+                </div>
+                <div class="game-card locked">
+                    <div class="game-icon">🃏</div>
+                    <div class="game-info">
+                        <b>משחק הזיכרון</b>
+                        <span>בקרוב...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-green" style="margin-top:20px;" onclick="sharePersonalScore()">שתף הישג 📱</button>
         <button class="btn btn-secondary" onclick="restartFromBeginning()">תרגול חוזר 🔄</button>
     </div>
 
-    <div id="screen-game" class="card-box hidden">
+    <div id="screen-game-c4" class="card-box hidden">
         <div class="top-nav">
             <span class="nav-link" onclick="showScreen('screen-summary')" style="color:var(--red)">❌ יציאה</span>
             <a href="https://word-academy-8b91d.web.app/" class="nav-link">🏠 בית</a>
@@ -142,7 +174,7 @@
 <div id="modal" class="modal"><div class="modal-content" id="modal-body"></div></div>
 
 <script>
-    let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false };
+    let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false, passed: false };
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -207,15 +239,31 @@
     function finalize() {
         const pct = Math.round((state.score/state.words.length)*100);
         document.getElementById('final-pct').innerText = pct + "%";
-        const isPassed = pct >= 70;
-        document.getElementById('lock-status').innerText = isPassed ? "פתוח! 🔓" : "צריך 70% 🔒";
-        document.getElementById('btn-game-go').classList.toggle('hidden', !isPassed);
-        document.getElementById('btn-game-locked').classList.toggle('hidden', isPassed);
+        state.passed = pct >= 70;
+        
+        const c4Card = document.getElementById('game-c4');
+        const c4Status = document.getElementById('c4-status');
+        
+        if(state.passed) {
+            c4Card.classList.remove('locked');
+            c4Status.innerText = "פתוח! לחץ לשחק 🔓";
+            c4Status.style.color = "var(--green)";
+        } else {
+            c4Card.classList.add('locked');
+            c4Status.innerText = "צריך 70% כדי לפתוח 🔒";
+            c4Status.style.color = "var(--red)";
+        }
         showScreen('screen-summary');
     }
 
+    function handleGameClick(gameId) {
+        if(!state.passed) return;
+        if(gameId === 'c4') startConnect4();
+    }
+
+    // --- לוגיקה של 4 בשורה (ללא שינוי, רק הועברה למסך ייעודי) ---
     function startConnect4() {
-        showScreen('screen-game');
+        showScreen('screen-game-c4');
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
         const b = document.getElementById('c4-board'); b.innerHTML = '';
         for(let i=0; i<42; i++) {
@@ -272,7 +320,8 @@
         state.board[targetRow][col] = state.turn;
         if(checkWin(targetRow, col)) {
             const winner = state.turn === 1 ? "אדום" : "צהוב";
-            document.getElementById('modal-body').innerHTML = `<h2>ניצחון ל${winner}! 🎉</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">שוב?</button>`;
+            document.getElementById('modal-body').innerHTML = `<h2>ניצחון לאדום! 🎉</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">שוב?</button>`;
+            if(state.turn === 2) document.getElementById('modal-body').querySelector('h2').innerText = "ניצחון לצהוב! 🎉";
             document.getElementById('modal').style.display = 'flex';
         } else {
             state.turn = state.turn === 1 ? 2 : 1; 
