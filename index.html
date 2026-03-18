@@ -6,7 +6,10 @@
     <title>Word Academy</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; --green: #22c55e; --red: #ef4444; --gray: #94a3b8; }
+        :root { 
+            --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; 
+            --white: #ffffff; --green: #22c55e; --red: #ef4444; --gray: #94a3b8; 
+        }
         
         body { 
             font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); 
@@ -14,10 +17,17 @@
             display: flex; flex-direction: column; letter-spacing: 0.02em;
         }
         
-        .header { background: white; padding: 8px 20px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .header-content { display: flex; align-items: center; gap: 10px; }
-        .header-logo { height: 45px; width: auto; }
-        .site-name { font-size: 24px; font-weight: bold; color: var(--blue); margin: 0; }
+        /* הדר עם תצוגת משתמש */
+        .header { 
+            background: white; padding: 10px 20px; display: flex; 
+            justify-content: space-between; align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0;
+            z-index: 10;
+        }
+        .user-greeting { font-size: 15px; font-weight: bold; color: var(--navy); min-width: 100px; text-align: right; }
+        .header-content { display: flex; align-items: center; gap: 8px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .header-logo { height: 35px; width: auto; }
+        .site-name { font-size: 20px; font-weight: bold; color: var(--blue); margin: 0; }
 
         .container { 
             flex: 1; max-width: 500px; margin: 0 auto; padding: 10px; 
@@ -35,12 +45,21 @@
         .nav-link { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
 
         textarea { 
-            width: 100%; height: 200px; border-radius: 15px; padding: 15px; 
+            width: 100%; height: 180px; border-radius: 15px; padding: 15px; 
             font-family: inherit; font-size: 18px; line-height: 1.6; 
             border: 2px solid #cbd5e1; box-sizing: border-box; resize: none; margin-top: 15px;
             text-align: left; direction: ltr;
         }
 
+        /* כפתורים */
+        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-green { background: var(--green); }
+        .btn-red { background: var(--red); }
+        .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
+        .btn-submit { background: #eff6ff; color: var(--blue); border: 1px solid #dbeafe; margin-top: 10px; font-size: 15px; }
+
+        /* כרטיסיות */
         .flip-card { width: 280px; height: 160px; perspective: 1000px; margin: 10px 0; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
@@ -52,31 +71,27 @@
         }
         .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
 
-        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-green { background: var(--green); }
-        .btn-red { background: var(--red); }
-        .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
-        
-        /* אזור בחירת המשחקים */
+        /* גריד משחקים */
         .games-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; margin-top: 15px; }
         .game-card { 
             background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; 
-            padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px;
+            padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px;
             transition: 0.2s; text-align: right;
         }
         .game-card:hover { border-color: var(--blue); background: #eff6ff; }
-        .game-icon { font-size: 24px; background: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .game-info b { display: block; font-size: 16px; }
-        .game-info span { font-size: 13px; color: #64748b; }
+        .game-icon { font-size: 20px; background: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .game-info b { display: block; font-size: 15px; }
+        .game-info span { font-size: 12px; color: #64748b; }
         .locked { opacity: 0.6; cursor: not-allowed; }
 
+        /* לוח 4 בשורה */
         .board { background: var(--blue); padding: 6px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 270px; margin: 5px auto; }
         .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
         .numbers-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 270px; margin-bottom: 2px; color: var(--blue); font-weight: bold; font-size: 12px; }
         .arrow-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 270px; text-align: center; }
         .arrow-item { cursor: pointer; color: var(--blue); font-size: 18px; }
 
+        /* מודאל */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 24px; width: 85%; max-width: 350px; position: relative; overflow: hidden; }
         .turn-stripe { width: 100%; height: 10px; position: absolute; top: 0; left: 0; }
@@ -89,10 +104,12 @@
 <body>
 
 <div class="header">
+    <div id="user-display" class="user-greeting">👤 שלום, אורח/ת!</div>
     <div class="header-content">
-        <img src="logo.svg" alt="Word Academy Logo" class="header-logo">
+        <img src="logo.svg" alt="WA" class="header-logo">
         <h1 class="site-name">Word Academy</h1>
     </div>
+    <div style="width: 50px;"></div>
 </div>
 
 <div class="container">
@@ -105,7 +122,7 @@
     <div id="screen-cards" class="card-box hidden">
         <div class="top-nav">
             <span class="nav-link" onclick="shareCurrentList()" style="color:var(--green)">🔗 שיתוף</span>
-            <a href="https://word-academy-8b91d.web.app/" class="nav-link">🏠 בית</a>
+            <span class="nav-link" onclick="location.reload()">🏠 בית</span>
         </div>
         <div class="flip-card" id="card-wrap" onclick="this.classList.toggle('flipped')">
             <div class="flip-card-inner">
@@ -121,7 +138,7 @@
 
     <div id="screen-quiz" class="card-box hidden">
         <h2 style="color:var(--blue); margin:0;">אתגר המילים</h2>
-        <div id="quiz-unit-name" style="font-weight:bold;"></div>
+        <div id="quiz-unit-name" style="font-weight:bold; font-size: 14px; margin-bottom: 5px;"></div>
         <div id="quiz-progress" style="font-size:12px; color:#64748b;"></div>
         <div id="quiz-q" style="font-size:32px; font-weight:bold; margin:10px 0;"></div>
         <div id="quiz-options" style="width:100%; display:flex; flex-direction:column; gap:10px;"></div>
@@ -129,14 +146,17 @@
 
     <div id="screen-summary" class="card-box hidden">
         <div class="top-nav">
-            <span class="nav-link" onclick="shareCurrentList()" style="color:var(--green)">🔗 שיתוף</span>
-            <a href="https://word-academy-8b91d.web.app/" class="nav-link">🏠 בית</a>
+            <span class="nav-link" onclick="shareCurrentList()" style="color:var(--green)">🔗 שיתוף רשימה</span>
+            <span class="nav-link" onclick="location.reload()">🏠 בית</span>
         </div>
         <h2 style="margin:0;">הציון שלך:</h2>
         <div id="final-pct" style="font-size:50px; font-weight:bold; color:var(--blue);">0%</div>
         
+        <button class="btn btn-green" onclick="sharePersonalScore()">שתף הישג בוואטסאפ 📱</button>
+        <button class="btn btn-submit" onclick="submitToTeacher()">הגשה למורה (משתמשים רשומים)</button>
+
         <div id="games-section" style="width:100%;">
-            <h3 style="margin-top:20px; text-align:right;">בחר משחק:</h3>
+            <h3 style="margin-top:20px; text-align:right; font-size: 16px;">בחר משחק:</h3>
             <div class="games-grid">
                 <div class="game-card" id="game-c4" onclick="handleGameClick('c4')">
                     <div class="game-icon">🔴</div>
@@ -155,14 +175,12 @@
             </div>
         </div>
 
-        <button class="btn btn-green" style="margin-top:20px;" onclick="sharePersonalScore()">שתף הישג 📱</button>
-        <button class="btn btn-secondary" onclick="restartFromBeginning()">תרגול חוזר 🔄</button>
+        <button class="btn btn-secondary" style="margin-top:15px;" onclick="restartFromBeginning()">תרגול חוזר 🔄</button>
     </div>
 
     <div id="screen-game-c4" class="card-box hidden">
         <div class="top-nav">
             <span class="nav-link" onclick="showScreen('screen-summary')" style="color:var(--red)">❌ יציאה</span>
-            <a href="https://word-academy-8b91d.web.app/" class="nav-link">🏠 בית</a>
         </div>
         <button class="btn" id="btn-ask" onclick="askGameQ()" style="margin-top:0; margin-bottom:15px; height: 60px;">לחצו לשאלה</button>
         <div class="numbers-row"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div></div>
@@ -174,7 +192,22 @@
 <div id="modal" class="modal"><div class="modal-content" id="modal-body"></div></div>
 
 <script>
-    let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false, passed: false };
+    let state = { 
+        words: [], queue: [], currentIdx: 0, score: 0, 
+        listName: '', board: [], turn: 1, canDrop: false, passed: false 
+    };
+
+    // משתנה למשתמש - כרגע null כדי להציג "אורח/ת"
+    let currentUser = null; 
+
+    function updateHeaderGreeting() {
+        const displayElement = document.getElementById('user-display');
+        if (currentUser && currentUser.name) {
+            displayElement.innerText = `👋 שלום, ${currentUser.name}`;
+        } else {
+            displayElement.innerText = `👤 שלום, אורח/ת!`;
+        }
+    }
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -261,7 +294,12 @@
         if(gameId === 'c4') startConnect4();
     }
 
-    // --- לוגיקה של 4 בשורה (ללא שינוי, רק הועברה למסך ייעודי) ---
+    function submitToTeacher() {
+        if(!currentUser) return alert("יש להתחבר למערכת כדי להגיש למורה.");
+        alert(`הציון (${document.getElementById('final-pct').innerText}) נשלח למורה!`);
+    }
+
+    // --- לוגיקה 4 בשורה ---
     function startConnect4() {
         showScreen('screen-game-c4');
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
@@ -282,9 +320,7 @@
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const body = document.getElementById('modal-body');
         const color = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
-        body.innerHTML = `<div class="turn-stripe" style="background:${color}"></div>
-                          <h2 style="margin-top:20px;">${q.eng}</h2>
-                          <div id="modal-ans" style="display:flex; flex-direction:column; gap:10px;"></div>`;
+        body.innerHTML = `<div class="turn-stripe" style="background:${color}"></div><h2 style="margin-top:20px;">${q.eng}</h2><div id="modal-ans" style="display:flex; flex-direction:column; gap:10px;"></div>`;
         const others = state.words.filter(w => w.heb !== q.heb).map(w => w.heb);
         const opts = [q.heb, ...others.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         const ansCont = body.querySelector('#modal-ans');
@@ -319,9 +355,8 @@
         }
         state.board[targetRow][col] = state.turn;
         if(checkWin(targetRow, col)) {
-            const winner = state.turn === 1 ? "אדום" : "צהוב";
-            document.getElementById('modal-body').innerHTML = `<h2>ניצחון לאדום! 🎉</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">שוב?</button>`;
-            if(state.turn === 2) document.getElementById('modal-body').querySelector('h2').innerText = "ניצחון לצהוב! 🎉";
+            const winText = state.turn === 1 ? "ניצחון לאדום! 🎉" : "ניצחון לצהוב! 🎉";
+            document.getElementById('modal-body').innerHTML = `<h2>${winText}</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">שוב?</button>`;
             document.getElementById('modal').style.display = 'flex';
         } else {
             state.turn = state.turn === 1 ? 2 : 1; 
@@ -356,6 +391,7 @@
     }
 
     window.onload = () => {
+        updateHeaderGreeting();
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
@@ -369,3 +405,5 @@
 </script>
 </body>
 </html>
+
+    
