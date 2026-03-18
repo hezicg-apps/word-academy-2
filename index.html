@@ -6,61 +6,61 @@
     <title>Word Adventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f0f4f8; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; --green: #22c55e; --red: #ef4444; }
-        body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; }
+        :root { --bg: #f8fafc; --blue: #2563eb; --red: #ef4444; --yellow: #facc15; --green: #22c55e; --navy: #1e3a8a; }
+        body { font-family: 'Comic Neue', cursive; background: var(--bg); margin: 0; text-align: center; }
         
-        /* לוגו קבוע בראש הדף */
-        .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 2000; }
-        .site-name { font-size: 26px; font-weight: 700; color: var(--blue); }
-        .logo-box { background: var(--blue); color: white; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
+        /* לוגו קבוע */
+        .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--blue); font-size: 24px; }
+        .logo-img { background: var(--blue); color: white; padding: 5px 8px; border-radius: 6px; font-size: 16px; }
 
-        .container { max-width: 500px; margin: 15px auto; padding: 10px; }
-        .card-box { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 2px solid #e2e8f0; margin-bottom: 20px; }
+        .container { max-width: 500px; margin: 20px auto; padding: 0 15px; display: flex; flex-direction: column; align-items: center; }
+        .card-box { background: white; padding: 25px; border-radius: 20px; border: 2px solid #e2e8f0; width: 100%; box-sizing: border-box; margin-bottom: 20px; }
         
         /* כרטיסיות */
-        .flip-card { width: 280px; height: 180px; perspective: 1000px; margin: 15px auto; cursor: pointer; }
+        .flip-card { width: 260px; height: 160px; perspective: 1000px; margin: 20px auto; cursor: pointer; }
         .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .flip-card.is-flipped .flip-inner { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 20px; border: 4px solid var(--blue); font-size: 32px; font-weight: bold; background: white; }
         .card-back { transform: rotateY(180deg); background: #eff6ff; color: var(--blue); }
 
-        /* כפתורים */
-        .btn { background: var(--blue); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 20px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 12px; font-family: inherit; box-shadow: 0 4px 0 #1d4ed8; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #1d4ed8; }
-        .btn-option { background: #f8fafc; color: var(--navy); border: 2px solid #e2e8f0; margin-bottom: 18px; box-shadow: 0 4px 0 #e2e8f0; }
-        .correct { background: var(--green) !important; color: white !important; }
-        .wrong { background: var(--red) !important; color: white !important; }
-        .btn-locked { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+        /* כפתורים ללא צל */
+        .btn { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 10px; font-family: inherit; transition: opacity 0.2s; }
+        .btn-option { background: #f1f5f9; color: var(--navy); border: 2px solid #e2e8f0; }
+        .correct { background: var(--green) !important; color: white !important; border-color: var(--green); }
+        .wrong { background: var(--red) !important; color: white !important; border-color: var(--red); }
+        
+        textarea { width: 100%; max-width: 400px; height: 180px; border-radius: 15px; padding: 15px; font-size: 18px; border: 2px solid #cbd5e1; font-family: inherit; display: block; margin: 0 auto 20px auto; }
 
-        /* לוח משחק 4 בשורה */
-        .board { background: var(--navy); display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 10px; border-radius: 20px; width: 300px; margin: 0 auto; position: relative; z-index: 10; overflow: hidden; }
-        .cell { aspect-ratio: 1; background: #312e81; border-radius: 50%; z-index: 20; position: relative; }
-        .token { width: 34px; height: 34px; border-radius: 50%; position: absolute; z-index: 15; transition: top 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95); }
-        .red-t { background: var(--red); }
-        .yellow-t { background: var(--accent); }
+        /* לוח 4 בשורה */
+        .board { background: var(--navy); display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; padding: 10px; border-radius: 15px; width: 320px; margin: 10px auto; }
+        .cell { aspect-ratio: 1; background: #312e81; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .cell.lit-red { background: var(--red); opacity: 0.6; }
+        .cell.lit-yellow { background: var(--yellow); opacity: 0.6; }
+        .cell.filled-red { background: var(--red); opacity: 1; }
+        .cell.filled-yellow { background: var(--yellow); opacity: 1; }
 
-        /* חצים ומספרים */
-        .arrow-area { display: grid; grid-template-columns: repeat(7, 1fr); width: 300px; margin: 0 auto 5px auto; }
-        .arrow-btn { cursor: pointer; color: var(--blue); font-weight: bold; font-size: 14px; }
+        .arrows { display: grid; grid-template-columns: repeat(7, 1fr); width: 320px; margin-bottom: 5px; }
+        .arrow { cursor: pointer; color: var(--blue); font-size: 12px; font-weight: bold; }
 
-        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 400px; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 80%; max-width: 350px; }
 
         .hidden { display: none; }
-        textarea { width: 100%; height: 180px; border-radius: 15px; padding: 15px; font-size: 18px; border: 2px solid #cbd5e1; font-family: inherit; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="site-name">Word Adventure</div>
-    <div class="logo-box">WA</div>
+    <div class="logo"><span class="logo-img">WA</span> Word Adventure</div>
+    <div id="status-icon">☀️</div>
 </div>
 
 <div class="container">
     <div id="screen-input" class="card-box">
-        <h3>בואו נכיר את המילים ✨</h3>
-        <textarea id="wordInput" placeholder="שם הרשימה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
+        <h3 style="color:var(--blue)">בואו נכיר את המילים ✨</h3>
+        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
         <button class="btn" onclick="initApp()">יוצאים לדרך</button>
     </div>
 
@@ -68,44 +68,45 @@
         <p style="font-weight:bold; color:var(--blue);">לחצו על הכרטיסייה כדי לסובב</p>
         <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
             <div class="flip-inner">
-                <div class="card-face" id="front-val"></div>
-                <div class="card-face card-back" id="back-val"></div>
+                <div class="card-face" id="f-eng"></div>
+                <div class="card-face card-back" id="f-heb"></div>
             </div>
         </div>
         <button class="btn" onclick="nextCard()">המילה הבאה</button>
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
-        <div id="quiz-progress" style="font-size:14px; margin-bottom:10px;"></div>
-        <h2 id="quiz-word" style="font-size:40px; color:var(--blue);"></h2>
-        <div id="quiz-options"></div>
+        <div id="q-prog" style="font-size:14px; margin-bottom:10px;"></div>
+        <h2 id="q-word" style="font-size:40px; color:var(--blue); margin:10px 0;"></h2>
+        <div id="q-opts"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
-        <h2>הציון שלך: <span id="score-val">0</span>%</h2>
-        <p id="unit-link" style="font-size:12px; color:var(--blue); word-break:break-all; margin-bottom:15px;"></p>
-        <button class="btn" style="background:var(--green);" onclick="shareWA()">שתף הישג 📱</button>
-        <button class="btn btn-locked">הגשה למורה (למשתמשים רשומים)</button>
-        <div id="game-status"></div>
-        <button id="play-btn" class="btn hidden" onclick="initGame()">מתחם המשחקים 🎮</button>
+        <h2 style="font-size:32px;">הציון שלך: <span id="res-pct">0</span>%</h2>
+        <button class="btn" style="background:var(--green);" onclick="shareScore()">שתף הישג בוואטסאפ 📱</button>
+        <button class="btn" style="background:#f1f5f9; color:var(--navy); font-size:14px;">הגשה למורה<br>(למשתמשים רשומים בלבד)</button>
+        <div id="game-lock" style="margin:15px 0; font-weight:bold;"></div>
+        <button id="play-btn" class="btn hidden" onclick="initGame()">למתחם המשחקים 🎮</button>
         <button class="btn btn-option" onclick="startQuiz()">תרגול חוזר</button>
     </div>
 
     <div id="screen-game" class="card-box hidden">
-        <button class="btn" onclick="askQuestion()">שאלה חדשה ❓</button>
-        <div style="display:flex; justify-content:space-between; width:300px; margin:10px auto; font-weight:bold;">
-            <span onclick="showScreen('screen-summary')">❌ יציאה</span>
-            <span>תור: <div id="turn-indicator" style="width:15px; height:15px; border-radius:50%; display:inline-block; background:var(--red);"></div></span>
+        <button class="btn" onclick="gameQuestion()">שאלה חדשה ❓</button>
+        <div style="display:flex; justify-content:space-between; margin:10px 0; font-weight:bold;">
+            <span onclick="showScreen('screen-summary')" style="cursor:pointer">❌ יציאה</span>
+            <span>תור: <div id="t-ind" style="width:14px; height:14px; border-radius:50%; display:inline-block; background:var(--red);"></div></span>
         </div>
-        <div class="arrow-area" id="arrows"></div>
+        <div class="arrows" id="arrows"></div>
         <div class="board" id="board"></div>
     </div>
 </div>
 
-<div id="modal" class="modal"><div class="modal-content" id="modal-body"></div></div>
+<div id="modal" class="modal">
+    <div class="modal-content" id="modal-body"></div>
+</div>
 
 <script>
-    let state = { words: [], queue: [], score: 0, currentIdx: 0, turn: 1, canDrop: false, board: [] };
+    let state = { words: [], queue: [], score: 0, current: 0, turn: 1, canDrop: false, board: [], listName: '' };
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -113,154 +114,144 @@
     }
 
     function initApp() {
-        const lines = document.getElementById('wordInput').value.trim().split('\n');
+        const txt = document.getElementById('wordInput').value.trim();
+        const lines = txt.split('\n');
+        state.listName = lines[0] || "רשימה חדשה";
         state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
             const [e, h] = l.split('-').map(s => s.trim());
             return { eng: e, heb: h };
         });
+        if(state.words.length < 1) return alert("הזן רשימה תקינה");
         state.queue = [...state.words];
-        showCards();
+        showNextCard();
     }
 
-    function showCards() {
+    function showNextCard() {
         if(state.queue.length === 0) return startQuiz();
         document.querySelector('.flip-card').classList.remove('is-flipped');
-        document.getElementById('front-val').innerText = state.queue[0].eng;
-        document.getElementById('back-val').innerText = state.queue[0].heb;
+        document.getElementById('f-eng').innerText = state.queue[0].eng;
+        document.getElementById('f-heb').innerText = state.queue[0].heb;
         showScreen('screen-cards');
     }
 
-    function nextCard() { state.queue.shift(); showCards(); }
+    function nextCard() { state.queue.shift(); showNextCard(); }
 
     function startQuiz() {
-        state.score = 0; state.currentIdx = 0;
+        state.score = 0; state.current = 0;
         showScreen('screen-quiz');
         renderQuiz();
     }
 
     function renderQuiz() {
-        const q = state.words[state.currentIdx];
-        document.getElementById('quiz-progress').innerText = `מילה ${state.currentIdx+1} מתוך ${state.words.length}`;
-        document.getElementById('quiz-word').innerText = q.eng;
+        const q = state.words[state.current];
+        document.getElementById('q-prog').innerText = `מילה ${state.current + 1} מתוך ${state.words.length}`;
+        document.getElementById('q-word').innerText = q.eng;
         const opts = [q.heb, ...state.words.filter(w=>w.heb!==q.heb).map(w=>w.heb)].sort(()=>0.5-Math.random()).slice(0,4);
-        const container = document.getElementById('quiz-options');
+        const container = document.getElementById('q-opts');
         container.innerHTML = '';
         opts.forEach(o => {
             const b = document.createElement('button'); b.className = 'btn btn-option'; b.innerText = o;
             b.onclick = () => {
-                if(o === q.heb) { b.classList.add('correct'); state.score++; setTimeout(nextQ, 600); }
-                else { b.classList.add('wrong'); setTimeout(nextQ, 1000); }
+                if(o === q.heb) {
+                    b.classList.add('correct'); state.score++;
+                    setTimeout(() => { state.current++; state.current < state.words.length ? renderQuiz() : finish(); }, 600);
+                } else {
+                    b.classList.add('wrong');
+                    Array.from(container.children).find(btn => btn.innerText === q.heb).classList.add('correct');
+                    setTimeout(() => { state.current++; state.current < state.words.length ? renderQuiz() : finish(); }, 1200);
+                }
             };
             container.appendChild(b);
         });
     }
 
-    function nextQ() {
-        state.currentIdx++;
-        if(state.currentIdx < state.words.length) renderQuiz();
-        else finish();
-    }
-
     function finish() {
         const pct = Math.round((state.score/state.words.length)*100);
-        document.getElementById('score-val').innerText = pct;
-        document.getElementById('unit-link').innerText = "לינק ליחידה: " + window.location.href;
+        document.getElementById('res-pct').innerText = pct;
         const btn = document.getElementById('play-btn');
-        const status = document.getElementById('game-status');
-        if(pct >= 70) { btn.classList.remove('hidden'); status.innerText = "המשחקים פתוחים! 🎉"; status.style.color = "green"; }
-        else { btn.classList.add('hidden'); status.innerText = "צריך 70% כדי לשחק."; status.style.color = "red"; }
+        const lock = document.getElementById('game-lock');
+        if(pct >= 70) { btn.classList.remove('hidden'); lock.innerText = "כל הכבוד! המשחקים פתוחים."; lock.style.color = "green"; }
+        else { btn.classList.add('hidden'); lock.innerText = "כדי לשחק צריך לפחות 70%."; lock.style.color = "red"; }
         showScreen('screen-summary');
     }
 
-    // --- GAME ---
     function initGame() {
         showScreen('screen-game');
-        const boardElem = document.getElementById('board');
-        boardElem.innerHTML = '';
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
-        for(let i=0; i<42; i++) {
-            const c = document.createElement('div'); c.className = 'cell';
-            c.id = `cell-${Math.floor(i/7)}-${i%7}`;
-            boardElem.appendChild(c);
+        const board = document.getElementById('board'); board.innerHTML = '';
+        for(let r=0; r<6; r++) for(let c=0; c<7; c++) {
+            const d = document.createElement('div'); d.className = 'cell'; d.id = `c-${r}-${c}`;
+            board.appendChild(d);
         }
-        const arrows = document.getElementById('arrows');
-        arrows.innerHTML = '';
+        const ars = document.getElementById('arrows'); ars.innerHTML = '';
         for(let i=0; i<7; i++) {
-            const a = document.createElement('div'); a.className = 'arrow-btn';
-            a.innerHTML = `▼<br>${i+1}`;
-            a.onclick = () => dropToken(i);
-            arrows.appendChild(a);
+            const a = document.createElement('div'); a.className = 'arrow'; a.innerHTML = `▼<br>${i+1}`;
+            a.onclick = () => drop(i); ars.appendChild(a);
         }
     }
 
-    function askQuestion() {
+    function gameQuestion() {
         const q = state.words[Math.floor(Math.random()*state.words.length)];
-        const modal = document.getElementById('modal');
         const body = document.getElementById('modal-body');
-        body.innerHTML = `<h3>${q.eng}</h3>`;
+        body.innerHTML = `<h3 style="color:var(--blue)">${q.eng}</h3>`;
         const opts = [q.heb, ...state.words.filter(w=>w.heb!==q.heb).map(w=>w.heb)].sort(()=>0.5-Math.random()).slice(0,4);
         opts.forEach(o => {
             const b = document.createElement('button'); b.className = 'btn btn-option'; b.innerText = o;
             b.onclick = () => {
-                if(o === q.heb) { b.classList.add('correct'); setTimeout(()=>{modal.style.display='none'; state.canDrop=true;}, 600); }
-                else b.classList.add('wrong');
+                if(o === q.heb) { b.classList.add('correct'); setTimeout(()=> { document.getElementById('modal').style.display='none'; state.canDrop=true; }, 600); }
+                else { b.classList.add('wrong'); }
             };
             body.appendChild(b);
         });
-        modal.style.display = 'flex';
+        document.getElementById('modal').style.display = 'flex';
     }
 
-    async function dropToken(col) {
+    async function drop(col) {
         if(!state.canDrop) return;
         let row = -1;
         for(let r=5; r>=0; r--) { if(!state.board[r][col]) { row = r; break; } }
         if(row === -1) return;
-
         state.canDrop = false;
+
+        const colorClass = state.turn === 1 ? 'red' : 'yellow';
+        for(let r=0; r<=row; r++) {
+            const c = document.getElementById(`c-${r}-${col}`);
+            c.className = `cell lit-${colorClass}`;
+            await new Promise(res => setTimeout(res, 150));
+            if(r < row) c.className = 'cell';
+            else c.className = `cell filled-${colorClass}`;
+        }
         state.board[row][col] = state.turn;
-
-        const token = document.createElement('div');
-        token.className = `token ${state.turn === 1 ? 'red-t' : 'yellow-t'}`;
-        const firstCell = document.getElementById(`cell-0-${col}`);
-        token.style.left = firstCell.offsetLeft + "px";
-        token.style.top = "-40px";
-        document.getElementById('board').appendChild(token);
-
-        setTimeout(() => {
-            const targetCell = document.getElementById(`cell-${row}-${col}`);
-            token.style.top = targetCell.offsetTop + "px";
-        }, 50);
-
-        setTimeout(() => {
-            if(checkWin(row, col)) {
-                alert(`השחקן ה${state.turn === 1 ? 'אדום' : 'צהוב'} ניצח!`);
-                initGame();
-            } else {
-                state.turn = state.turn === 1 ? 2 : 1;
-                document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
-            }
-        }, 600);
+        if(checkWin(row, col)) showWin();
+        else {
+            state.turn = state.turn === 1 ? 2 : 1;
+            document.getElementById('t-ind').style.background = state.turn === 1 ? 'var(--red)' : 'var(--yellow)';
+        }
     }
 
     function checkWin(r, c) {
         const p = state.turn;
         const check = (dr, dc) => {
-            let count = 1;
-            for (let i = 1; i < 4; i++) {
-                if (state.board[r + dr * i]?.[c + dc * i] === p) count++;
-                else break;
-            }
-            for (let i = 1; i < 4; i++) {
-                if (state.board[r - dr * i]?.[c - dc * i] === p) count++;
-                else break;
-            }
-            return count >= 4;
+            let cnt = 1;
+            for(let i=1; i<4; i++) if(state.board[r+dr*i]?.[c+dc*i] === p) cnt++; else break;
+            for(let i=1; i<4; i++) if(state.board[r-dr*i]?.[c-dc*i] === p) cnt++; else break;
+            return cnt >= 4;
         };
-        return check(0, 1) || check(1, 0) || check(1, 1) || check(1, -1);
+        return check(0,1) || check(1,0) || check(1,1) || check(1,-1);
     }
 
-    function shareWA() {
-        const text = `הצלחתי ללמוד מילים חדשות בציון ${state.score}%! 🏆`;
+    function showWin() {
+        const body = document.getElementById('modal-body');
+        const winner = state.turn === 1 ? "אדום" : "צהוב";
+        body.innerHTML = `<h2 style="color:var(--blue)">ניצחון! 🎉</h2><p>השחקן ה${winner} ניצח!</p>
+        <button class="btn" onclick="initGame(); document.getElementById('modal').style.display='none';">משחק חוזר</button>
+        <button class="btn btn-option" onclick="document.getElementById('modal').style.display='none';">סגור</button>`;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function shareScore() {
+        const pct = document.getElementById('res-pct').innerText;
+        const text = `הצלחתי ללמוד את "${state.listName}" בציון ${pct}%! 🏆 בא לכם גם? ${window.location.href}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
     }
 </script>
