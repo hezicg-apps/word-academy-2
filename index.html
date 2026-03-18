@@ -12,7 +12,7 @@
             font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); 
             margin: 0; text-align: center; overflow: hidden; height: 100vh;
             display: flex; flex-direction: column; 
-            letter-spacing: 0.02em; /* ריווח אותיות עדין לכל האפליקציה */
+            letter-spacing: 0.02em;
         }
         
         .header { background: white; padding: 8px 20px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
@@ -35,22 +35,12 @@
         .top-nav { display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; }
         .nav-link { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
 
-        /* הגדלת תיבת הטקסט */
         textarea { 
-            width: 100%; 
-            height: 220px; /* גובה מוגדל ל-15 מילים */
-            border-radius: 15px; 
-            padding: 15px; 
-            font-family: inherit; 
-            font-size: 18px; /* טקסט מעט גדול יותר */
-            line-height: 1.6; /* ריווח שורות משופר */
-            border: 2px solid #cbd5e1; 
-            box-sizing: border-box; 
-            resize: none;
-            margin-top: 15px;
+            width: 100%; height: 220px; border-radius: 15px; padding: 15px; 
+            font-family: inherit; font-size: 18px; line-height: 1.6; 
+            border: 2px solid #cbd5e1; box-sizing: border-box; resize: none; margin-top: 15px;
         }
 
-        /* Flip Card */
         .flip-card { width: 280px; height: 160px; perspective: 1000px; margin: 10px 0; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
@@ -63,20 +53,13 @@
         .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
 
         .word-row { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; }
-        .speak-btn { 
-            background: #f1f5f9; border: none; border-radius: 50%; width: 40px; height: 40px; 
-            cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;
-        }
+        .speak-btn { background: #f1f5f9; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
 
-        .btn { 
-            background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; 
-            font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; 
-        }
+        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; }
         .btn-green { background: var(--green); }
         .btn-red { background: var(--red); }
         .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
 
-        /* Connect 4 */
         .board { background: var(--blue); padding: 6px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 270px; margin: 5px auto; }
         .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
         .filled-red { background-color: var(--red) !important; } 
@@ -110,7 +93,7 @@
 <div class="container">
     <div id="screen-input" class="card-box">
         <h2 style="margin:0;">מה לומדים היום? ✨</h2>
-        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש&#10;Book - ספר..."></textarea>
+        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש..."></textarea>
         <button class="btn" onclick="processInput()">יוצאים לדרך</button>
     </div>
 
@@ -155,7 +138,7 @@
         <div id="lock-status" style="margin:5px 0; font-weight:bold;"></div>
         <button id="btn-game-go" class="btn hidden" onclick="startConnect4()">למשחקים 🎮</button>
         <button id="btn-game-locked" class="btn btn-locked">המשחקים נעולים 🔒</button>
-        <button class="btn btn-secondary" onclick="location.reload()">תרגול חוזר 🔄</button>
+        <button class="btn btn-secondary" onclick="restartFromBeginning()">תרגול חוזר 🔄</button>
     </div>
 
     <div id="screen-game" class="card-box hidden">
@@ -199,7 +182,14 @@
             return { eng: e, heb: h };
         });
         if(state.words.length < 2) return alert("הזן לפחות 2 מילים");
-        state.queue = [...state.words]; renderCard(); showScreen('screen-cards');
+        restartFromBeginning();
+    }
+
+    // פונקציה חדשה שמאפסת את התור מהמילים המקוריות
+    function restartFromBeginning() {
+        state.queue = [...state.words]; 
+        renderCard(); 
+        showScreen('screen-cards');
     }
 
     function renderCard() {
@@ -339,7 +329,7 @@
             try {
                 const decoded = JSON.parse(decodeURIComponent(escape(atob(data))));
                 state.listName = decoded.name; state.words = decoded.words;
-                state.queue = [...state.words]; renderCard(); showScreen('screen-cards');
+                restartFromBeginning();
             } catch(e) {}
         }
     };
