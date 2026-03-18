@@ -2,76 +2,116 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Adventure - Connected Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Adventure - Pro Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; --white: #ffffff; --green: #22c55e; --red: #ef4444; }
-        body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; overflow-x: hidden; }
+        
+        body { 
+            font-family: 'Comic Neue', cursive; 
+            background: var(--bg); 
+            color: var(--navy); 
+            margin: 0; 
+            text-align: center; 
+            overflow: hidden; /* מניעת גלילה כללית */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
         
         /* Header */
-        .header { background: white; padding: 15px 25px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .header-content { display: flex; align-items: center; gap: 15px; }
-        .header-logo { height: 50px; width: auto; }
-        .site-name { font-size: 30px; font-weight: bold; color: var(--blue); margin: 0; }
+        .header { background: white; padding: 10px 20px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .header-content { display: flex; align-items: center; gap: 12px; }
+        .header-logo { height: 40px; width: auto; }
+        .site-name { font-size: 24px; font-weight: bold; color: var(--blue); margin: 0; }
 
-        /* Main Container - Responsive width */
-        .container { max-width: 500px; margin: 30px auto; padding: 20px; min-height: 85vh; display: flex; flex-direction: column; align-items: center; gap: 20px; box-sizing: border-box; }
-        @media (min-width: 768px) { .container { max-width: 800px; margin: 50px auto; } }
+        /* Container */
+        .container { 
+            flex: 1;
+            max-width: 500px; 
+            margin: 0 auto; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-y: auto; /* מאפשר גלילה רק בתוך הקונטיינר אם ממש חייב */
+        }
 
-        .card-box { background: white; padding: 30px; border-radius: 28px; border: 2px solid #e2e8f0; min-height: 480px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; }
-        
-        .nav-links { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .nav-item { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 16px; }
+        .card-box { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 24px; 
+            border: 2px solid #e2e8f0; 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
 
-        /* Buttons - ללא צל */
-        .btn { background: var(--blue); color: white; border: none; padding: 18px 25px; border-radius: 18px; font-size: 20px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
-        .btn:active { opacity: 0.8; }
+        .nav-links { width: 100%; display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .nav-item { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
+
+        /* Buttons */
+        .btn { 
+            background: var(--blue); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 16px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            width: 100%; 
+            cursor: pointer; 
+            font-family: inherit;
+            margin-top: 15px; /* מרווח מהתיבה/אלמנט מעל */
+        }
         .btn-green { background: var(--green); }
         .btn-red { background: var(--red); }
         .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
 
-        /* Flip Card */
-        .flip-card { width: 300px; height: 200px; perspective: 1000px; margin-bottom: 25px; }
+        /* Cards */
+        .flip-card { width: 260px; height: 160px; perspective: 1000px; margin-bottom: 15px; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 24px; border: 5px solid var(--blue); font-size: 40px; font-weight: bold; background: white; padding: 15px; box-sizing: border-box; text-align: center;}
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 20px; border: 4px solid var(--blue); font-size: 32px; font-weight: bold; background: white; padding: 10px; box-sizing: border-box; }
         .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
 
-        /* Connect 4 Board - Scalable */
-        .board { background: var(--blue); padding: 10px; border-radius: 18px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 300px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        @media (min-width: 768px) { .board { width: 450px; gap: 12px; padding: 15px; } }
+        /* Quiz Specific */
+        .quiz-header { margin-bottom: 20px; width: 100%; }
+        .quiz-title { font-size: 28px; margin: 0; color: var(--blue); }
+        .quiz-unit { font-size: 18px; color: var(--navy); margin: 5px 0; font-weight: bold; }
+        .quiz-counter { font-size: 14px; color: #64748b; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 10px; }
 
-        .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; transition: background 0.1s ease; }
-        
-        /* Scan Classes - צבע בהיר ומלא */
-        .scan-red { background-color: var(--red) !important; opacity: 1; } 
-        .scan-yellow { background-color: var(--accent) !important; opacity: 1; }
-        .filled-red { background-color: var(--red) !important; opacity: 1; } 
-        .filled-yellow { background-color: var(--accent) !important; opacity: 1; }
+        /* Connect 4 */
+        .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 280px; margin: 0 auto; }
+        .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
+        .scan-red { background-color: var(--red) !important; } 
+        .scan-yellow { background-color: var(--accent) !important; }
+        .filled-red { background-color: var(--red) !important; } 
+        .filled-yellow { background-color: var(--accent) !important; }
 
-        .arrows-container { display: flex; flex-direction: column; align-items: center; width: 300px; margin-bottom: 10px; }
-        @media (min-width: 768px) { .arrows-container { width: 450px; } }
-
+        .arrows-container { display: flex; flex-direction: column; align-items: center; width: 280px; margin-bottom: 5px; }
         .num-row, .arrow-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 100%; text-align: center; }
-        .num-item { font-weight: bold; color: var(--blue); font-size: 16px; }
-        .arrow-item { cursor: pointer; color: var(--blue); font-size: 22px; padding: 5px; }
+        .num-item { font-weight: bold; color: var(--blue); font-size: 14px; }
+        .arrow-item { cursor: pointer; color: var(--blue); font-size: 18px; }
 
-        /* Modal turn indicator */
-        .turn-stripe { width: 100%; height: 10px; position: absolute; top: 0; left: 0; }
-        .stripe-red { background: var(--red); }
-        .stripe-yellow { background: var(--accent); }
-
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; position: relative; overflow: hidden; box-sizing: border-box;}
+        /* Modals */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 85%; max-width: 350px; position: relative; overflow: hidden; }
+        .turn-stripe { width: 100%; height: 8px; position: absolute; top: 0; left: 0; }
 
         .hidden { display: none; }
-        textarea { width: 100%; height: 160px; border-radius: 18px; padding: 15px; font-family: inherit; font-size: 18px; border: 2px solid #cbd5e1; box-sizing: border-box; }
+        textarea { width: 100%; height: 140px; border-radius: 15px; padding: 12px; font-family: inherit; font-size: 16px; border: 2px solid #cbd5e1; box-sizing: border-box; }
         .correct { background: var(--green) !important; color: white !important; }
         .wrong { background: var(--red) !important; color: white !important; }
-        
-        #turn-indicator { width: 35px; height: 35px; border-radius: 50%; display: inline-block; vertical-align: middle; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .score-display { font-size: 80px; font-weight: bold; color: var(--blue); margin: 25px 0; }
+        #turn-indicator { width: 25px; height: 25px; border-radius: 50%; display: inline-block; vertical-align: middle; border: 2px solid #fff; }
     </style>
 </head>
 <body>
@@ -85,61 +125,55 @@
 
 <div class="container">
     <div id="screen-input" class="card-box">
-        <h2 style="font-size:30px; color:var(--blue); margin-top:0;">מה לומדים היום? ✨</h2>
-        <textarea id="wordInput" placeholder="שם הרשימה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
+        <h2 style="margin-top:0;">מה לומדים היום? ✨</h2>
+        <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש"></textarea>
         <button class="btn" onclick="processInput()">יוצאים לדרך</button>
     </div>
 
     <div id="screen-cards" class="card-box hidden">
         <div class="nav-links">
             <a href="https://word-academy-8b91d.web.app/" class="nav-item">🏠 בית</a>
-            <span class="nav-item" onclick="shareCurrentList()" style="color:var(--green)">שיתוף רשימה 🔗</span>
+            <span class="nav-item" onclick="shareCurrentList()" style="color:var(--green)">שיתוף 🔗</span>
         </div>
-        <p style="font-weight:bold; color:var(--primary); margin-bottom:15px; font-size:18px;">לחצו על הכרטיסייה כדי לסובב</p>
         <div class="flip-card" id="card-obj" onclick="this.classList.toggle('flipped')">
             <div class="flip-card-inner">
                 <div class="flip-card-front" id="txt-eng"></div>
                 <div class="flip-card-back" id="txt-heb"></div>
             </div>
         </div>
-        <div style="display:flex; gap:15px; width:100%;">
-            <button class="btn btn-red" onclick="handleCardMove(false)">עוד מעט אדע</button>
+        <div style="display:flex; gap:10px; width:100%;">
+            <button class="btn btn-red" onclick="handleCardMove(false)">עוד לא</button>
             <button class="btn btn-green" onclick="handleCardMove(true)">יודע!</button>
         </div>
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
-        <div style="width:100%; margin-bottom:25px;">
-            <h2 style="margin:0; color:var(--blue); font-size:32px;">אתגר המילים</h2>
-            <div style="display:flex; justify-content:space-between; font-size:16px; color:#64748b; margin-top:8px;">
-                <span id="quiz-unit-name"></span>
-                <span id="quiz-progress"></span>
-            </div>
+        <div class="quiz-header">
+            <h2 class="quiz-title">אתגר המילים</h2>
+            <div class="quiz-unit" id="quiz-unit-name"></div>
+            <div class="quiz-counter" id="quiz-progress"></div>
         </div>
-        <div id="quiz-q" style="font-size:48px; font-weight:bold; color:black; margin-bottom:40px;"></div>
-        <div id="quiz-options" style="width:100%"></div>
+        <div id="quiz-q" style="font-size:38px; font-weight:bold; color:black; margin:10px 0;"></div>
+        <div id="quiz-options" class="options-grid"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
-        <div class="nav-links">
-            <a href="https://word-academy-8b91d.web.app/" class="nav-item">🏠 בית</a>
-            <span class="nav-item" onclick="shareCurrentList()" style="color:var(--green)">שיתוף רשימה 🔗</span>
-        </div>
-        <h2>הציון שלך:</h2>
-        <div id="final-pct" class="score-display">0%</div>
-        <button class="btn btn-green" onclick="sharePersonalScore()">שתף הישג בוואטסאפ 📱</button>
-        <button class="btn btn-secondary" style="font-size:16px; margin-top:15px;">הגשה למורה (משתמשים רשומים)</button>
-        <div id="lock-status" style="margin:20px 0; font-weight:bold; font-size:18px;"></div>
+        <h2 style="margin-top:0;">הציון שלך:</h2>
+        <div id="final-pct" style="font-size:60px; font-weight:bold; color:var(--blue);">0%</div>
+        <button class="btn btn-green" onclick="sharePersonalScore()">שתף הישג 📱</button>
+        <div id="lock-status" style="margin:15px 0; font-weight:bold;"></div>
         <button id="btn-game-go" class="btn hidden" onclick="startConnect4()">למתחם המשחקים 🎮</button>
-        <button class="btn btn-secondary" style="margin-top:10px;" onclick="restartPractice()">תרגול חוזר 🔄</button>
+        <button class="btn btn-secondary" onclick="restartPractice()">תרגול חוזר 🔄</button>
     </div>
 
     <div id="screen-game" class="card-box hidden">
         <div class="nav-links">
-            <span class="nav-item" onclick="showScreen('screen-summary')" style="font-size:16px;">❌ יציאה</span>
-            <span style="font-weight:bold; font-size:16px; display:flex; align-items:center; gap:10px;">תור: <div id="turn-indicator" style="background:var(--red);"></div></span>
+            <span class="nav-item" onclick="showScreen('screen-summary')">❌ יציאה</span>
+            <span style="font-weight:bold;">תור: <div id="turn-indicator" style="background:var(--red);"></div></span>
         </div>
-        <button class="btn" id="btn-ask" style="margin-bottom:20px;" onclick="askGameQ()">שאלה חדשה ❓</button>
+        <button class="btn" id="btn-ask" onclick="askGameQ()" style="margin-top:0; margin-bottom:15px;">
+            שאלה חדשה <span style="color:white;">?</span>
+        </button>
         <div class="arrows-container">
             <div class="num-row"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div></div>
             <div class="arrow-row" id="arrow-row"></div>
@@ -152,18 +186,6 @@
 
 <script>
     let state = { words: [], queue: [], currentIdx: 0, score: 0, listName: '', board: [], turn: 1, canDrop: false };
-
-    window.onload = () => {
-        const params = new URLSearchParams(window.location.search);
-        const data = params.get('data');
-        if (data) {
-            try {
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(data))));
-                state.listName = decoded.name; state.words = decoded.words;
-                startLearning();
-            } catch(e) {}
-        }
-    };
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -179,10 +201,6 @@
             return { eng: e, heb: h };
         });
         if(state.words.length < 2) return alert("הזן לפחות 2 מילים");
-        startLearning();
-    }
-
-    function startLearning() {
         state.queue = [...state.words]; renderCard(); showScreen('screen-cards');
     }
 
@@ -195,10 +213,6 @@
 
     function handleCardMove(known) {
         const word = state.queue.shift(); if(!known) state.queue.push(word); renderCard();
-    }
-
-    function restartPractice() {
-        startLearning();
     }
 
     function startQuiz() {
@@ -216,7 +230,7 @@
         const opts = [q.heb, ...others.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         const container = document.getElementById('quiz-options'); container.innerHTML = '';
         opts.forEach(o => {
-            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o;
+            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o; b.style.marginTop = "0";
             b.onclick = () => {
                 if(o === q.heb) { b.classList.add('correct'); state.score++; setTimeout(nextQ, 600); }
                 else { b.classList.add('wrong'); Array.from(container.children).find(x => x.innerText === q.heb).classList.add('correct'); setTimeout(nextQ, 1200); }
@@ -235,19 +249,17 @@
         document.getElementById('final-pct').innerText = pct + "%";
         const msg = document.getElementById('lock-status');
         const btn = document.getElementById('btn-game-go');
-        if(pct >= 70) { msg.innerText = "כל הכבוד! המשחקים פתוחים."; msg.style.color = "var(--green)"; btn.classList.remove('hidden'); }
-        else { msg.innerText = "צריך 70% כדי לשחק."; msg.style.color = "var(--red)"; btn.classList.add('hidden'); }
+        if(pct >= 70) { msg.innerText = "המשחקים פתוחים! 🔓"; msg.style.color = "var(--green)"; btn.classList.remove('hidden'); }
+        else { msg.innerText = "צריך 70% כדי לשחק 🔒"; msg.style.color = "var(--red)"; btn.classList.add('hidden'); }
         showScreen('screen-summary');
     }
 
-    // --- Connect 4 logic ---
     function startConnect4() {
         showScreen('screen-game');
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
         const b = document.getElementById('c4-board'); b.innerHTML = '';
         for(let i=0; i<42; i++) {
-            const c = document.createElement('div'); c.className = 'cell'; c.id = `c-${Math.floor(i/7)}-${i%7}`;
-            b.appendChild(c);
+            const c = document.createElement('div'); c.className = 'cell'; c.id = `c-${Math.floor(i/7)}-${i%7}`; b.appendChild(c);
         }
         const ars = document.getElementById('arrow-row'); ars.innerHTML = '';
         for(let i=0; i<7; i++) {
@@ -261,11 +273,11 @@
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const body = document.getElementById('modal-body');
         const colorClass = state.turn === 1 ? 'stripe-red' : 'stripe-yellow';
-        body.innerHTML = `<div class="turn-stripe ${colorClass}"></div><h2 style="margin-top:25px; font-size:32px;">${q.eng}</h2>`;
+        body.innerHTML = `<div class="turn-stripe ${colorClass}"></div><h2 style="margin-top:20px;">${q.eng}</h2>`;
         const others = state.words.filter(w => w.heb !== q.heb).map(w => w.heb);
         const opts = [q.heb, ...others.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         opts.forEach(o => {
-            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o;
+            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o; b.style.marginTop = "10px";
             b.onclick = () => {
                 if(o === q.heb) {
                     b.classList.add('correct');
@@ -286,25 +298,19 @@
         let targetRow = -1;
         for(let i=5; i>=0; i--) { if(!state.board[i][col]) { targetRow = i; break; } }
         if(targetRow === -1) return;
-        
         state.canDrop = false;
         const color = state.turn === 1 ? 'red' : 'yellow';
-        
-        // Scan Animation (Bright and Full Color)
         for(let i=0; i<=targetRow; i++) {
             const cell = document.getElementById(`c-${i}-${col}`);
             cell.classList.add(`scan-${color}`);
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 80));
             if(i < targetRow) cell.classList.remove(`scan-${color}`);
             else cell.classList.add(`filled-${color}`);
         }
-        
         state.board[targetRow][col] = state.turn;
         if(checkWin(targetRow, col)) {
             const mBody = document.getElementById('modal-body');
-            mBody.innerHTML = `<h2>ניצחון ל${state.turn===1?'אדום':'צהוב'}! 🎉</h2>
-            <button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">משחק חדש</button>
-            <button class="btn btn-secondary" style="margin-top:10px;" onclick="document.getElementById('modal').style.display='none';">סגור</button>`;
+            mBody.innerHTML = `<h2>ניצחון! 🎉</h2><button class="btn btn-green" onclick="startConnect4(); document.getElementById('modal').style.display='none';">משחק חדש</button><button class="btn btn-secondary" onclick="document.getElementById('modal').style.display='none';">סגור</button>`;
             document.getElementById('modal').style.display = 'flex';
         } else {
             state.turn = state.turn === 1 ? 2 : 1;
@@ -313,10 +319,7 @@
         }
     }
 
-    function updateTurnUI() {
-        document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
-    }
-
+    function updateTurnUI() { document.getElementById('turn-indicator').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)'; }
     function checkWin(r, c) {
         const p = state.turn;
         const check = (dr, dc) => {
@@ -327,13 +330,11 @@
         };
         return check(0,1) || check(1,0) || check(1,1) || check(1,-1);
     }
-
-    function generateLink() {
-        const data = { name: state.listName, words: state.words };
-        return window.location.origin + window.location.pathname + "?data=" + btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    function restartPractice() { showScreen('screen-input'); }
+    function sharePersonalScore() { 
+        const text = `הוצאתי ${document.getElementById('final-pct').innerText} ב-Word Adventure! 🏆`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`); 
     }
-    function shareCurrentList() { window.open(`https://wa.me/?text=${encodeURIComponent('בואו ללמוד מילים: ' + state.listName + '\n' + generateLink())}`); }
-    function sharePersonalScore() { window.open(`https://wa.me/?text=${encodeURIComponent('הוצאתי ' + document.getElementById('final-pct').innerText + ' ביחידה ' + state.listName + '! 🏆\n' + generateLink())}`); }
 </script>
 </body>
 </html>
