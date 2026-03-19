@@ -6,77 +6,50 @@
     <title>Word Academy</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --accent: #facc15; 
-            --white: #ffffff; --green: #22c55e; --red: #ef4444; --gray: #94a3b8; 
-        }
-        
-        body { 
-            font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); 
-            margin: 0; text-align: center; overflow: hidden; height: 100vh;
-            display: flex; flex-direction: column; 
-        }
+        :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --green: #22c55e; --red: #ef4444; --accent: #facc15; }
+        body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* הדר נקי: עברית מימין, אנגלית משמאל */
-        .header { 
-            background: white; padding: 10px 20px; display: flex; 
-            justify-content: space-between; align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0;
-        }
-        .user-greeting { font-size: 14px; font-weight: bold; color: var(--navy); }
+        .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .header-left { display: flex; align-items: center; gap: 8px; direction: ltr; }
-        .header-logo { height: 35px; width: auto; }
         .site-name { font-size: 18px; font-weight: bold; color: var(--blue); margin: 0; }
+        .user-greeting { font-size: 14px; font-weight: bold; }
 
-        .container { 
-            flex: 1; max-width: 500px; margin: 0 auto; padding: 10px; 
-            display: flex; flex-direction: column; align-items: center; 
-            width: 100%; box-sizing: border-box; overflow-y: auto;
-        }
+        .container { flex: 1; max-width: 500px; margin: 0 auto; padding: 15px; width: 100%; box-sizing: border-box; overflow-y: auto; }
+        .card-box { background: white; padding: 20px; border-radius: 24px; border: 2px solid #e2e8f0; margin-bottom: 15px; position: relative; }
 
-        .card-box { 
-            background: white; padding: 15px; border-radius: 24px; border: 2px solid #e2e8f0; 
-            width: 100%; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
-            position: relative; margin-bottom: 10px;
-        }
-
-        .top-nav { display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; }
-        .nav-link { cursor: pointer; text-decoration: none; color: #64748b; font-weight: bold; font-size: 14px; }
-
-        textarea { 
-            width: 100%; height: 180px; border-radius: 15px; padding: 15px; 
-            font-family: inherit; font-size: 18px; line-height: 1.6; 
-            border: 2px solid #cbd5e1; box-sizing: border-box; resize: none; margin-top: 15px;
-            text-align: left; direction: ltr;
-        }
-
-        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 16px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; font-family: inherit; margin-top: 10px; }
+        textarea { width: 100%; height: 120px; border-radius: 15px; padding: 12px; font-family: inherit; font-size: 16px; border: 2px solid #cbd5e1; box-sizing: border-box; direction: ltr; }
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-green { background: var(--green); }
         .btn-red { background: var(--red); }
-        .btn-secondary { background: #f1f5f9; color: var(--navy); border: 1px solid #e2e8f0; }
+        .btn-outline { background: #f8fafc; color: var(--blue); border: 1px solid #dbeafe; font-size: 14px; }
 
         /* כרטיסיות */
-        .flip-card { width: 280px; height: 160px; perspective: 1000px; margin: 15px 0; }
+        .flip-card { width: 280px; height: 160px; perspective: 1000px; margin: 20px auto; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { 
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-            display: flex; align-items: center; justify-content: center; border-radius: 24px; 
-            border: 4px solid var(--blue); font-size: 32px; font-weight: bold; background: white; 
-        }
-        .flip-card-back { background: #eff6ff; color: var(--blue); transform: rotateY(180deg); }
+        .flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 24px; border: 4px solid var(--blue); font-size: 28px; font-weight: bold; background: white; padding: 10px; }
+        .flip-card-back { transform: rotateY(180deg); background: #eff6ff; color: var(--blue); }
 
-        /* לוח משחק 4 בשורה */
-        .board { background: var(--blue); padding: 6px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 270px; margin: 10px auto; }
+        /* גריד משחקים */
+        .game-link { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+
+        /* 4 בשורה */
+        .c4-top { display: grid; grid-template-columns: repeat(7, 1fr); width: 280px; margin: 0 auto; color: var(--blue); font-weight: bold; font-size: 12px; }
+        .c4-arrows { display: grid; grid-template-columns: repeat(7, 1fr); width: 280px; margin: 5px auto; }
+        .arrow { cursor: pointer; font-size: 20px; color: var(--blue); }
+        .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 280px; margin: 0 auto; }
         .cell { aspect-ratio: 1; border-radius: 50%; background: #1e3a8a; }
-        .arrow-row { display: grid; grid-template-columns: repeat(7, 1fr); width: 270px; text-align: center; color: var(--blue); }
-        
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 24px; width: 85%; max-width: 350px; }
 
+        /* משחק זיכרון */
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+        .memory-card { aspect-ratio: 1; background: var(--blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; cursor: pointer; padding: 5px; }
+        .memory-card.revealed { background: white; color: var(--navy); border: 2px solid var(--blue); }
+
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 24px; width: 85%; max-width: 350px; }
         .hidden { display: none; }
-        .correct { background: var(--green) !important; color: white !important; }
-        .wrong { background: var(--red) !important; color: white !important; }
     </style>
 </head>
 <body>
@@ -84,20 +57,20 @@
 <div class="header">
     <div id="user-display" class="user-greeting">שלום, אורח/ת!</div>
     <div class="header-left">
-        <img src="logo.svg" alt="WA" class="header-logo">
         <h1 class="site-name">Word Academy</h1>
     </div>
 </div>
 
 <div class="container">
     <div id="screen-input" class="card-box">
-        <h2 style="margin:0;">מה לומדים היום?</h2>
+        <h2 id="unit-title">מה לומדים היום?</h2>
         <textarea id="wordInput" placeholder="Unit Name&#10;Apple - תפוח..."></textarea>
         <button class="btn" onclick="processInput()">יוצאים לדרך</button>
+        <button class="btn btn-outline" id="btn-copy" style="display:none;" onclick="generateLink()">🔗 העתק קישור למורה</button>
     </div>
 
     <div id="screen-cards" class="card-box hidden">
-        <div class="top-nav"><span class="nav-link" onclick="location.reload()">בית</span></div>
+        <div id="card-unit-display" style="color:var(--blue); font-weight:bold;"></div>
         <div class="flip-card" id="card-wrap" onclick="this.classList.toggle('flipped')">
             <div class="flip-card-inner">
                 <div class="flip-card-front" id="txt-eng"></div>
@@ -110,150 +83,181 @@
         </div>
     </div>
 
-    <div id="screen-quiz" class="card-box hidden">
-        <h2 style="color:var(--blue); margin:0;">אתגר המילים</h2>
-        <div id="quiz-q" style="font-size:32px; font-weight:bold; margin:20px 0;"></div>
-        <div id="quiz-options" style="width:100%; display:flex; flex-direction:column; gap:10px;"></div>
-    </div>
-
     <div id="screen-summary" class="card-box hidden">
-        <h2 style="margin:0;">הציון שלך:</h2>
-        <div id="final-pct" style="font-size:50px; font-weight:bold; color:var(--blue);">0%</div>
-        <div id="game-status" style="margin:10px 0; font-weight:bold;"></div>
-        <button class="btn btn-green hidden" id="btn-play-c4" onclick="startConnect4()">שחק 4 בשורה</button>
-        <button class="btn btn-secondary" onclick="location.reload()">תרגול חוזר</button>
+        <h2>הציון שלך: <span id="final-pct">100%</span></h2>
+        <div class="game-link" onclick="startConnect4()">
+            <span>🔴 4 בשורה (Connect 4)</span>
+            <span style="color:var(--green)">פתוח!</span>
+        </div>
+        <div class="game-link" onclick="startMemory()">
+            <span>🃏 משחק זיכרון</span>
+            <span style="color:var(--green)">חדש!</span>
+        </div>
+        <button class="btn btn-outline" onclick="shareToWhatsapp()">📲 שתף הישג בוואטסאפ</button>
+        <button class="btn btn-red" onclick="location.reload()">חזרה להתחלה</button>
     </div>
 
     <div id="screen-game-c4" class="card-box hidden">
-        <div class="top-nav"><span class="nav-link" onclick="showScreen('screen-summary')">יציאה</span></div>
-        <button class="btn" id="btn-ask" onclick="askGameQ()">לחצו לשאלה</button>
-        <div class="arrow-row" id="arrow-row"></div>
-        <div class="board" id="c4-board"></div>
+        <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+            <span onclick="showScreen('screen-summary')" style="cursor:pointer">✖ יציאה</span>
+            <span id="turn-display">תור: 🔴</span>
+        </div>
+        <button class="btn" id="btn-ask-c4" onclick="askQuestion('c4')">לחצו לשאלה</button>
+        <div class="c4-top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+        <div class="c4-arrows" id="arrows"></div>
+        <div class="board" id="board"></div>
+    </div>
+
+    <div id="screen-memory" class="card-box hidden">
+        <div onclick="showScreen('screen-summary')" style="text-align:right; cursor:pointer; margin-bottom:10px;">✖ יציאה</div>
+        <div class="memory-grid" id="memory-grid"></div>
     </div>
 </div>
 
 <div id="modal" class="modal"><div class="modal-content" id="modal-body"></div></div>
 
 <script>
-    let state = { words: [], queue: [], currentIdx: 0, score: 0, board: [], turn: 1, canDrop: false };
+    let state = { 
+        words: [], queue: [], unitName: '', score: 0, 
+        turn: 1, canDrop: false, board: [], 
+        memoryCards: [], firstCard: null, lockBoard: false 
+    };
 
-    function showScreen(id) {
-        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
-
+    // עיבוד והזנה
     function processInput() {
         const val = document.getElementById('wordInput').value.trim();
         const lines = val.split('\n');
+        state.unitName = lines[0] || 'Unit';
         state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
             const [e, h] = l.split('-').map(s => s.trim());
             return { eng: e, heb: h };
         });
         if(state.words.length < 2) return alert("הזן לפחות 2 מילים");
         state.queue = [...state.words];
+        document.getElementById('card-unit-display').innerText = state.unitName;
+        document.getElementById('btn-copy').style.display = 'block';
         showScreen('screen-cards');
         renderCard();
     }
 
+    // כרטיסיות
     function renderCard() {
-        if(state.queue.length === 0) return startQuiz();
+        if(state.queue.length === 0) return showScreen('screen-summary');
         document.getElementById('card-wrap').classList.remove('flipped');
         document.getElementById('txt-eng').innerText = state.queue[0].eng;
         document.getElementById('txt-heb').innerText = state.queue[0].heb;
     }
 
     function handleCardMove(known) {
-        const word = state.queue.shift();
-        if(!known) state.queue.push(word);
+        const w = state.queue.shift();
+        if(!known) state.queue.push(w);
         setTimeout(renderCard, 300);
     }
 
-    function startQuiz() {
-        state.currentIdx = 0; state.score = 0;
-        showScreen('screen-quiz');
-        renderQuizStep();
-    }
-
-    function renderQuizStep() {
-        const q = state.words[state.currentIdx];
-        document.getElementById('quiz-q').innerText = q.eng;
-        const opts = [q.heb, ...state.words.filter(w => w.heb !== q.heb).map(w => w.heb).sort(() => 0.5-Math.random()).slice(0,3)].sort(() => 0.5-Math.random());
-        const cont = document.getElementById('quiz-options'); cont.innerHTML = '';
-        opts.forEach(o => {
-            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o;
-            b.onclick = () => {
-                if(o === q.heb) { b.classList.add('correct'); state.score++; setTimeout(nextQ, 600); }
-                else { b.classList.add('wrong'); Array.from(cont.children).find(x => x.innerText === q.heb).classList.add('correct'); setTimeout(nextQ, 1200); }
-            };
-            cont.appendChild(b);
-        });
-    }
-
-    function nextQ() { state.currentIdx++; state.currentIdx < state.words.length ? renderQuizStep() : finalize(); }
-
-    function finalize() {
-        const pct = Math.round((state.score/state.words.length)*100);
-        document.getElementById('final-pct').innerText = pct + "%";
-        if(pct >= 70) {
-            document.getElementById('game-status').innerText = "כל הכבוד! המשחק נפתח 🔓";
-            document.getElementById('btn-play-c4').classList.remove('hidden');
-        } else {
-            document.getElementById('game-status').innerText = "צריך 70% כדי לפתוח את המשחק 🔒";
-        }
-        showScreen('screen-summary');
-    }
-
+    // משחק 4 בשורה
     function startConnect4() {
         showScreen('screen-game-c4');
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
-        const b = document.getElementById('c4-board'); b.innerHTML = '';
+        const b = document.getElementById('board'); b.innerHTML = '';
+        const ars = document.getElementById('arrows'); ars.innerHTML = '';
         for(let i=0; i<42; i++) {
-            const c = document.createElement('div'); c.className = 'cell'; c.id = `c-${Math.floor(i/7)}-${i%7}`; b.appendChild(c);
+            const c = document.createElement('div'); c.className = 'cell'; c.id = `c-${Math.floor(i/7)}-${i%7}`;
+            b.appendChild(c);
         }
-        const ars = document.getElementById('arrow-row'); ars.innerHTML = '';
         for(let i=0; i<7; i++) {
-            const a = document.createElement('div'); a.innerHTML = `▼`; a.style.cursor='pointer';
-            a.onclick = () => handleDrop(i); ars.appendChild(a);
+            const a = document.createElement('div'); a.className = 'arrow'; a.innerHTML = '▼';
+            a.onclick = () => dropDisc(i); ars.appendChild(a);
         }
-        state.turn = 1; state.canDrop = false; updateTurnUI();
+        state.turn = 1; state.canDrop = false;
     }
 
-    function askGameQ() {
-        const q = state.words[Math.floor(Math.random()*state.words.length)];
-        const body = document.getElementById('modal-body');
-        body.innerHTML = `<h2>${q.eng}</h2><div id="modal-ans" style="display:flex; flex-direction:column; gap:10px;"></div>`;
-        const opts = [q.heb, ...state.words.filter(w => w.heb !== q.heb).map(w => w.heb).sort(() => 0.5-Math.random()).slice(0,3)].sort(() => 0.5-Math.random());
-        opts.forEach(o => {
-            const b = document.createElement('button'); b.className = 'btn btn-secondary'; b.innerText = o;
-            b.onclick = () => {
-                document.getElementById('modal').style.display='none';
-                if(o === q.heb) { state.canDrop = true; document.getElementById('btn-ask').disabled = true; }
-                else { state.turn = state.turn === 1 ? 2 : 1; updateTurnUI(); }
-            };
-            body.querySelector('#modal-ans').appendChild(b);
+    function dropDisc(col) {
+        if(!state.canDrop) return alert("ענו על שאלה קודם!");
+        for(let r=5; r>=0; r--) {
+            if(!state.board[r][col]) {
+                state.board[r][col] = state.turn;
+                document.getElementById(`c-${r}-${col}`).style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
+                state.canDrop = false; state.turn = state.turn === 1 ? 2 : 1;
+                document.getElementById('turn-display').innerText = state.turn === 1 ? "תור: 🔴" : "תור: 🟡";
+                return;
+            }
+        }
+    }
+
+    // משחק זיכרון
+    function startMemory() {
+        showScreen('screen-memory');
+        const grid = document.getElementById('memory-grid'); grid.innerHTML = '';
+        let cards = [];
+        state.words.slice(0, 8).forEach(w => {
+            cards.push({ txt: w.eng, pair: w.heb });
+            cards.push({ txt: w.heb, pair: w.eng });
         });
-        document.getElementById('modal').style.display = 'flex';
+        cards.sort(() => 0.5 - Math.random());
+        cards.forEach(c => {
+            const div = document.createElement('div'); div.className = 'memory-card'; div.innerText = '?';
+            div.onclick = () => {
+                if(state.lockBoard || div.classList.contains('revealed')) return;
+                div.innerText = c.txt; div.classList.add('revealed');
+                if(!state.firstCard) { state.firstCard = { div, c }; }
+                else {
+                    state.lockBoard = true;
+                    if(state.firstCard.c.pair === c.txt || state.firstCard.c.txt === c.pair) {
+                        state.firstCard = null; state.lockBoard = false;
+                    } else {
+                        setTimeout(() => {
+                            div.innerText = '?'; div.classList.remove('revealed');
+                            state.firstCard.div.innerText = '?'; state.firstCard.div.classList.remove('revealed');
+                            state.firstCard = null; state.lockBoard = false;
+                        }, 1000);
+                    }
+                }
+            };
+            grid.appendChild(div);
+        });
     }
 
-    async function handleDrop(col) {
-        if(!state.canDrop) return;
-        let row = -1; for(let i=5; i>=0; i--) if(!state.board[i][col]) { row = i; break; }
-        if(row === -1) return;
-        state.canDrop = false; state.board[row][col] = state.turn;
-        document.getElementById(`c-${row}-${col}`).style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)';
-        if(checkWin(row, col)) { alert(state.turn === 1 ? "אדום ניצח!" : "צהוב ניצח!"); location.reload(); }
-        else { state.turn = state.turn === 1 ? 2 : 1; updateTurnUI(); document.getElementById('btn-ask').disabled = false; }
+    // שאלות למשחקים
+    function askQuestion(type) {
+        const q = state.words[Math.floor(Math.random()*state.words.length)];
+        const modal = document.getElementById('modal');
+        const body = document.getElementById('modal-body');
+        body.innerHTML = `<h3>${q.eng}</h3><div id="opts"></div>`;
+        const opts = [q.heb, ...state.words.filter(x => x.heb !== q.heb).map(x => x.heb)].slice(0,4).sort(() => 0.5-Math.random());
+        opts.forEach(o => {
+            const b = document.createElement('button'); b.className = 'btn btn-outline'; b.style.marginBottom='5px'; b.innerText = o;
+            b.onclick = () => {
+                modal.style.display = 'none';
+                if(o === q.heb) { state.canDrop = true; alert("נכון! בחר טור"); }
+                else { state.turn = state.turn === 1 ? 2 : 1; }
+            };
+            body.querySelector('#opts').appendChild(b);
+        });
+        modal.style.display = 'flex';
     }
 
-    function updateTurnUI() { document.getElementById('btn-ask').style.background = state.turn === 1 ? 'var(--red)' : 'var(--accent)'; }
-    function checkWin(r, c) {
-        const p = state.turn; const check = (dr, dc) => {
-            let cnt = 1;
-            for(let i=1; i<4; i++) if(state.board[r+dr*i]?.[c+dc*i] === p) cnt++; else break;
-            for(let i=1; i<4; i++) if(state.board[r-dr*i]?.[c-dc*i] === p) cnt++; else break;
-            return cnt >= 4;
-        }; return check(0,1) || check(1,0) || check(1,1) || check(1,-1);
+    // עזרים
+    function showScreen(id) { document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+    function shareToWhatsapp() { window.open(`https://wa.me/?text=סיימתי את יחידת הלימוד ${state.unitName} ב-Word Academy!`); }
+    
+    function generateLink() {
+        const data = btoa(unescape(encodeURIComponent(JSON.stringify({ name: state.unitName, words: state.words }))));
+        const url = window.location.href.split('?')[0] + '?data=' + data;
+        navigator.clipboard.writeText(url);
+        alert("הקישור הועתק! שלח אותו לתלמידים");
     }
+
+    // טעינה מקישור
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('data')) {
+            const decoded = JSON.parse(decodeURIComponent(escape(atob(params.get('data')))));
+            state.unitName = decoded.name; state.words = decoded.words;
+            state.queue = [...state.words];
+            document.getElementById('card-unit-display').innerText = state.unitName;
+            showScreen('screen-cards'); renderCard();
+        }
+    };
 </script>
 </body>
 </html>
