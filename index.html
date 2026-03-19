@@ -25,9 +25,11 @@
         .correct { background: var(--green) !important; color: white; }
         .wrong { background: #ef4444 !important; color: white; }
 
+        .speaker-icon { cursor: pointer; font-size: 24px; color: var(--blue); display: inline-block; vertical-align: middle; }
+
         /* 4 בשורה */
         .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 300px; margin: 0 auto; }
-        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; transition: background 0.2s; }
+        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; transition: background 0.1s; }
         .cell.red { background: #ef4444; }
         .cell.yellow { background: var(--accent); }
         
@@ -36,7 +38,6 @@
         .modal-stripe { height: 10px; width: 100%; }
         .modal-body { padding: 20px; font-size: 20px; font-weight: bold; }
         
-        /* תיקו */
         .tie-stripes { display: flex; height: 12px; width: 100%; }
         .tie-red { background: #ef4444; flex: 1; }
         .tie-yellow { background: var(--accent); flex: 1; }
@@ -204,13 +205,14 @@
             btn.disabled = false;
         } else if(mode === "טור") {
             btn.innerText = `תור ${colorName}: בחר טור 👇`;
-            btn.disabled = true; // ננעל כדי שיבחרו בלוח
+            btn.disabled = true;
         }
     }
 
     function c4Ask() {
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const opts = [q.heb, ...state.words.filter(x => x.heb !== q.heb).map(x => x.heb)].slice(0,4).sort(() => Math.random()-0.5);
+        
         let html = `<div style="font-size:24px; margin-bottom:15px;">${q.eng}</div>`;
         opts.forEach(o => { html += `<button class="opt-btn" onclick="checkC4Ans(this,'${o}','${q.heb}')">${o}</button>`; });
         openMsg(html, state.c4Turn === 'red' ? '#ef4444' : 'var(--accent)');
@@ -219,6 +221,7 @@
     function checkC4Ans(btn, sel, cor) {
         const allBtns = document.querySelectorAll('#msg-modal .opt-btn');
         allBtns.forEach(b => b.style.pointerEvents = 'none');
+
         if(sel === cor) {
             btn.classList.add('correct');
             state.canDrop = true;
@@ -238,21 +241,20 @@
         for(let r=5; r>=0; r--) { if(!state.board[r][col]) { row = r; break; } }
         if(row === -1) { state.canDrop = true; return; }
 
-        const color = state.c4Turn;
+        const colorClass = state.c4Turn; // הצבע הנוכחי לאורך כל האנימציה
         for(let r=0; r<=row; r++) {
             const c = document.getElementById(`c-${r}-${col}`);
-            c.classList.add(color);
-            await new Promise(res => setTimeout(res, 60));
-            if(r < row) c.classList.remove(color);
+            c.classList.add(colorClass); // צביעה בצבע של האסימון הנופל
+            await new Promise(res => setTimeout(res, 60)); // המתנה
+            if(r < row) c.classList.remove(colorClass); // הסרת הצבע אם זה לא התא הסופי
         }
-        state.board[row][col] = color;
+        state.board[row][col] = colorClass;
         
         if(checkWin(row, col)) {
             setTimeout(() => {
-                openMsg(`<h2>השחקן ה${color === 'red' ? 'אדום' : 'צהוב'} ניצח!</h2><button class="btn" onclick="startC4(); closeMsg()">משחק חדש</button>`, color === 'red' ? '#ef4444' : 'var(--accent)');
+                openMsg(`<h2>השחקן ה${colorClass === 'red' ? 'אדום' : 'צהוב'} ניצח!</h2><button class="btn" onclick="startC4(); closeMsg()">משחק חדש</button>`, colorClass === 'red' ? '#ef4444' : 'var(--accent)');
             }, 300);
         } else if(state.board.every(row => row.every(cell => cell !== null))) {
-            // לוגיקת תיקו
             setTimeout(() => {
                 document.getElementById('msg-stripe').innerHTML = '<div class="tie-stripes"><div class="tie-red"></div><div class="tie-yellow"></div></div>';
                 document.getElementById('msg-stripe').style.background = "none";
