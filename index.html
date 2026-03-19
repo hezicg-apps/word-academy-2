@@ -16,7 +16,6 @@
         .container { flex: 1; max-width: 500px; margin: 0 auto; padding: 15px; width: 100%; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .card-box { background: white; padding: 20px; border-radius: 24px; border: 2px solid #e2e8f0; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
 
-        /* תיקון מירכוז תיבת טקסט */
         #wordInput { width: 100%; height: 150px; direction: ltr; text-align: left; font-family: 'Comic Neue', cursive; font-size: 18px; padding: 15px; border-radius: 15px; border: 2px solid #cbd5e1; box-sizing: border-box; display: block; margin: 0 auto; }
 
         .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: 'Comic Neue', cursive; }
@@ -24,17 +23,14 @@
         .correct { background: var(--green) !important; color: white; }
         .wrong { background: var(--red) !important; color: white; }
 
-        /* כרטיסיות - הסרת הבהוב ברמקול */
-        .speaker-icon { cursor: pointer; font-size: 24px; color: var(--blue); transition: transform 0.1s; display: inline-block; vertical-align: middle; }
-        .speaker-icon:active { transform: scale(1.2); }
+        .speaker-icon { cursor: pointer; font-size: 24px; color: var(--blue); display: inline-block; vertical-align: middle; }
 
         /* 4 בשורה */
         .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 300px; margin: 0 auto; }
-        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; position: relative; }
+        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; }
         .cell.red { background: var(--red); }
         .cell.yellow { background: var(--accent); }
         
-        /* מודאל הודעות משלנו (מחליף את ה-Alert) */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; text-align: center; }
         .modal-stripe { height: 10px; width: 100%; }
@@ -108,7 +104,6 @@
 <script>
     let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, c4Turn: 'red', board: [], canDrop: false };
 
-    // טעינה מהירה מכתובת אתר (אם שיתפו רשימה)
     window.onload = () => {
         const params = new URLSearchParams(window.location.search);
         if(params.has('list')) {
@@ -126,7 +121,7 @@
 
     function initApp() {
         const raw = document.getElementById('wordInput').value.trim().split('\n');
-        if(raw.length < 2) return alert("אנא הזן כותרת ולפחות 2 מילים");
+        if(raw.length < 2) return;
         state.unit = raw[0];
         state.words = raw.slice(1).filter(l => l.includes('-')).map(l => {
             const parts = l.split('-');
@@ -172,7 +167,6 @@
         showScreen('screen-summary');
     }
 
-    // 4 בשורה
     function startC4() {
         if(parseInt(document.getElementById('final-score').innerText) < 70) return;
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
@@ -201,17 +195,21 @@
         const opts = [q.heb, ...state.words.filter(x => x.heb !== q.heb).map(x => x.heb)].slice(0,4).sort(() => Math.random()-0.5);
         
         let html = `<div style="font-size:24px; margin-bottom:15px;">${q.eng}</div>`;
-        opts.forEach(o => { html += `<button class="opt-btn" onclick="checkC4Ans('${o}','${q.heb}')">${o}</button>`; });
+        opts.forEach(o => { html += `<button class="opt-btn" onclick="checkC4Ans(this,'${o}','${q.heb}')">${o}</button>`; });
         openMsg(html, state.c4Turn === 'red' ? 'var(--red)' : 'var(--accent)');
     }
 
-    function checkC4Ans(sel, cor) {
+    function checkC4Ans(btn, sel, cor) {
+        const allBtns = document.querySelectorAll('#msg-modal .opt-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
         if(sel === cor) {
+            btn.classList.add('correct');
             state.canDrop = true;
-            updateMsg(`<div style="color:var(--green)">נכון! בחר טור ▼</div>`);
-            setTimeout(closeMsg, 800);
+            setTimeout(closeMsg, 600); // סגירה מהירה ללא הודעה
         } else {
-            updateMsg(`<div style="color:var(--red)">טעות... התור עובר</div>`);
+            btn.classList.add('wrong');
+            allBtns.forEach(b => { if(b.innerText === cor) b.classList.add('correct'); });
             state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red';
             setTimeout(() => { closeMsg(); drawBoard(); }, 1200);
         }
@@ -245,8 +243,8 @@
 
     function checkWin(r, c) {
         const color = state.board[r][c];
-        const directions = [[0,1], [1,0], [1,1], [1,-1]];
-        return directions.some(([dr, dc]) => {
+        const dirs = [[0,1], [1,0], [1,1], [1,-1]];
+        return dirs.some(([dr, dc]) => {
             let count = 1;
             [1, -1].forEach(dir => {
                 for(let i=1; i<4; i++) {
@@ -258,27 +256,18 @@
         });
     }
 
-    // פונקציות הודעה (במקום Alert)
     function openMsg(html, color) {
         document.getElementById('msg-body').innerHTML = html;
         document.getElementById('msg-stripe').style.background = color || 'var(--blue)';
         document.getElementById('msg-modal').style.display = 'flex';
     }
-    function updateMsg(html) { document.getElementById('msg-body').innerHTML = html; }
     function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
+    function speak(id) { const msg = new SpeechSynthesisUtterance(document.getElementById(id).innerText); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
 
-    function speak(id) {
-        const msg = new SpeechSynthesisUtterance(document.getElementById(id).innerText);
-        msg.lang = 'en-US';
-        window.speechSynthesis.speak(msg);
-    }
-
-    // שיתופים
     function shareAchievement() {
         const score = document.getElementById('final-score').innerText;
-        const currentUrl = window.location.href.split('?')[0];
         const data = btoa(unescape(encodeURIComponent(JSON.stringify({u: state.unit, w: state.words}))));
-        const fullLink = `${currentUrl}?list=${data}`;
+        const fullLink = `${window.location.href.split('?')[0]}?list=${data}`;
         const text = `הצלחתי לסיים את "${state.unit}" בציון ${score}! 🎉\nבואו לתרגל גם: ${fullLink}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
     }
