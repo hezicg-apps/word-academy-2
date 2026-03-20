@@ -1,12 +1,6 @@
-// js/main.js - גרסה מעודכנת
+// js/main.js - גרסה נקייה ללא אייקונים בשיתוף
 
-let state = {
-    words: [],
-    unit: '',
-    qIdx: 0,
-    qCorrect: 0,
-    score: 0
-};
+let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, score: 0 };
 
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
@@ -26,16 +20,12 @@ function showScreen(id) {
 function initApp() {
     const input = document.getElementById('wordInput').value.trim();
     const lines = input.split('\n');
-    if (lines.length < 2) return alert("אנא הזן שם יחידה ולפחות מילה אחת (פורמט: מילה - תרגום)");
-    
+    if (lines.length < 2) return;
     state.unit = lines[0];
     state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
         const parts = l.split('-');
         return { eng: parts[0].trim(), heb: parts[1].trim() };
     });
-    
-    if (state.words.length === 0) return alert("לא נמצאו מילים תקינות. וודא שכתבת בפורמט: English - עברית");
-    
     restartQuiz();
 }
 
@@ -62,7 +52,7 @@ function renderQuiz() {
         b.onclick = () => {
             cont.querySelectorAll('button').forEach(btn => btn.style.pointerEvents = 'none');
             if (o === q.heb) { b.classList.add('correct'); state.qCorrect++; }
-            else { b.classList.add('wrong'); cont.querySelectorAll('button').forEach(btn => { if(btn.innerText === q.heb) btn.classList.add('correct'); }); }
+            else { b.classList.add('wrong'); }
             setTimeout(() => { state.qIdx++; renderQuiz(); }, 1000);
         };
         cont.appendChild(b);
@@ -73,12 +63,16 @@ function endQuiz() {
     state.score = Math.round((state.qCorrect / state.words.length) * 100);
     document.getElementById('final-score').innerText = state.score + '%';
     const isOpen = state.score >= 70;
-    
     document.getElementById('btn-c4').disabled = !isOpen;
     document.getElementById('btn-mem').disabled = !isOpen;
-    document.getElementById('lock-msg').innerText = isOpen ? "כל הכבוד! המשחקים פתוחים 🎉" : "🔓 המשחקים ייפתחו ב-70% הצלחה";
-    
     showScreen('screen-summary');
+}
+
+function shareAchievement() {
+    // הסרת האייקון למניעת סימני שאלה
+    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
+    const url = "https://word-academy-8b91d.web.app/"; 
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
 }
 
 function speak(elementId) {
@@ -93,24 +87,4 @@ function openMsg(html, color) {
     document.getElementById('msg-stripe').style.background = color || 'var(--blue)';
     document.getElementById('msg-modal').style.display = 'flex';
 }
-
 function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
-
-/**
- * פונקציות שיתוף
- */
-function shareAchievement() {
-    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%! 🎉`;
-    const url = "https://word-academy-8b91d.web.app/"; // כתובת הפורטל שלך
-    
-    // תיקון: הורדת הכתובת שורה בתוך הודעת השיתוף
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
-}
-
-function shareList() {
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
-    const link = `${window.location.href.split('?')[0]}?list=${data}`;
-    
-    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n${link}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
-}
