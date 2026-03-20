@@ -79,7 +79,6 @@ function renderQuiz() {
     document.getElementById('quiz-progress').innerText = `מילה ${state.qIdx + 1} מתוך ${state.words.length}`;
     document.getElementById('quiz-eng').innerText = q.eng;
 
-    // יצירת מסיחים (אפשרויות) - התשובה הנכונה + 3 רנדומליות
     const distractors = state.words
         .filter(x => x.heb !== q.heb)
         .map(x => x.heb);
@@ -96,7 +95,6 @@ function renderQuiz() {
         b.className = 'opt-btn';
         b.innerText = o;
         b.onclick = () => {
-            // מניעת לחיצות נוספות בזמן המשוב
             cont.querySelectorAll('button').forEach(btn => btn.style.pointerEvents = 'none');
             
             if (o === q.heb) {
@@ -104,13 +102,11 @@ function renderQuiz() {
                 state.qCorrect++;
             } else {
                 b.classList.add('wrong');
-                // הדגשת התשובה הנכונה
                 cont.querySelectorAll('button').forEach(btn => {
                     if (btn.innerText === q.heb) btn.classList.add('correct');
                 });
             }
             
-            // מעבר לשאלה הבאה אחרי השהיה קצרה
             setTimeout(() => {
                 state.qIdx++;
                 renderQuiz();
@@ -132,12 +128,12 @@ function endQuiz() {
     const btnC4 = document.getElementById('btn-c4');
 
     if (isOpen) {
-        lockMsg.innerText = "כל הכבוד! המשחקים פתוחים 🎉";
+        lockMsg.innerText = "כל הכבוד! המשחקים פתוחים";
         lockMsg.style.color = "var(--green)";
         btnC4.disabled = false;
         btnC4.style.opacity = "1";
     } else {
-        lockMsg.innerText = "🔓 המשחקים ייפתחו ב-70% הצלחה";
+        lockMsg.innerText = "המשחקים ייפתחו ב-70% הצלחה";
         lockMsg.style.color = "var(--red)";
         btnC4.disabled = true;
         btnC4.style.opacity = "0.5";
@@ -147,17 +143,22 @@ function endQuiz() {
 }
 
 /**
- * פונקציות שיתוף
+ * פונקציות שיתוף מעודכנות
  */
 function shareAchievement() {
-    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%! 🎉\nבואו לתרגל גם ב-Word Academy!`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
+    const url = window.location.href.split('?')[0]; 
+    const fullMessage = text + "\n\nבואו לתרגל גם ב-Word Academy:\n" + url;
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(fullMessage)}`);
 }
 
 function shareList() {
     const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
     const link = `${window.location.href.split('?')[0]}?list=${data}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent('הנה רשימת המילים שלי לתרגול: ' + link)}`);
+    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n\n${link}`;
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
 }
 
 /**
