@@ -1,4 +1,5 @@
-/* משתנים קבועים - שינוי כאן ישפיע על כל האתר */
+/* js/style.css - קובץ עיצוב מעודכן */
+
 :root { 
     --bg: #f8fafc; 
     --navy: #1e3a8a; 
@@ -9,7 +10,6 @@
     --border: #e2e8f0;
 }
 
-/* הגדרות כלליות */
 body { 
     font-family: 'Comic Neue', cursive; 
     background: var(--bg); 
@@ -22,7 +22,6 @@ body {
     overflow: hidden; 
 }
 
-/* כותרת עליונה */
 .header { 
     background: white; 
     padding: 10px 20px; 
@@ -39,9 +38,6 @@ body {
     direction: ltr; 
 }
 
-.logo-img { height: 35px; }
-
-/* מכל המרכזי */
 .container { 
     flex: 1; 
     max-width: 500px; 
@@ -55,7 +51,6 @@ body {
     align-items: center; 
 }
 
-/* קופסאות תוכן (מסכים) */
 .card-box { 
     background: white; 
     padding: 20px; 
@@ -64,26 +59,22 @@ body {
     margin-bottom: 15px; 
     width: 100%; 
     box-sizing: border-box; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* קלט טקסט */
+/* תיקון: הגדלת תיבת הטקסט ל-10-15 מילים */
 #wordInput { 
     width: 100%; 
-    height: 150px; 
+    height: 300px; /* הגדלה מ-150px ל-300px */
     direction: ltr; 
     text-align: left; 
-    font-family: 'Comic Neue', cursive; 
     font-size: 18px; 
     padding: 15px; 
     border-radius: 15px; 
     border: 2px solid #cbd5e1; 
     box-sizing: border-box; 
-    display: block; 
-    margin: 0 auto; 
+    font-family: inherit;
 }
 
-/* כפתורים */
 .btn { 
     background: var(--blue); 
     color: white; 
@@ -95,12 +86,8 @@ body {
     width: 100%; 
     cursor: pointer; 
     margin-top: 10px; 
-    font-family: inherit; 
-    transition: transform 0.1s, opacity 0.2s;
+    font-family: inherit;
 }
-
-.btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .opt-btn { 
     background: #f1f5f9; 
@@ -111,14 +98,12 @@ body {
     cursor: pointer; 
     margin-bottom: 8px; 
     width: 100%; 
-    font-family: inherit; 
-    transition: 0.2s; 
 }
 
-.correct { background: var(--green) !important; color: white; border-color: var(--green); }
-.wrong { background: var(--red) !important; color: white; border-color: var(--red); }
+.correct { background: var(--green) !important; color: white; }
+.wrong { background: var(--red) !important; color: white; }
 
-/* לוח 4 בשורה */
+/* תיקון: הגדלת הלוח במחשב */
 .board { 
     background: var(--blue); 
     padding: 8px; 
@@ -126,54 +111,15 @@ body {
     display: grid; 
     grid-template-columns: repeat(7, 1fr); 
     gap: 5px; 
-    width: 300px; 
+    width: 100%; /* רוחב מלא של המכל */
+    max-width: 450px; /* הגדלה במחשב */
     margin: 0 auto; 
 }
 
-.cell { 
-    aspect-ratio: 1; 
-    border-radius: 50%; 
-    background: #ffffff33; 
-    position: relative;
-}
+.cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; }
+.cell.red { background: var(--red); }
+.cell.yellow { background: var(--accent); }
 
-.cell.red { background: var(--red); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
-.cell.yellow { background: var(--accent); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
-
-.drop-arrow { 
-    cursor: pointer; 
-    font-size: 24px; 
-    color: var(--blue); 
-    transition: 0.2s; 
-}
-.drop-arrow:hover { transform: translateY(3px); }
-
-/* משחק הזיכרון */
-.mem-grid { 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 8px; 
-    width: 100%; 
-}
-
-.mem-card { 
-    aspect-ratio: 1; 
-    background: var(--navy); 
-    color: white; 
-    border-radius: 10px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 14px; 
-    font-weight: bold; 
-    cursor: pointer; 
-    transition: transform 0.3s;
-}
-
-.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); }
-.mem-card.matched { background: var(--green); border: none; color: white; visibility: visible; }
-
-/* מודאל (Modal) */
 .modal { 
     display: none; 
     position: fixed; 
@@ -192,27 +138,6 @@ body {
     overflow: hidden; 
     position: relative; 
     padding-bottom: 20px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-.modal-stripe { height: 10px; width: 100%; margin-bottom: 10px; }
-
-.modal-body { 
-    padding: 20px; 
-    font-size: 20px; 
-    font-weight: bold; 
-    line-height: 1.4;
-}
-
-/* עזרי תצוגה */
 .hidden { display: none !important; }
-
-.tie-stripes { display: flex; height: 10px; width: 100%; }
-.tie-red { background: var(--red); flex: 1; }
-.tie-yellow { background: var(--accent); flex: 1; }
-
-/* רספונסיביות לנייד */
-@media (max-width: 400px) {
-    .board { width: 100%; }
-    .btn { font-size: 16px; }
-}
