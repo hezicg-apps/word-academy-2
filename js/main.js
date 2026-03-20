@@ -42,16 +42,12 @@ function restartQuiz() {
 
 function renderQuiz() {
     if (state.qIdx >= state.words.length) return endQuiz();
-    
     document.getElementById('quiz-unit-display').innerText = state.unit;
     document.getElementById('quiz-progress').innerText = `מילה ${state.qIdx + 1} מתוך ${state.words.length}`;
-    
     const q = state.words[state.qIdx];
     document.getElementById('quiz-eng').innerText = q.eng;
-    
     const distractors = state.words.filter(x => x.heb !== q.heb).map(x => x.heb);
     const opts = [q.heb, ...distractors].slice(0, 4).sort(() => Math.random() - 0.5);
-    
     const cont = document.getElementById('quiz-options');
     cont.innerHTML = '';
     opts.forEach(o => {
@@ -72,16 +68,18 @@ function endQuiz() {
     state.score = Math.round((state.qCorrect / state.words.length) * 100);
     document.getElementById('final-score').innerText = state.score + '%';
     const isOpen = state.score >= 70;
-    const btnC4 = document.getElementById('btn-c4');
-    btnC4.disabled = !isOpen;
-    btnC4.style.opacity = isOpen ? "1" : "0.5";
+    
+    document.getElementById('btn-c4').disabled = !isOpen;
+    document.getElementById('btn-mem').disabled = !isOpen;
     document.getElementById('lock-msg').innerText = isOpen ? "כל הכבוד! המשחקים פתוחים 🎉" : "🔓 המשחקים ייפתחו ב-70% הצלחה";
+    
     showScreen('screen-summary');
 }
 
-function speak(elementId) {
-    const text = document.getElementById(elementId).innerText;
-    const msg = new SpeechSynthesisUtterance(text);
+function speak(text) {
+    const el = document.getElementById(text);
+    const val = el ? el.innerText : text;
+    const msg = new SpeechSynthesisUtterance(val);
     msg.lang = 'en-US';
     window.speechSynthesis.speak(msg);
 }
