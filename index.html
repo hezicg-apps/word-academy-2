@@ -24,7 +24,6 @@
         .correct { background: var(--green) !important; color: white; }
         .wrong { background: var(--red) !important; color: white; }
 
-        /* Connect 4 */
         .c4-cols { display: grid; grid-template-columns: repeat(7, 1fr); width: 280px; margin: 10px auto 0; }
         .c4-num { font-size: 12px; font-weight: bold; color: var(--blue); margin-bottom: 2px; }
         .c4-arrow { cursor: pointer; font-size: 18px; color: var(--blue); transition: transform 0.2s; }
@@ -79,8 +78,11 @@
         </div>
         <h2 style="margin:0;">הציון שלך:</h2>
         <div id="final-score" style="font-size:64px; font-weight:bold; color:var(--blue); margin:10px 0;">0%</div>
+        
         <button class="btn" style="background:var(--green)" onclick="shareAchievement()">שתף הישג בוואטסאפ 📱</button>
         
+        <button class="btn" style="background:white; color:var(--blue); border:2px solid var(--blue);" onclick="initApp()">🔄 תרגול מחדש</button>
+
         <div id="game-lock" style="margin-top:20px; padding:15px; border:2px dashed #cbd5e1; border-radius:15px;">
             <div id="lock-msg">🔒 המשחקים ייפתחו ב-70% הצלחה</div>
             <button id="btn-c4" class="btn hidden" onclick="startC4()">🔴 4 בשורה (Connect 4)</button>
@@ -94,7 +96,6 @@
             <div id="turn-indicator" style="padding:5px 12px; border-radius:10px; font-weight:bold; font-size:14px;"></div>
         </div>
         <button id="c4-turn-btn" class="btn" onclick="c4Ask()"></button>
-        
         <div class="c4-cols">
             <div class="c4-num">1</div><div class="c4-num">2</div><div class="c4-num">3</div><div class="c4-num">4</div><div class="c4-num">5</div><div class="c4-num">6</div><div class="c4-num">7</div>
             <div class="c4-arrow" onclick="dropToken(0)">▼</div><div class="c4-arrow" onclick="dropToken(1)">▼</div><div class="c4-arrow" onclick="dropToken(2)">▼</div><div class="c4-arrow" onclick="dropToken(3)">▼</div><div class="c4-arrow" onclick="dropToken(4)">▼</div><div class="c4-arrow" onclick="dropToken(5)">▼</div><div class="c4-arrow" onclick="dropToken(6)">▼</div>
@@ -268,7 +269,6 @@
         });
     }
 
-    /* Memory Game */
     function startMemory() {
         showScreen('screen-mem');
         const sub = state.words.slice(0, 6);
@@ -298,7 +298,6 @@
         });
     }
 
-    /* Sharing Logic */
     function getShareLink() {
         const data = btoa(unescape(encodeURIComponent(JSON.stringify({u: state.unit, w: state.words}))));
         const baseUrl = window.location.href.split('?')[0];
