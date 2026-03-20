@@ -1,4 +1,4 @@
-/* css/style.css - גרסה סופית עם Segoe UI */
+/* css/style.css */
 
 :root { 
     --bg: #f8fafc; 
@@ -10,8 +10,12 @@
     --border: #e2e8f0;
 }
 
+/* החלת הגופן Segoe UI על כל האתר בצורה גורפת */
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
 body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* שפה אחידה לכל האתר */
     background: var(--bg); 
     color: var(--navy); 
     margin: 0; 
@@ -64,7 +68,6 @@ body {
     height: 250px; 
     direction: ltr; 
     text-align: left; 
-    font-family: inherit; 
     font-size: 18px; 
     padding: 15px; 
     border-radius: 15px; 
@@ -85,7 +88,6 @@ body {
     width: 100%; 
     cursor: pointer; 
     margin-top: 10px; 
-    font-family: inherit; 
     transition: transform 0.1s;
 }
 .btn:active { transform: scale(0.98); }
@@ -99,7 +101,6 @@ body {
     margin-bottom: 12px; 
     width: 100%; 
     cursor: pointer;
-    font-family: inherit;
 }
 
 .correct { background: var(--green) !important; color: white; border-color: var(--green); }
