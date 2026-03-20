@@ -4,80 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Word Academy</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="header">
-        <div class="header-left">
-            <img src="logo.svg" alt="WA" class="logo-img">
-            <span style="font-weight: bold; color: var(--blue);">Word Academy</span>
-        </div>
-        <div style="font-size: 12px;">שלום, אורח/ת!</div>
+<div class="header">
+    <div id="user-display">שלום, אורח/ת!</div>
+    <div class="header-left">
+        <img src="logo.svg" alt="WA" class="logo-img">
+        <h2 style="font-size:18px; color:var(--blue); margin:0; font-family: inherit;">Word Academy</h2>
+    </div>
+</div>
+
+<div class="container">
+    <div id="screen-input" class="card-box">
+        <h2 style="margin-top:0;">מה לומדים היום? ✨</h2>
+        <textarea id="wordInput" placeholder="Unit Name&#10;Apple - תפוח&#10;Sun - שמש..."></textarea>
+        <button class="btn" onclick="initApp()">יוצאים לדרך</button>
     </div>
 
-    <div class="container">
-        <div id="screen-setup">
-            <div class="card-box">
-                <h2 style="margin-top:0;">✨ מה לומדים היום?</h2>
-                <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח&#10;Sun - שמש..."></textarea>
-                <button class="btn" onclick="initApp()">יוצאים לדרך</button>
-            </div>
+    <div id="screen-quiz" class="card-box hidden">
+        <div id="quiz-unit-display" style="font-weight:bold; color:var(--blue); margin-bottom:5px;"></div>
+        <div id="quiz-progress" style="font-size:14px; margin-bottom:15px; color:#64748b;"></div>
+        <div style="font-size:36px; font-weight:bold; margin-bottom:25px; display:flex; align-items:center; justify-content:center; gap:15px;">
+            <span id="quiz-eng"></span>
+            <button onclick="speak('quiz-eng')" style="background:none; border:none; font-size:28px; cursor:pointer;">🔊</button>
         </div>
-
-        <div id="screen-quiz" class="hidden">
-            <div class="card-box">
-                <div id="quiz-unit-display" style="font-weight: bold; color: var(--blue); margin-bottom: 5px;"></div>
-                <div id="quiz-progress" style="font-size: 14px; color: #64748b; margin-bottom: 15px;"></div>
-                <div id="quiz-eng" style="font-size: 32px; font-weight: bold; margin-bottom: 20px; cursor: pointer;" onclick="speak('quiz-eng')"></div>
-                <div id="quiz-options"></div>
-            </div>
-        </div>
-
-        <div id="screen-summary" class="hidden">
-            <div class="card-box">
-                <div style="font-size: 18px;">הציון שלך:</div>
-                <div id="final-score" style="font-size: 64px; font-weight: bold; color: var(--blue); margin: 10px 0;"></div>
-                <button class="btn" style="background: var(--green);" onclick="shareAchievement()">שתף הישג בוואטסאפ</button>
-                <button class="btn" style="background: white; color: var(--blue); border: 2px solid var(--blue);" onclick="shareList()">שתף רשימה 🔗</button>
-            </div>
-            
-            <div class="card-box" style="border-style: dashed;">
-                <div style="font-size: 14px; margin-bottom: 10px;">כל הכבוד! המשחקים פתוחים:</div>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn-c4" class="btn" style="flex: 1; background: var(--blue);" onclick="startConnect4()">🔴 4 בשורה</button>
-                    <button id="btn-mem" class="btn" style="flex: 1; background: var(--navy);" onclick="startMemory()">🧠 הזיכרון</button>
-                </div>
-            </div>
-            <button class="btn" style="background: none; color: var(--blue); text-decoration: underline;" onclick="location.reload()">🔄 תרגול חוזר</button>
-        </div>
-
-        <div id="screen-c4" class="hidden">
-            <div id="c4-status" style="margin-bottom: 10px; padding: 10px; border-radius: 10px; color: white; font-weight: bold;"></div>
-            <div class="board" id="c4-board"></div>
-            <button class="btn" style="background: none; color: var(--navy);" onclick="showScreen('screen-summary')">🏠 חזרה</button>
-        </div>
-
-        <div id="screen-memory" class="hidden">
-            <div id="memory-moves"></div>
-            <div class="memory-grid" id="memory-grid"></div>
-            <button class="btn" style="background: none; color: var(--navy);" onclick="showScreen('screen-summary')">🏠 חזרה</button>
-        </div>
+        <div id="quiz-options"></div>
     </div>
 
-    <div id="msg-modal" class="modal">
-        <div class="modal-content">
-            <div id="msg-stripe" class="modal-stripe"></div>
-            <div id="msg-body" class="modal-body"></div>
-            <div style="padding: 10px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn" onclick="location.reload()">משחק חדש</button>
-                <button class="btn" style="background: #e2e8f0; color: var(--navy);" onclick="closeMsg()">סגור</button>
+    <div id="screen-summary" class="card-box hidden">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items: center;">
+            <button onclick="location.reload()" style="background:none; border:none; font-size:24px; cursor:pointer;">🏠</button>
+            <button onclick="shareList()" style="background:none; border:none; font-size:16px; color:var(--blue); cursor:pointer; font-weight: bold; font-family: inherit;">🔗 שתף רשימה</button>
+        </div>
+        <h2 style="margin:0;">הציון שלך:</h2>
+        <div id="final-score" style="font-size:64px; font-weight:bold; color:var(--blue); margin:10px 0;">0%</div>
+        
+        <button class="btn" style="background:var(--green)" onclick="shareAchievement()">שתף הישג בוואטסאפ</button>
+        
+        <div id="game-lock" style="margin-top:20px; padding:15px; border:2px dashed #cbd5e1; border-radius:15px;">
+            <div id="lock-msg">🔓 המשחקים ייפתחו ב-70% הצלחה</div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button id="btn-c4" class="btn" onclick="startC4()" disabled>
+                    <span class="color-dot" style="background:var(--red);"></span>
+                    <span class="color-dot" style="background:var(--accent);"></span>
+                    4 בשורה
+                </button>
+                <button id="btn-mem" class="btn" onclick="startMemory()" disabled style="background:var(--navy)">משחק זיכרון</button>
             </div>
         </div>
+        <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="restartQuiz()">🔄 תרגול חוזר</button>
     </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/connect4.js"></script>
-    <script src="js/memory.js"></script>
+    <div id="screen-c4" class="card-box hidden">
+        <div style="text-align:left;"><span onclick="showScreen('screen-summary')" style="cursor:pointer; font-weight:bold;">✖ סגור</span></div>
+        <button id="c4-turn-btn" class="btn" onclick="c4Ask()"></button>
+        
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:100%; max-width:450px; margin:15px auto 5px; font-weight:bold;">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:100%; max-width:450px; margin:0 auto 10px; color:var(--blue);">
+            <span class="drop-arrow" onclick="dropToken(0)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(1)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(2)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(3)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(4)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(5)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(6)">▼</span>
+        </div>
+        
+        <div class="board" id="c4-board"></div>
+    </div>
+
+    <div id="screen-memory" class="card-box hidden">
+        <div style="text-align:left; margin-bottom:10px;"><span onclick="showScreen('screen-summary')" style="cursor:pointer; font-weight:bold;">✖ סגור</span></div>
+        <div id="memory-moves">צעדים: 0</div>
+        <div id="memory-grid" class="memory-grid"></div>
+    </div>
+</div>
+
+<div id="msg-modal" class="modal">
+    <div class="modal-content">
+        <div id="msg-stripe" class="modal-stripe"></div>
+        <div id="msg-body" class="modal-body"></div>
+        <button id="modal-close-btn" class="btn" onclick="closeMsg()" style="width:80%; margin: 10px auto 20px; display:block;">סגור</button>
+    </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/connect4.js"></script>
+<script src="js/memory.js"></script>
 </body>
 </html>
