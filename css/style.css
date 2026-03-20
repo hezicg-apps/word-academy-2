@@ -1,3 +1,5 @@
+/* css/style.css - גרסה סופית ומעודכנת */
+
 :root { 
     --bg: #f8fafc; 
     --navy: #1e3a8a; 
@@ -9,7 +11,8 @@
 }
 
 body { 
-    font-family: 'Comic Neue', cursive; 
+    /* שימוש בגופן אחיד, נעים וקריא בכל האתר */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg); 
     color: var(--navy); 
     margin: 0; 
@@ -30,7 +33,9 @@ body {
 }
 
 .header-left { display: flex; align-items: center; gap: 8px; direction: ltr; }
-.logo-img { height: 35px; }
+
+/* תיקון: הגדרת גובה קבוע ללוגו SVG כדי שלא יהיה ענקי */
+.logo-img { height: 35px; width: auto; }
 
 .container { 
     flex: 1; 
@@ -53,10 +58,13 @@ body {
     margin-bottom: 15px; 
     width: 100%; 
     box-sizing: border-box; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+/* תיקון: תיבת הטקסט ממורכזת ונוחה */
 #wordInput { 
     width: 100%; 
+    max-width: 450px; /* הגבלת רוחב למרכוז טוב יותר */
     height: 250px; 
     direction: ltr; 
     text-align: left; 
@@ -65,6 +73,9 @@ body {
     padding: 15px; 
     border-radius: 15px; 
     border: 2px solid #cbd5e1; 
+    box-sizing: border-box; 
+    margin: 0 auto; /* מרכוז */
+    display: block;
 }
 
 .btn { 
@@ -79,8 +90,9 @@ body {
     cursor: pointer; 
     margin-top: 10px; 
     font-family: inherit; 
+    transition: transform 0.1s;
 }
-
+.btn:active { transform: scale(0.98); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .opt-btn { 
@@ -95,9 +107,10 @@ body {
     font-family: inherit;
 }
 
-.correct { background: var(--green) !important; color: white; }
-.wrong { background: var(--red) !important; color: white; }
+.correct { background: var(--green) !important; color: white; border-color: var(--green); }
+.wrong { background: var(--red) !important; color: white; border-color: var(--red); }
 
+/* עיצוב לוח 4 בשורה - גודל מושלם למחשב ולנייד */
 .board { 
     background: var(--blue); 
     padding: 8px; 
@@ -106,12 +119,30 @@ body {
     grid-template-columns: repeat(7, 1fr); 
     gap: 5px; 
     width: 100%; 
-    max-width: 400px; 
+    max-width: 450px; /* מותאם לצילום המסך */
     margin: 0 auto; 
 }
-.cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; }
-.cell.red { background: var(--red); }
-.cell.yellow { background: var(--accent); }
+.cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; position: relative; }
+.cell.red { background: var(--red); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+.cell.yellow { background: var(--accent); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+
+/* סמל של עיגול לצד שם המשחק */
+.color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* עיצוב חצי הפלה (Connect 4) */
+.drop-arrow { 
+    cursor: pointer; 
+    font-size: 24px; 
+    color: var(--blue); 
+    transition: transform 0.2s;
+}
+.drop-arrow:hover { transform: translateY(3px); color: var(--navy); }
 
 /* משחק הזיכרון */
 .memory-grid {
@@ -132,13 +163,15 @@ body {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.3s, background 0.3s;
     padding: 5px;
+    box-sizing: border-box;
 }
 
-.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); }
-.mem-card.matched { visibility: hidden; }
+.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); transform: rotateY(180s); }
+.mem-card.matched { background: var(--green); border-color: var(--green); color: white; visibility: hidden; }
 
+/* מודאל */
 .modal { 
     display: none; 
     position: fixed; 
@@ -150,6 +183,14 @@ body {
 }
 .modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; padding-bottom: 10px;}
 .modal-stripe { height: 10px; width: 100%; }
-.modal-body { padding: 20px; font-size: 20px; font-weight: bold; }
+.modal-body { padding: 20px; font-size: 20px; font-weight: bold; line-height: 1.4; }
 
 .hidden { display: none !important; }
+
+/* מונה צעדים */
+#memory-moves {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--navy);
+    margin-bottom: 10px;
+}
