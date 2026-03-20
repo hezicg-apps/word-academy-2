@@ -12,6 +12,7 @@
 <div class="header">
     <div id="user-display">שלום, אורח/ת!</div>
     <div class="header-left">
+        <img src="logo.svg" alt="WA" class="logo-img">
         <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
     </div>
 </div>
@@ -24,16 +25,18 @@
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
-        <div id="quiz-progress" style="font-size:14px; margin-bottom:10px; color:#64748b;"></div>
-        <div style="font-size:32px; font-weight:bold; margin-bottom:20px;">
+        <div id="quiz-unit-display" style="font-weight:bold; color:var(--blue); margin-bottom:5px;"></div>
+        <div id="quiz-progress" style="font-size:14px; margin-bottom:15px; color:#64748b;"></div>
+        <div style="font-size:36px; font-weight:bold; margin-bottom:25px; display:flex; align-items:center; justify-content:center; gap:15px;">
             <span id="quiz-eng"></span>
+            <button onclick="speak('quiz-eng')" style="background:none; border:none; font-size:28px; cursor:pointer;">🔊</button>
         </div>
         <div id="quiz-options"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-            <button onclick="location.href='https://word-academy-8b91d.web.app/'" style="background:none; border:none; font-size:24px; cursor:pointer;">🏠</button>
+            <button onclick="location.reload()" style="background:none; border:none; font-size:24px; cursor:pointer;">🏠</button>
             <button onclick="shareList()" style="background:none; border:none; font-size:24px; color:var(--blue); cursor:pointer;">🔗 שתף רשימה</button>
         </div>
         <h2 style="margin:0;">הציון שלך:</h2>
@@ -50,8 +53,17 @@
     <div id="screen-c4" class="card-box hidden">
         <div style="text-align:left;"><span onclick="showScreen('screen-summary')" style="cursor:pointer; font-weight:bold;">✖ סגור</span></div>
         <button id="c4-turn-btn" class="btn" onclick="c4Ask()"></button>
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:100%; max-width:450px; margin:15px auto 5px; font-weight:bold;">
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:100%; max-width:400px; margin:15px auto 5px; font-weight:bold;">
             <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:100%; max-width:400px; margin:0 auto 10px; color:var(--blue);">
+            <span class="drop-arrow" onclick="dropToken(0)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(1)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(2)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(3)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(4)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(5)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(6)">▼</span>
         </div>
         <div class="board" id="c4-board"></div>
     </div>
@@ -59,12 +71,13 @@
 
 <div id="msg-modal" class="modal">
     <div class="modal-content">
-        <div id="msg-stripe" style="height:10px; width:100%;"></div>
-        <div id="msg-body" style="padding:20px; font-weight:bold;"></div>
-        <button class="btn" onclick="closeMsg()" style="width:80%; margin:0 auto; display:block;">סגור</button>
+        <div id="msg-stripe" class="modal-stripe"></div>
+        <div id="msg-body" class="modal-body"></div>
+        <button id="modal-close-btn" class="btn" onclick="closeMsg()" style="width:80%; margin: 10px auto 20px; display:block;">סגור</button>
     </div>
 </div>
 
 <script src="js/main.js"></script>
+<script src="js/connect4.js"></script>
 </body>
 </html>
