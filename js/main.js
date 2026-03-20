@@ -1,4 +1,4 @@
-// js/main.js - גרסה נקייה ללא אייקונים בשיתוף
+// js/main.js
 
 let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, score: 0 };
 
@@ -68,18 +68,23 @@ function endQuiz() {
     showScreen('screen-summary');
 }
 
+function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    window.speechSynthesis.speak(msg);
+}
+
 function shareAchievement() {
-    // הסרת האייקון למניעת סימני שאלה
     const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
     const url = "https://word-academy-8b91d.web.app/"; 
     window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
 }
 
-function speak(elementId) {
-    const text = document.getElementById(elementId).innerText;
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = 'en-US';
-    window.speechSynthesis.speak(msg);
+function shareList() {
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
+    const link = `${window.location.href.split('?')[0]}?list=${data}`;
+    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n${link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
 }
 
 function openMsg(html, color) {
