@@ -1,4 +1,4 @@
-// js/memory.js - גרסה עם שורה אחת במודאל
+// js/memory.js
 
 let memState = { cards: [], flipped: [], lock: false, moves: 0 };
 
@@ -32,8 +32,15 @@ function flipCard(i) {
     if (memState.lock || memState.flipped.includes(i)) return;
     const card = memState.cards[i];
     const el = document.getElementById(`mem-${i}`);
+    
     el.innerText = card.val;
     el.classList.add('flipped');
+    
+    // החזרת ההקראה באנגלית
+    if (card.type === 'eng') {
+        speak(card.val);
+    }
+    
     memState.flipped.push(i);
     if (memState.flipped.length === 2) checkMatch();
 }
@@ -49,7 +56,6 @@ function checkMatch() {
             document.getElementById(`mem-${idx2}`).classList.add('matched');
             memState.flipped = []; memState.lock = false;
             if (document.querySelectorAll('.mem-card:not(.matched)').length === 0) {
-                // שורה אחת בלבד
                 openMsg(`כל הכבוד! ניצחת ב-${memState.moves} צעדים! 🏆`, "var(--green)");
             }
         }, 600);
