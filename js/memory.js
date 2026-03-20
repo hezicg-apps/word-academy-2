@@ -1,19 +1,26 @@
+// js/memory.js - גרסה מעודכנת עם מונה צעדים
+
 let memState = {
     cards: [],
     flipped: [],
-    lock: false
+    lock: false,
+    moves: 0 // תיקון: מונה צעדים
 };
 
 function startMemory() {
     memState.flipped = [];
     memState.lock = false;
+    memState.moves = 0; // אתחול מונה צעדים
+    updateMovesDisplay(); // עדכון התצוגה בהתחלה
     
+    // יצירת זוגות (אנגלית ועברית)
     let pool = [];
     state.words.forEach(w => {
         pool.push({ val: w.eng, type: 'eng', match: w.heb });
         pool.push({ val: w.heb, type: 'heb', match: w.eng });
     });
     
+    // ערבוב ובחירת 16 כרטיסים (8 זוגות)
     memState.cards = pool.sort(() => Math.random() - 0.5).slice(0, 16).sort(() => Math.random() - 0.5);
     
     showScreen('screen-memory');
@@ -43,7 +50,12 @@ function flipCard(i) {
     el.classList.add('flipped');
     memState.flipped.push(i);
     
-    if (card.type === 'eng') speak(card.val);
+    // אם הכרטיס הוא באנגלית, השמע אותו
+    if (card.type === 'eng') {
+        const msg = new SpeechSynthesisUtterance(card.val);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
 
     if (memState.flipped.length === 2) {
         checkMatch();
@@ -52,6 +64,9 @@ function flipCard(i) {
 
 function checkMatch() {
     memState.lock = true;
+    memState.moves++; // תיקון: הגדלת מונה הצעדים אחרי כל זוג שנפתח
+    updateMovesDisplay(); // עדכון התצוגה
+
     const [idx1, idx2] = memState.flipped;
     const c1 = memState.cards[idx1];
     const c2 = memState.cards[idx2];
@@ -63,7 +78,8 @@ function checkMatch() {
             memState.flipped = [];
             memState.lock = false;
             if (document.querySelectorAll('.mem-card:not(.matched)').length === 0) {
-                openMsg("כל הכבוד! סיימת את משחק הזיכרון 🏆", "var(--green)");
+                // תיקון: הודעת ניצחון עם מונה הצעדים
+                openMsg(`<h2>כל הכבוד! ניצחת ב-${memState.moves} צעדים! 🏆</h2><button class="btn" onclick="startMemory(); closeMsg()">משחק חדש</button>`, "var(--green)");
             }
         }, 600);
     } else {
@@ -78,4 +94,9 @@ function checkMatch() {
             memState.lock = false;
         }, 1000);
     }
+}
+
+// תיקון: פונקציית עזר לעדכון תצוגת הצעדים
+function updateMovesDisplay() {
+    document.getElementById('memory-moves').innerText = `צעדים: ${memState.moves}`;
 }
