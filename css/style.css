@@ -53,7 +53,6 @@ body {
     margin-bottom: 15px; 
     width: 100%; 
     box-sizing: border-box; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 #wordInput { 
@@ -66,7 +65,6 @@ body {
     padding: 15px; 
     border-radius: 15px; 
     border: 2px solid #cbd5e1; 
-    box-sizing: border-box; 
 }
 
 .btn { 
@@ -91,10 +89,10 @@ body {
     padding: 16px; 
     border-radius: 12px; 
     font-size: 18px; 
-    cursor: pointer; 
-    margin-bottom: 12px; /* ריווח מוגדל בין תשובות */
+    margin-bottom: 12px; 
     width: 100%; 
-    font-family: inherit; 
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .correct { background: var(--green) !important; color: white; }
@@ -111,12 +109,35 @@ body {
     max-width: 400px; 
     margin: 0 auto; 
 }
-
 .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; }
 .cell.red { background: var(--red); }
 .cell.yellow { background: var(--accent); }
 
-.drop-arrow { cursor: pointer; font-size: 24px; }
+/* משחק הזיכרון */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.mem-card {
+    aspect-ratio: 1;
+    background: var(--navy);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 5px;
+}
+
+.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); }
+.mem-card.matched { visibility: hidden; }
 
 .modal { 
     display: none; 
@@ -127,16 +148,7 @@ body {
     align-items: center; 
     justify-content: center; 
 }
-
-.modal-content { 
-    background: white; 
-    border-radius: 24px; 
-    width: 85%; 
-    max-width: 320px; 
-    overflow: hidden; 
-    padding-bottom: 10px;
-}
-
+.modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; padding-bottom: 10px;}
 .modal-stripe { height: 10px; width: 100%; }
 .modal-body { padding: 20px; font-size: 20px; font-weight: bold; }
 
