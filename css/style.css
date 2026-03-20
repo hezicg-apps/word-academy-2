@@ -1,4 +1,4 @@
-/* css/style.css - גרסה סופית ומעודכנת */
+/* css/style.css - גרסה סופית עם Segoe UI */
 
 :root { 
     --bg: #f8fafc; 
@@ -11,8 +11,7 @@
 }
 
 body { 
-    /* שימוש בגופן אחיד, נעים וקריא בכל האתר */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* שפה אחידה לכל האתר */
     background: var(--bg); 
     color: var(--navy); 
     margin: 0; 
@@ -33,8 +32,6 @@ body {
 }
 
 .header-left { display: flex; align-items: center; gap: 8px; direction: ltr; }
-
-/* תיקון: הגדרת גובה קבוע ללוגו SVG כדי שלא יהיה ענקי */
 .logo-img { height: 35px; width: auto; }
 
 .container { 
@@ -61,10 +58,9 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* תיקון: תיבת הטקסט ממורכזת ונוחה */
 #wordInput { 
     width: 100%; 
-    max-width: 450px; /* הגבלת רוחב למרכוז טוב יותר */
+    max-width: 450px; 
     height: 250px; 
     direction: ltr; 
     text-align: left; 
@@ -74,7 +70,7 @@ body {
     border-radius: 15px; 
     border: 2px solid #cbd5e1; 
     box-sizing: border-box; 
-    margin: 0 auto; /* מרכוז */
+    margin: 0 auto; 
     display: block;
 }
 
@@ -93,7 +89,6 @@ body {
     transition: transform 0.1s;
 }
 .btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .opt-btn { 
     background: #f1f5f9; 
@@ -110,7 +105,6 @@ body {
 .correct { background: var(--green) !important; color: white; border-color: var(--green); }
 .wrong { background: var(--red) !important; color: white; border-color: var(--red); }
 
-/* עיצוב לוח 4 בשורה - גודל מושלם למחשב ולנייד */
 .board { 
     background: var(--blue); 
     padding: 8px; 
@@ -119,14 +113,13 @@ body {
     grid-template-columns: repeat(7, 1fr); 
     gap: 5px; 
     width: 100%; 
-    max-width: 450px; /* מותאם לצילום המסך */
+    max-width: 450px; 
     margin: 0 auto; 
 }
 .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; position: relative; }
-.cell.red { background: var(--red); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
-.cell.yellow { background: var(--accent); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+.cell.red { background: var(--red); }
+.cell.yellow { background: var(--accent); }
 
-/* סמל של עיגול לצד שם המשחק */
 .color-dot {
     display: inline-block;
     width: 12px;
@@ -135,16 +128,8 @@ body {
     margin-right: 5px;
 }
 
-/* עיצוב חצי הפלה (Connect 4) */
-.drop-arrow { 
-    cursor: pointer; 
-    font-size: 24px; 
-    color: var(--blue); 
-    transition: transform 0.2s;
-}
-.drop-arrow:hover { transform: translateY(3px); color: var(--navy); }
+.drop-arrow { cursor: pointer; font-size: 24px; color: var(--blue); }
 
-/* משחק הזיכרון */
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -163,15 +148,12 @@ body {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.3s, background 0.3s;
     padding: 5px;
     box-sizing: border-box;
 }
+.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); }
+.mem-card.matched { visibility: hidden; }
 
-.mem-card.flipped { background: white; color: var(--navy); border: 2px solid var(--navy); transform: rotateY(180s); }
-.mem-card.matched { background: var(--green); border-color: var(--green); color: white; visibility: hidden; }
-
-/* מודאל */
 .modal { 
     display: none; 
     position: fixed; 
@@ -186,11 +168,4 @@ body {
 .modal-body { padding: 20px; font-size: 20px; font-weight: bold; line-height: 1.4; }
 
 .hidden { display: none !important; }
-
-/* מונה צעדים */
-#memory-moves {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--navy);
-    margin-bottom: 10px;
-}
+#memory-moves { font-size: 16px; font-weight: bold; color: var(--navy); margin-bottom: 10px; }
