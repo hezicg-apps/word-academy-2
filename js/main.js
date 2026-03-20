@@ -24,7 +24,6 @@ window.onload = () => {
 
 /**
  * ניהול מעבר בין מסכים
- * @param {string} id - ה-ID של הדיב שרוצים להציג
  */
 function showScreen(id) {
     document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -33,7 +32,7 @@ function showScreen(id) {
 }
 
 /**
- * אתחול האפליקציה ועיבוד הטקסט מה-textarea
+ * אתחול האפליקציה ועיבוד הטקסט
  */
 function initApp() {
     const input = document.getElementById('wordInput').value.trim();
@@ -143,12 +142,13 @@ function endQuiz() {
 }
 
 /**
- * פונקציות שיתוף מעודכנות
+ * פונקציות שיתוף - מעודכן לפורטל היחידות
  */
 function shareAchievement() {
     const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
-    const url = window.location.href.split('?')[0]; 
-    const fullMessage = text + "\n\nבואו לתרגל גם ב-Word Academy:\n" + url;
+    const portalUrl = "https://word-academy-8b91d.web.app/"; 
+    
+    const fullMessage = text + "\n\nבואו לתרגל את כל היחידות ב-Word Academy:\n" + portalUrl;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(fullMessage)}`);
 }
@@ -156,13 +156,14 @@ function shareAchievement() {
 function shareList() {
     const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
     const link = `${window.location.href.split('?')[0]}?list=${data}`;
+    
     const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n\n${link}`;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
 }
 
 /**
- * הקראה קולית (Text to Speech)
+ * הקראה קולית
  */
 function speak(elementId) {
     const text = document.getElementById(elementId).innerText;
@@ -172,7 +173,7 @@ function speak(elementId) {
 }
 
 /**
- * ניהול מודאל הודעות
+ * ניהול מודאל
  */
 function openMsg(html, color) {
     document.getElementById('msg-body').innerHTML = html;
