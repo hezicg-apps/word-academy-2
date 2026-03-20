@@ -9,108 +9,131 @@
         :root { --bg: #f8fafc; --navy: #1e3a8a; --blue: #2563eb; --green: #22c55e; --red: #ef4444; --accent: #facc15; }
         body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Header & Main UI */
-        .header { background: white; height: 65px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .logo-img { height: 40px; width: auto; }
-        .container { flex: 1; max-width: 500px; margin: 0 auto; padding: 15px; width: 100%; box-sizing: border-box; overflow-y: auto; }
-        .card-box { background: white; padding: 25px; border-radius: 24px; border: 2px solid #e2e8f0; margin-bottom: 15px; }
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: inherit; }
+        .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header-left { display: flex; align-items: center; gap: 8px; direction: ltr; }
+        .logo-img { height: 35px; }
+
+        .container { flex: 1; max-width: 500px; margin: 0 auto; padding: 15px; width: 100%; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+        .card-box { background: white; padding: 20px; border-radius: 24px; border: 2px solid #e2e8f0; margin-bottom: 15px; width: 100%; box-sizing: border-box; position: relative; }
+
+        #wordInput { width: 100%; height: 150px; direction: ltr; text-align: left; font-family: 'Comic Neue', cursive; font-size: 18px; padding: 15px; border-radius: 15px; border: 2px solid #cbd5e1; box-sizing: border-box; display: block; margin: 0 auto; }
+
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: 'Comic Neue', cursive; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        /* Connect 4 Board */
-        .c4-board { background: #2563eb; padding: 10px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; max-width: 320px; margin: 10px auto; border: 4px solid #1e40af; }
-        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff44; position: relative; }
-        .token { position: absolute; inset: 10%; border-radius: 50%; }
-        .token.red { background: var(--red); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2); }
-        .token.yellow { background: var(--accent); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2); }
-        .token.animating { animation: pulse 0.3s infinite; }
-        @keyframes pulse { 50% { opacity: 0.6; } }
+        .opt-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 15px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-bottom: 8px; width: 100%; font-family: 'Comic Neue', cursive; transition: 0.2s; }
+        .correct { background: var(--green) !important; color: white; }
+        .wrong { background: #ef4444 !important; color: white; }
 
-        /* Modals */
-        #game-overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; }
-        .modal-shade { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
-        .modal-content { background: white; border-radius: 20px; width: 100%; max-width: 350px; padding: 25px; position: relative; overflow: hidden; }
-        .modal-stripe { height: 12px; position: absolute; top: 0; left: 0; right: 0; }
+        /* 4 בשורה */
+        .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 300px; margin: 0 auto; }
+        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; transition: background 0.1s; position: relative; }
+        .cell.red { background: #ef4444; }
+        .cell.yellow { background: var(--accent); }
+        
+        /* משחק הזיכרון - אנימציית סיבוב אמיתית */
+        .mem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; perspective: 1000px; }
+        .mem-card { aspect-ratio: 1; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+        .mem-card.flipped { transform: rotateY(180deg); }
+        .mem-front, .mem-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; padding: 4px; }
+        .mem-back { background: var(--navy); color: white; }
+        .mem-front { background: white; color: var(--navy); border: 2px solid var(--navy); transform: rotateY(180deg); }
+        .mem-card.matched .mem-front { background: var(--green); color: white; border-color: var(--green); }
 
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; text-align: center; }
+        .modal-stripe { height: 10px; width: 100%; }
+        .modal-body { padding: 20px; font-size: 20px; font-weight: bold; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
-<body onload="checkUrlParams()">
+<body>
 
 <div class="header">
-    <div id="user-display" style="font-size: 14px;">שלום, אורח/ת!</div>
-    <div class="logo-box"><img src="logo.svg" alt="Word Academy" class="logo-img"></div>
+    <div class="user-greeting">שלום, אורח/ת!</div>
+    <div class="header-left">
+        <img src="logo.svg" alt="WA" class="logo-img">
+        <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
+    </div>
 </div>
 
-<div class="container" id="main-ui">
+<div class="container">
     <div id="screen-input" class="card-box">
         <h2 style="margin-top:0;">מה לומדים היום? ✨</h2>
-        <textarea id="wordInput" style="width:100%; height:120px; direction:ltr;" placeholder="Unit Name&#10;Apple - תפוח"></textarea>
+        <textarea id="wordInput" placeholder="Unit Name&#10;Apple - תפוח&#10;Sun - שמש..."></textarea>
         <button class="btn" onclick="initApp()">יוצאים לדרך</button>
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
         <div id="quiz-progress" style="font-size:14px; margin-bottom:10px; color:#64748b;"></div>
         <div style="font-size:32px; font-weight:bold; margin-bottom:20px;">
-            <span style="cursor:pointer" onclick="speakText(document.getElementById('quiz-eng').innerText)">🔊</span>
+            <span style="cursor:pointer" onclick="speak('quiz-eng')">🔊</span>
             <span id="quiz-eng"></span>
         </div>
         <div id="quiz-options"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
-        <h2>הציון שלך: <span id="final-score">0%</span></h2>
-        <div id="game-lock">
-            <button id="btn-c4" class="btn" onclick="startC4Game()">🔴 4 בשורה (Connect 4)</button>
-            <button class="btn" style="background:var(--accent); color:black;" onclick="startMemoryGame()">🧠 משחק הזיכרון</button>
+        <h2 style="margin:0;">הציון שלך:</h2>
+        <div id="final-score" style="font-size:64px; font-weight:bold; color:var(--blue); margin:10px 0;">0%</div>
+        
+        <div id="game-lock" style="margin-top:20px; padding:15px; border:2px dashed #cbd5e1; border-radius:15px;">
+            <div id="lock-msg" style="color:#ef4444; margin-bottom:10px;">🔓 המשחקים ייפתחו ב-70% הצלחה</div>
+            <button id="btn-c4" class="btn" onclick="startC4()">4 בשורה 🔴</button>
+            <button id="btn-mem" class="btn" style="background:var(--accent); color:black;" onclick="startMem()">משחק הזיכרון 🧠</button>
         </div>
+        <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="restartQuiz()">🔄 תרגול חוזר</button>
+    </div>
+
+    <div id="screen-c4" class="card-box hidden">
+        <div style="text-align:left;"><span onclick="showScreen('screen-summary')" style="cursor:pointer;">✖ סגור</span></div>
+        <button id="c4-turn-btn" class="btn" onclick="c4Ask()"></button>
+        <div class="board" id="c4-board" style="margin-top:20px;"></div>
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:300px; margin:10px auto; color:var(--blue);">
+            ${[0,1,2,3,4,5,6].map(i => `<span onclick="dropToken(${i})" style="cursor:pointer; font-size:24px;">▼</span>`).join('')}
+        </div>
+    </div>
+
+    <div id="screen-mem" class="card-box hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <span id="mem-steps" style="font-weight:bold;">צעדים: 0</span>
+            <span onclick="showScreen('screen-summary')" style="cursor:pointer;">✖ סגור</span>
+        </div>
+        <div id="mem-grid" class="mem-grid"></div>
     </div>
 </div>
 
-<div id="game-overlay">
-    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
-        <div id="mem-steps" style="font-weight:bold;"></div>
-        <button onclick="closeGame()" style="background:none; border:none; font-size:24px;">✖</button>
-    </div>
-    <div id="game-content" style="flex:1; position:relative;"></div>
-    
-    <div id="game-modal" class="modal-shade hidden">
-        <div class="modal-content">
-            <div id="modal-stripe" class="modal-stripe"></div>
-            <div id="modal-body"></div>
-        </div>
+<div id="msg-modal" class="modal">
+    <div class="modal-content">
+        <div id="msg-stripe" class="modal-stripe"></div>
+        <div id="msg-body" class="modal-body"></div>
     </div>
 </div>
 
 <script>
-    let state = { words: [], qIdx: 0, qCorrect: 0 };
-    let c4State = { board: [], turn: 'red', canDrop: false };
-    let memState = { flipped: [], matches: 0, steps: 0 };
-
-    function checkUrlParams() {
-        const params = new URLSearchParams(window.location.search);
-        const listData = params.get('list');
-        if (listData) {
-            try {
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(listData))));
-                document.getElementById('wordInput').value = decoded.u + '\n' + decoded.w.map(x => `${x.eng} - ${x.heb}`).join('\n');
-                initApp();
-            } catch(e) {}
-        }
-    }
-
-    function initApp() {
-        const raw = document.getElementById('wordInput').value.trim().split('\n');
-        if(raw.length < 2) return alert("נא להזין שם יחידה ומילים");
-        state.words = raw.slice(1).filter(l => l.includes('-')).map(l => {
-            const p = l.split('-'); return { eng: p[0].trim(), heb: p[1].trim() };
-        });
-        state.qIdx = 0; state.qCorrect = 0;
-        showScreen('screen-quiz'); renderQuiz();
-    }
+    let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, c4Turn: 'red', board: [], canDrop: false, memFlipped: [], memMatches: 0, memSteps: 0 };
 
     function showScreen(id) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+    }
+
+    function initApp() {
+        const raw = document.getElementById('wordInput').value.trim().split('\n');
+        if(raw.length < 2) return;
+        state.unit = raw[0];
+        state.words = raw.slice(1).filter(l => l.includes('-')).map(l => {
+            const parts = l.split('-');
+            return { eng: parts[0].trim(), heb: parts[1].trim() };
+        });
+        restartQuiz();
+    }
+
+    function restartQuiz() {
+        state.qIdx = 0; state.qCorrect = 0;
+        showScreen('screen-quiz');
+        renderQuiz();
     }
 
     function renderQuiz() {
@@ -122,8 +145,13 @@
         const cont = document.getElementById('quiz-options');
         cont.innerHTML = '';
         opts.forEach(o => {
-            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerText = o;
-            b.onclick = () => { if(o === q.heb) state.qCorrect++; state.qIdx++; renderQuiz(); };
+            const b = document.createElement('button');
+            b.className = 'opt-btn'; b.innerText = o;
+            b.onclick = () => {
+                if(o === q.heb) { b.classList.add('correct'); state.qCorrect++; }
+                else { b.classList.add('wrong'); }
+                setTimeout(() => { state.qIdx++; renderQuiz(); }, 600);
+            };
             cont.appendChild(b);
         });
     }
@@ -131,132 +159,136 @@
     function endQuiz() {
         const score = Math.round((state.qCorrect / state.words.length) * 100);
         document.getElementById('final-score').innerText = score + '%';
+        const open = score >= 70;
+        document.getElementById('btn-c4').disabled = !open;
+        document.getElementById('btn-mem').disabled = !open;
+        document.getElementById('lock-msg').innerText = open ? "המשחקים פתוחים 🎉" : "🔓 המשחקים ייפתחו ב-70% הצלחה";
         showScreen('screen-summary');
     }
 
-    // --- Connect 4 ---
-    function startC4Game() {
-        c4State = { board: Array(6).fill(null).map(() => Array(7).fill(null)), turn: 'red', canDrop: false };
-        document.getElementById('game-content').innerHTML = `
-            <button id="c4-btn" class="btn" style="background:var(--red); width:90%; margin:10px auto; display:block;" onclick="showC4Q()">תור אדום: לחץ לשאלה</button>
-            <div class="c4-board" id="c4-board"></div>
-            <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:5px; max-width:320px; margin:0 auto;">
-                ${[0,1,2,3,4,5,6].map(i => `<button onclick="dropToken(${i})" style="padding:10px; border-radius:8px; border:1px solid #ccc;">👇</button>`).join('')}
-            </div>`;
-        renderBoard();
-        document.getElementById('game-overlay').style.display = 'flex';
+    // --- 4 בשורה ---
+    function startC4() {
+        state.board = Array(6).fill(null).map(() => Array(7).fill(null));
+        state.c4Turn = 'red'; state.canDrop = false;
+        showScreen('screen-c4');
+        updateC4Button("שאלה");
+        drawBoard();
     }
 
-    function renderBoard() {
+    function drawBoard() {
         const b = document.getElementById('c4-board'); b.innerHTML = '';
-        for (let r=0; r<6; r++) for (let c=0; c<7; c++) {
-            const cell = document.createElement('div'); cell.className = 'cell';
-            if (c4State.board[r][c]) {
-                const t = document.createElement('div'); t.className = `token ${c4State.board[r][c]}`;
-                cell.appendChild(t);
-            }
-            b.appendChild(cell);
+        for(let r=0; r<6; r++) for(let c=0; c<7; c++) {
+            const d = document.createElement('div');
+            d.className = 'cell ' + (state.board[r][c] || '');
+            d.id = `c-${r}-${c}`;
+            b.appendChild(d);
         }
     }
 
-    function showC4Q() {
+    function updateC4Button(mode) {
+        const btn = document.getElementById('c4-turn-btn');
+        const isRed = state.c4Turn === 'red';
+        btn.style.background = isRed ? "#ef4444" : "var(--accent)";
+        btn.innerText = mode === "שאלה" ? `תור ${isRed?'אדום':'צהוב'}: לחץ לשאלה` : `נכון! בחר טור 👇`;
+    }
+
+    function c4Ask() {
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const opts = [q.heb, ...state.words.filter(x => x.heb !== q.heb).map(x => x.heb)].slice(0,3).sort(() => Math.random()-0.5);
-        openModal(`<h3>אתגר המילים</h3><p>איך אומרים <b>${q.eng}</b>?</p>` + 
-            opts.map(o => `<button class="btn" style="background:#f1f5f9; color:black; margin-bottom:5px;" onclick="checkC4A('${o}','${q.heb}')">${o}</button>`).join(''), 
-            c4State.turn === 'red' ? 'var(--red)' : 'var(--accent)');
+        let html = `<div style="font-size:24px; margin-bottom:15px;">${q.eng}</div>`;
+        opts.forEach(o => html += `<button class="opt-btn" onclick="checkC4Ans(this,'${o}','${q.heb}')">${o}</button>`);
+        openMsg(html, state.c4Turn === 'red' ? '#ef4444' : 'var(--accent)');
     }
 
-    function checkC4A(s, c) {
-        closeModal();
-        if (s === c) {
-            c4State.canDrop = true;
-            const b = document.getElementById('c4-btn'); b.innerText = "נכון! בחר טור 👇"; b.style.background = 'var(--green)';
-        } else {
-            c4State.turn = c4State.turn === 'red' ? 'yellow' : 'red'; updateC4Btn();
-        }
+    function checkC4Ans(btn, sel, cor) {
+        if(sel === cor) { state.canDrop = true; closeMsg(); updateC4Button("טור"); }
+        else { state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red'; closeMsg(); updateC4Button("שאלה"); }
     }
 
     async function dropToken(col) {
-        if (!c4State.canDrop) return;
+        if(!state.canDrop) return;
+        state.canDrop = false;
         let row = -1;
-        for (let r=5; r>=0; r--) if (!c4State.board[r][col]) { row = r; break; }
-        if (row === -1) return;
+        for(let r=5; r>=0; r--) if(!state.board[r][col]) { row = r; break; }
+        if(row === -1) { state.canDrop = true; return; }
 
-        c4State.canDrop = false;
-        for (let r=0; r<=row; r++) {
-            c4State.board[r][col] = c4State.turn; renderBoard();
-            if (r < row) {
-                const cells = document.querySelectorAll('.cell');
-                cells[r*7+col].querySelector('.token').classList.add('animating');
-                await new Promise(res => setTimeout(res, 100));
-                c4State.board[r][col] = null;
-            }
+        for(let r=0; r<=row; r++) {
+            const c = document.getElementById(`c-${r}-${col}`);
+            c.classList.add(state.c4Turn);
+            await new Promise(res => setTimeout(res, 60));
+            if(r < row) c.classList.remove(state.c4Turn);
         }
-        
-        if (checkWin(row, col)) {
-            openModal(`<h2>ניצחון ל${c4State.turn==='red'?'אדום':'צהוב'}! 🏆</h2>`, c4State.turn==='red'?'var(--red)':'var(--accent)');
-        } else {
-            c4State.turn = c4State.turn === 'red' ? 'yellow' : 'red'; updateC4Btn();
-        }
-    }
-
-    function updateC4Btn() {
-        const b = document.getElementById('c4-btn');
-        b.style.background = c4State.turn === 'red' ? 'var(--red)' : 'var(--accent)';
-        b.innerText = `תור ${c4State.turn==='red'?'אדום':'צהוב'}: לחץ לשאלה`;
+        state.board[row][col] = state.c4Turn;
+        if(checkWin(row, col)) openMsg(`<h2>ניצחון!</h2>`, state.c4Turn==='red'?'#ef4444':'var(--accent)');
+        else { state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red'; updateC4Button("שאלה"); }
     }
 
     function checkWin(r, c) {
-        const color = c4State.board[r][c];
+        const color = state.board[r][c];
         const dirs = [[0,1], [1,0], [1,1], [1,-1]];
-        for (let [dr, dc] of dirs) {
+        return dirs.some(([dr, dc]) => {
             let count = 1;
-            for (let i of [1, -1]) {
-                let nr = r + dr*i, nc = c + dc*i;
-                while(nr>=0 && nr<6 && nc>=0 && nc<7 && c4State.board[nr][nc] === color) { count++; nr += dr*i; nc += dc*i; }
-            }
-            if (count >= 4) return true;
-        }
-        return false;
+            [1, -1].forEach(dir => {
+                for(let i=1; i<4; i++) {
+                    const nr = r + dr*i*dir, nc = c + dc*i*dir;
+                    if(nr>=0 && nr<6 && nc>=0 && nc<7 && state.board[nr][nc] === color) count++; else break;
+                }
+            });
+            return count >= 4;
+        });
     }
 
-    // --- Memory (Simplified) ---
-    function startMemoryGame() {
-        memState = { flipped: [], matches: 0, steps: 0 };
+    // --- משחק הזיכרון ---
+    function startMem() {
+        state.memFlipped = []; state.memMatches = 0; state.memSteps = 0;
         document.getElementById('mem-steps').innerText = "צעדים: 0";
-        const content = document.getElementById('game-content');
-        content.innerHTML = `<div style="display:grid; grid-template-columns: repeat(4,1fr); gap:10px; padding:10px;" id="mem-grid"></div>`;
+        showScreen('screen-mem');
+        const grid = document.getElementById('mem-grid');
+        grid.innerHTML = '';
+        
         let cards = [];
-        state.words.slice(0, 6).forEach((w, i) => cards.push({ t: w.eng, id: i }, { t: w.heb, id: i }));
-        cards.sort(() => Math.random()-0.5).forEach(d => {
-            const c = document.createElement('div');
-            c.style.cssText = "height:70px; background:var(--navy); border-radius:12px; display:flex; align-items:center; justify-content:center; color:transparent; font-size:12px; cursor:pointer;";
-            c.onclick = () => {
-                if (c.style.background === 'white' || memState.flipped.length === 2) return;
-                c.innerText = d.t; c.style.background = 'white'; c.style.color = 'var(--navy)'; c.style.border = '2px solid var(--navy)';
-                memState.flipped.push({ c, d });
-                if (memState.flipped.length === 2) {
-                    memState.steps++; document.getElementById('mem-steps').innerText = `צעדים: ${memState.steps}`;
-                    if (memState.flipped[0].d.id === memState.flipped[1].d.id) {
-                        speakText(memState.flipped[0].d.t);
-                        memState.flipped.forEach(x => { x.c.style.background = 'var(--green)'; x.c.style.color = 'white'; x.c.style.border = 'none'; });
-                        memState.matches++; memState.flipped = [];
-                        if (memState.matches === 6) openModal(`<h2>כל הכבוד!</h2><p>סיימת ב-${memState.steps} צעדים.</p>`, 'var(--green)');
-                    } else {
-                        setTimeout(() => { memState.flipped.forEach(x => { x.c.innerText = ''; x.c.style.background = 'var(--navy)'; x.c.style.color = 'transparent'; x.c.style.border = 'none'; }); memState.flipped = []; }, 1000);
+        state.words.slice(0, 8).forEach((w, i) => {
+            cards.push({ txt: w.eng, id: i }, { txt: w.heb, id: i });
+        });
+        cards.sort(() => Math.random() - 0.5);
+
+        cards.forEach(data => {
+            const card = document.createElement('div');
+            card.className = 'mem-card';
+            card.innerHTML = `<div class="mem-back">?</div><div class="mem-front">${data.txt}</div>`;
+            card.onclick = () => {
+                if(state.memFlipped.length < 2 && !card.classList.contains('flipped')) {
+                    card.classList.add('flipped');
+                    state.memFlipped.push({ card, id: data.id, txt: data.txt });
+                    if(state.memFlipped.length === 2) {
+                        state.memSteps++;
+                        document.getElementById('mem-steps').innerText = `צעדים: ${state.memSteps}`;
+                        if(state.memFlipped[0].id === state.memFlipped[1].id) {
+                            speak(state.memFlipped[0].txt);
+                            state.memFlipped.forEach(f => f.card.classList.add('matched'));
+                            state.memMatches++;
+                            state.memFlipped = [];
+                            if(state.memMatches === cards.length/2) openMsg(`<h2>כל הכבוד!</h2><p>סיימת ב-${state.memSteps} צעדים</p>`, 'var(--green)');
+                        } else {
+                            setTimeout(() => {
+                                state.memFlipped.forEach(f => f.card.classList.remove('flipped'));
+                                state.memFlipped = [];
+                            }, 1000);
+                        }
                     }
                 }
             };
-            document.getElementById('mem-grid').appendChild(c);
+            grid.appendChild(card);
         });
-        document.getElementById('game-overlay').style.display = 'flex';
     }
 
-    function openModal(h, c) { const m = document.getElementById('game-modal'); document.getElementById('modal-stripe').style.background = c; document.getElementById('modal-body').innerHTML = h; m.classList.remove('hidden'); }
-    function closeModal() { document.getElementById('game-modal').classList.add('hidden'); }
-    function closeGame() { document.getElementById('game-overlay').style.display = 'none'; }
-    function speakText(t) { const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+    function openMsg(html, color) {
+        document.getElementById('msg-body').innerHTML = html;
+        document.getElementById('msg-stripe').style.background = color;
+        document.getElementById('msg-modal').style.display = 'flex';
+    }
+    function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
+    function speak(txt) { const msg = new SpeechSynthesisUtterance(txt); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
 </script>
 </body>
 </html>
