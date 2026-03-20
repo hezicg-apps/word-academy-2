@@ -1,3 +1,5 @@
+// js/main.js - גרסה מעודכנת
+
 let state = {
     words: [],
     unit: '',
@@ -24,13 +26,16 @@ function showScreen(id) {
 function initApp() {
     const input = document.getElementById('wordInput').value.trim();
     const lines = input.split('\n');
-    if (lines.length < 2) return alert("הזן שם יחידה ומילים");
+    if (lines.length < 2) return alert("אנא הזן שם יחידה ולפחות מילה אחת (פורמט: מילה - תרגום)");
     
     state.unit = lines[0];
     state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
         const parts = l.split('-');
         return { eng: parts[0].trim(), heb: parts[1].trim() };
     });
+    
+    if (state.words.length === 0) return alert("לא נמצאו מילים תקינות. וודא שכתבת בפורמט: English - עברית");
+    
     restartQuiz();
 }
 
@@ -76,10 +81,9 @@ function endQuiz() {
     showScreen('screen-summary');
 }
 
-function speak(text) {
-    const el = document.getElementById(text);
-    const val = el ? el.innerText : text;
-    const msg = new SpeechSynthesisUtterance(val);
+function speak(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    const msg = new SpeechSynthesisUtterance(text);
     msg.lang = 'en-US';
     window.speechSynthesis.speak(msg);
 }
@@ -92,11 +96,21 @@ function openMsg(html, color) {
 
 function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
 
+/**
+ * פונקציות שיתוף
+ */
 function shareAchievement() {
-    window.open(`https://wa.me/?text=${encodeURIComponent('הצלחתי ב"' + state.unit + '" בציון ' + state.score + '%!')}`);
+    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%! 🎉`;
+    const url = "https://word-academy-8b91d.web.app/"; // כתובת הפורטל שלך
+    
+    // תיקון: הורדת הכתובת שורה בתוך הודעת השיתוף
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
 }
 
 function shareList() {
     const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
-    window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href.split('?')[0] + '?list=' + data)}`);
+    const link = `${window.location.href.split('?')[0]}?list=${data}`;
+    
+    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n${link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
 }
