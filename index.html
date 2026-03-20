@@ -10,94 +10,105 @@
         body { font-family: 'Comic Neue', cursive; background: var(--bg); color: var(--navy); margin: 0; text-align: center; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         .header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .header-left { display: flex; align-items: center; gap: 8px; direction: ltr; }
+        .logo-box { display: flex; align-items: center; gap: 8px; direction: ltr; }
         .logo-img { height: 35px; }
 
         .container { flex: 1; max-width: 500px; margin: 0 auto; padding: 15px; width: 100%; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .card-box { background: white; padding: 20px; border-radius: 24px; border: 2px solid #e2e8f0; margin-bottom: 15px; width: 100%; box-sizing: border-box; position: relative; }
 
-        #wordInput { width: 100%; height: 150px; direction: ltr; text-align: left; font-family: 'Comic Neue', cursive; font-size: 18px; padding: 15px; border-radius: 15px; border: 2px solid #cbd5e1; box-sizing: border-box; display: block; margin: 0 auto; }
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: inherit; }
+        .opt-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-bottom: 8px; width: 100%; font-family: inherit; }
 
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-family: 'Comic Neue', cursive; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .opt-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 15px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-bottom: 8px; width: 100%; font-family: 'Comic Neue', cursive; transition: 0.2s; }
-        .correct { background: var(--green) !important; color: white; }
-        .wrong { background: #ef4444 !important; color: white; }
-
-        /* 4 בשורה */
-        .board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 300px; margin: 0 auto; }
-        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; transition: background 0.1s; position: relative; }
-        .cell.red { background: #ef4444; }
+        /* 4 בשורה - עיצוב לוח */
+        .c4-board { background: var(--blue); padding: 8px; border-radius: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 300px; margin: 0 auto; }
+        .cell { aspect-ratio: 1; border-radius: 50%; background: #ffffff33; position: relative; }
+        .cell.red { background: var(--red); }
         .cell.yellow { background: var(--accent); }
-        
-        /* משחק הזיכרון - אנימציית סיבוב אמיתית */
+        .drop-arrow { cursor: pointer; font-size: 24px; color: var(--blue); transition: 0.2s; }
+        .drop-arrow:hover { transform: translateY(3px); }
+
+        /* זיכרון - אנימציה */
         .mem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; perspective: 1000px; }
         .mem-card { aspect-ratio: 1; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
         .mem-card.flipped { transform: rotateY(180deg); }
-        .mem-front, .mem-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; padding: 4px; }
+        .mem-front, .mem-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; padding: 2px; }
         .mem-back { background: var(--navy); color: white; }
         .mem-front { background: white; color: var(--navy); border: 2px solid var(--navy); transform: rotateY(180deg); }
-        .mem-card.matched .mem-front { background: var(--green); color: white; border-color: var(--green); }
+        .mem-card.matched .mem-front { background: var(--green); color: white; border: none; }
 
-        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; text-align: center; }
-        .modal-stripe { height: 10px; width: 100%; }
-        .modal-body { padding: 20px; font-size: 20px; font-weight: bold; }
-        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 5000; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 24px; width: 85%; max-width: 320px; overflow: hidden; position: relative; }
+        .modal-body { padding: 25px; font-size: 20px; font-weight: bold; }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #64748b; }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="user-greeting">שלום, אורח/ת!</div>
-    <div class="header-left">
+    <div id="user-display">שלום, אורח/ת!</div>
+    <div class="logo-box">
         <img src="logo.svg" alt="WA" class="logo-img">
-        <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
+        <span style="font-weight:bold; color:var(--blue)">Word Academy</span>
     </div>
 </div>
 
 <div class="container">
     <div id="screen-input" class="card-box">
         <h2 style="margin-top:0;">מה לומדים היום? ✨</h2>
-        <textarea id="wordInput" placeholder="Unit Name&#10;Apple - תפוח&#10;Sun - שמש..."></textarea>
+        <textarea id="wordInput" style="width:100%; height:120px; direction:ltr; padding:10px; border-radius:12px; border:2px solid #cbd5e1;" placeholder="Unit Name&#10;Apple - תפוח"></textarea>
         <button class="btn" onclick="initApp()">יוצאים לדרך</button>
     </div>
 
     <div id="screen-quiz" class="card-box hidden">
         <div id="quiz-progress" style="font-size:14px; margin-bottom:10px; color:#64748b;"></div>
         <div style="font-size:32px; font-weight:bold; margin-bottom:20px;">
-            <span style="cursor:pointer" onclick="speak('quiz-eng')">🔊</span>
+            <span style="cursor:pointer" onclick="speak(document.getElementById('quiz-eng').innerText)">🔊</span>
             <span id="quiz-eng"></span>
         </div>
         <div id="quiz-options"></div>
     </div>
 
     <div id="screen-summary" class="card-box hidden">
+        <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:15px;">
+             <button onclick="shareList()" style="background:none; border:none; color:var(--blue); font-weight:bold; cursor:pointer;">🔗 שתף רשימה</button>
+             <button onclick="location.reload()" style="background:none; border:none; font-size:20px; cursor:pointer;">🏠</button>
+        </div>
         <h2 style="margin:0;">הציון שלך:</h2>
-        <div id="final-score" style="font-size:64px; font-weight:bold; color:var(--blue); margin:10px 0;">0%</div>
+        <div id="final-score" style="font-size:64px; font-weight:bold; color:var(--blue);">0%</div>
+        <button class="btn" style="background:var(--green); margin-bottom:20px;" onclick="shareAchievement()">שתף הישג בוואטסאפ 📱</button>
         
-        <div id="game-lock" style="margin-top:20px; padding:15px; border:2px dashed #cbd5e1; border-radius:15px;">
-            <div id="lock-msg" style="color:#ef4444; margin-bottom:10px;">🔓 המשחקים ייפתחו ב-70% הצלחה</div>
+        <div id="game-lock" style="padding:15px; border:2px dashed #cbd5e1; border-radius:15px;">
+            <div id="lock-msg" style="margin-bottom:10px; font-weight:bold;"></div>
             <button id="btn-c4" class="btn" onclick="startC4()">4 בשורה 🔴</button>
             <button id="btn-mem" class="btn" style="background:var(--accent); color:black;" onclick="startMem()">משחק הזיכרון 🧠</button>
         </div>
-        <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="restartQuiz()">🔄 תרגול חוזר</button>
     </div>
 
     <div id="screen-c4" class="card-box hidden">
-        <div style="text-align:left;"><span onclick="showScreen('screen-summary')" style="cursor:pointer;">✖ סגור</span></div>
-        <button id="c4-turn-btn" class="btn" onclick="c4Ask()"></button>
-        <div class="board" id="c4-board" style="margin-top:20px;"></div>
-        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:300px; margin:10px auto; color:var(--blue);">
-            ${[0,1,2,3,4,5,6].map(i => `<span onclick="dropToken(${i})" style="cursor:pointer; font-size:24px;">▼</span>`).join('')}
+        <div style="text-align:left; cursor:pointer; font-weight:bold;" onclick="showScreen('screen-summary')">✖ סגור</div>
+        <button id="c4-btn" class="btn" onclick="c4Ask()"></button>
+        
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:300px; margin:15px auto 0; font-weight:bold;">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
         </div>
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); width:300px; margin:0 auto 10px;">
+            <span class="drop-arrow" onclick="dropToken(0)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(1)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(2)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(3)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(4)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(5)">▼</span>
+            <span class="drop-arrow" onclick="dropToken(6)">▼</span>
+        </div>
+        <div class="c4-board" id="c4-board"></div>
     </div>
 
     <div id="screen-mem" class="card-box hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <span id="mem-steps" style="font-weight:bold;">צעדים: 0</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">
+            <span id="mem-steps">צעדים: 0</span>
             <span onclick="showScreen('screen-summary')" style="cursor:pointer;">✖ סגור</span>
         </div>
         <div id="mem-grid" class="mem-grid"></div>
@@ -106,8 +117,10 @@
 
 <div id="msg-modal" class="modal">
     <div class="modal-content">
-        <div id="msg-stripe" class="modal-stripe"></div>
+        <span class="close-modal" onclick="closeMsg()">×</span>
+        <div id="msg-stripe" style="height:10px; width:100%;"></div>
         <div id="msg-body" class="modal-body"></div>
+        <button id="modal-close-btn" class="btn hidden" style="width:80%; margin: 0 auto 20px; display:block;" onclick="closeMsg()">סגור</button>
     </div>
 </div>
 
@@ -124,16 +137,10 @@
         if(raw.length < 2) return;
         state.unit = raw[0];
         state.words = raw.slice(1).filter(l => l.includes('-')).map(l => {
-            const parts = l.split('-');
-            return { eng: parts[0].trim(), heb: parts[1].trim() };
+            const p = l.split('-'); return { eng: p[0].trim(), heb: p[1].trim() };
         });
-        restartQuiz();
-    }
-
-    function restartQuiz() {
         state.qIdx = 0; state.qCorrect = 0;
-        showScreen('screen-quiz');
-        renderQuiz();
+        showScreen('screen-quiz'); renderQuiz();
     }
 
     function renderQuiz() {
@@ -145,11 +152,10 @@
         const cont = document.getElementById('quiz-options');
         cont.innerHTML = '';
         opts.forEach(o => {
-            const b = document.createElement('button');
-            b.className = 'opt-btn'; b.innerText = o;
+            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerText = o;
             b.onclick = () => {
-                if(o === q.heb) { b.classList.add('correct'); state.qCorrect++; }
-                else { b.classList.add('wrong'); }
+                if(o === q.heb) { b.style.background = 'var(--green)'; b.style.color = 'white'; state.qCorrect++; }
+                else b.style.background = 'var(--red)';
                 setTimeout(() => { state.qIdx++; renderQuiz(); }, 600);
             };
             cont.appendChild(b);
@@ -163,6 +169,7 @@
         document.getElementById('btn-c4').disabled = !open;
         document.getElementById('btn-mem').disabled = !open;
         document.getElementById('lock-msg').innerText = open ? "המשחקים פתוחים 🎉" : "🔓 המשחקים ייפתחו ב-70% הצלחה";
+        document.getElementById('lock-msg').style.color = open ? "var(--green)" : "var(--red)";
         showScreen('screen-summary');
     }
 
@@ -170,39 +177,37 @@
     function startC4() {
         state.board = Array(6).fill(null).map(() => Array(7).fill(null));
         state.c4Turn = 'red'; state.canDrop = false;
-        showScreen('screen-c4');
-        updateC4Button("שאלה");
-        drawBoard();
+        showScreen('screen-c4'); updateC4UI("שאלה"); renderC4();
     }
 
-    function drawBoard() {
+    function renderC4() {
         const b = document.getElementById('c4-board'); b.innerHTML = '';
         for(let r=0; r<6; r++) for(let c=0; c<7; c++) {
             const d = document.createElement('div');
             d.className = 'cell ' + (state.board[r][c] || '');
-            d.id = `c-${r}-${c}`;
             b.appendChild(d);
         }
     }
 
-    function updateC4Button(mode) {
-        const btn = document.getElementById('c4-turn-btn');
+    function updateC4UI(mode) {
+        const btn = document.getElementById('c4-btn');
         const isRed = state.c4Turn === 'red';
-        btn.style.background = isRed ? "#ef4444" : "var(--accent)";
-        btn.innerText = mode === "שאלה" ? `תור ${isRed?'אדום':'צהוב'}: לחץ לשאלה` : `נכון! בחר טור 👇`;
+        btn.style.background = isRed ? "var(--red)" : "var(--accent)";
+        btn.style.color = isRed ? "white" : "black";
+        btn.innerText = mode === "שאלה" ? `תור ${isRed?'אדום':'צהוב'}: לחץ לשאלה` : "נכון! בחר טור 👇";
     }
 
     function c4Ask() {
         const q = state.words[Math.floor(Math.random()*state.words.length)];
         const opts = [q.heb, ...state.words.filter(x => x.heb !== q.heb).map(x => x.heb)].slice(0,3).sort(() => Math.random()-0.5);
         let html = `<div style="font-size:24px; margin-bottom:15px;">${q.eng}</div>`;
-        opts.forEach(o => html += `<button class="opt-btn" onclick="checkC4Ans(this,'${o}','${q.heb}')">${o}</button>`);
-        openMsg(html, state.c4Turn === 'red' ? '#ef4444' : 'var(--accent)');
+        opts.forEach(o => html += `<button class="opt-btn" onclick="checkC4Ans('${o}','${q.heb}')">${o}</button>`);
+        openMsg(html, state.c4Turn === 'red' ? 'var(--red)' : 'var(--accent)', false);
     }
 
-    function checkC4Ans(btn, sel, cor) {
-        if(sel === cor) { state.canDrop = true; closeMsg(); updateC4Button("טור"); }
-        else { state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red'; closeMsg(); updateC4Button("שאלה"); }
+    function checkC4Ans(sel, cor) {
+        if(sel === cor) { state.canDrop = true; closeMsg(); updateC4UI("טור"); }
+        else { state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red'; closeMsg(); updateC4UI("שאלה"); }
     }
 
     async function dropToken(col) {
@@ -213,14 +218,17 @@
         if(row === -1) { state.canDrop = true; return; }
 
         for(let r=0; r<=row; r++) {
-            const c = document.getElementById(`c-${r}-${col}`);
-            c.classList.add(state.c4Turn);
+            state.board[r][col] = state.c4Turn; renderC4();
             await new Promise(res => setTimeout(res, 60));
-            if(r < row) c.classList.remove(state.c4Turn);
+            if(r < row) state.board[r][col] = null;
         }
         state.board[row][col] = state.c4Turn;
-        if(checkWin(row, col)) openMsg(`<h2>ניצחון!</h2>`, state.c4Turn==='red'?'#ef4444':'var(--accent)');
-        else { state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red'; updateC4Button("שאלה"); }
+        if(checkWin(row, col)) {
+            openMsg(`<h2>ניצחון ל${state.c4Turn==='red'?'אדום':'צהוב'}! 🏆</h2>`, 'var(--green)', true);
+        } else {
+            state.c4Turn = state.c4Turn === 'red' ? 'yellow' : 'red';
+            updateC4UI("שאלה");
+        }
     }
 
     function checkWin(r, c) {
@@ -238,57 +246,59 @@
         });
     }
 
-    // --- משחק הזיכרון ---
+    // --- זיכרון ---
     function startMem() {
         state.memFlipped = []; state.memMatches = 0; state.memSteps = 0;
         document.getElementById('mem-steps').innerText = "צעדים: 0";
         showScreen('screen-mem');
-        const grid = document.getElementById('mem-grid');
-        grid.innerHTML = '';
-        
+        const grid = document.getElementById('mem-grid'); grid.innerHTML = '';
         let cards = [];
-        state.words.slice(0, 8).forEach((w, i) => {
-            cards.push({ txt: w.eng, id: i }, { txt: w.heb, id: i });
-        });
-        cards.sort(() => Math.random() - 0.5);
-
-        cards.forEach(data => {
-            const card = document.createElement('div');
-            card.className = 'mem-card';
-            card.innerHTML = `<div class="mem-back">?</div><div class="mem-front">${data.txt}</div>`;
-            card.onclick = () => {
-                if(state.memFlipped.length < 2 && !card.classList.contains('flipped')) {
-                    card.classList.add('flipped');
-                    state.memFlipped.push({ card, id: data.id, txt: data.txt });
+        state.words.slice(0, 8).forEach((w, i) => cards.push({ t: w.eng, id: i }, { t: w.heb, id: i }));
+        cards.sort(() => Math.random() - 0.5).forEach(d => {
+            const c = document.createElement('div'); c.className = 'mem-card';
+            c.innerHTML = `<div class="mem-back">?</div><div class="mem-front">${d.t}</div>`;
+            c.onclick = () => {
+                if(state.memFlipped.length < 2 && !c.classList.contains('flipped')) {
+                    c.classList.add('flipped'); state.memFlipped.push({ c, id: d.id, t: d.t });
                     if(state.memFlipped.length === 2) {
-                        state.memSteps++;
-                        document.getElementById('mem-steps').innerText = `צעדים: ${state.memSteps}`;
+                        state.memSteps++; document.getElementById('mem-steps').innerText = `צעדים: ${state.memSteps}`;
                         if(state.memFlipped[0].id === state.memFlipped[1].id) {
-                            speak(state.memFlipped[0].txt);
-                            state.memFlipped.forEach(f => f.card.classList.add('matched'));
-                            state.memMatches++;
-                            state.memFlipped = [];
-                            if(state.memMatches === cards.length/2) openMsg(`<h2>כל הכבוד!</h2><p>סיימת ב-${state.memSteps} צעדים</p>`, 'var(--green)');
+                            speak(state.memFlipped[0].t);
+                            state.memFlipped.forEach(f => f.c.classList.add('matched'));
+                            state.memMatches++; state.memFlipped = [];
+                            if(state.memMatches === cards.length/2) {
+                                // השהיה קלה לפני ה-Modal כדי לשמוע את המילה
+                                setTimeout(() => openMsg(`<h2>כל הכבוד!</h2><p>סיימת ב-${state.memSteps} צעדים</p>`, 'var(--green)', true), 1200);
+                            }
                         } else {
-                            setTimeout(() => {
-                                state.memFlipped.forEach(f => f.card.classList.remove('flipped'));
-                                state.memFlipped = [];
-                            }, 1000);
+                            setTimeout(() => { state.memFlipped.forEach(f => f.c.classList.remove('flipped')); state.memFlipped = []; }, 1000);
                         }
                     }
                 }
             };
-            grid.appendChild(card);
+            grid.appendChild(c);
         });
     }
 
-    function openMsg(html, color) {
+    function openMsg(html, color, showBtn) {
         document.getElementById('msg-body').innerHTML = html;
         document.getElementById('msg-stripe').style.background = color;
+        document.getElementById('modal-close-btn').classList.toggle('hidden', !showBtn);
         document.getElementById('msg-modal').style.display = 'flex';
     }
     function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
-    function speak(txt) { const msg = new SpeechSynthesisUtterance(txt); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
+    function speak(t) { const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+
+    function shareAchievement() {
+        const score = document.getElementById('final-score').innerText;
+        const text = `הצלחתי לסיים את "${state.unit}" בציון ${score}! 🎉\nבואו לתרגל גם!`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+    }
+    function shareList() {
+        const data = btoa(unescape(encodeURIComponent(JSON.stringify({u: state.unit, w: state.words}))));
+        const link = `${window.location.href.split('?')[0]}?list=${data}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent('הנה רשימת המילים שלי: ' + link)}`);
+    }
 </script>
 </body>
 </html>
