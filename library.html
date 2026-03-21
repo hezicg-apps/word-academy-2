@@ -6,30 +6,46 @@
     <title>Word Academy - Library</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background-color: #f0f4f8; overflow-y: auto; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        .library-container { display: flex; gap: 20px; justify-content: center; padding: 40px 20px; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; }
-        .book-column { background: white; border-radius: 20px; border: 2px solid #e2e8f0; width: 320px; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .book-header { padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 24px; }
-        .book-magical { background-color: #6366f1; }
-        .book-legendary { background-color: #f59e0b; }
-        .book-epic { background-color: #10b981; }
-        .book-default { background-color: #64748b; }
+        body { background-color: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+        .library-container { display: flex; gap: 20px; justify-content: center; padding: 40px 20px; flex-wrap: wrap; }
+        
+        /* עיצוב הטורים */
+        .book-column { 
+            background: white; border-radius: 20px; border: 2px solid #e2e8f0; 
+            width: 320px; min-height: 450px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .book-header { padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 22px; }
+        
+        /* צבעים לפי כיתות/ספרים */
+        .book-magical { background-color: #6366f1; } /* כיתה ה */
+        .book-legendary { background-color: #f59e0b; } /* כיתה ד */
+        .book-epic { background-color: #10b981; } /* כיתה ג */
+        .book-grade6 { background-color: #ef4444; } /* כיתה ו - הוספתי צבע אדום */
 
-        .units-list { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .units-list { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
 
-        .unit-dropdown { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; }
-        .unit-header { background: #f8fafc; padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #1e293b; border-bottom: 1px solid transparent; }
-        .unit-header:hover { background: #f1f5f9; }
-        .unit-header::after { content: '▼'; font-size: 12px; transition: transform 0.3s; }
-        .unit-dropdown.open .unit-header::after { transform: rotate(180deg); }
-        .unit-dropdown.open { border-color: #3b82f6; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* עיצוב ה-Dropdown של היחידה */
+        .unit-group { border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+        .unit-name { 
+            padding: 12px; cursor: pointer; font-weight: bold; color: #1e293b; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .unit-name:hover { background: #f1f5f9; }
+        .unit-name::after { content: '▼'; font-size: 10px; transition: 0.3s; }
+        .unit-group.open .unit-name::after { transform: rotate(180deg); }
 
-        .parts-content { display: none; padding: 10px; background: white; flex-direction: column; gap: 8px; }
-        .unit-dropdown.open .parts-content { display: flex; }
+        /* אזור הכפתורים בתוך היחידה */
+        .parts-area { display: none; padding: 10px; background: white; border-top: 1px solid #e2e8f0; gap: 8px; flex-direction: column; }
+        .unit-group.open .parts-area { display: flex; }
 
-        .part-btn { width: 100%; background: white; border: 1px solid #3b82f6; color: #3b82f6; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center; }
-        .part-btn:hover { background: #3b82f6; color: white; }
-        .loader { text-align: center; margin-top: 50px; font-size: 20px; color: #64748b; }
+        .part-link { 
+            background: #fff; border: 1px solid #3b82f6; color: #3b82f6; 
+            padding: 8px; border-radius: 6px; text-align: center; cursor: pointer; 
+            font-weight: bold; transition: 0.2s; text-decoration: none;
+        }
+        .part-link:hover { background: #3b82f6; color: white; }
+
+        .loader { text-align: center; margin-top: 50px; font-size: 18px; color: #64748b; }
     </style>
 </head>
 <body>
@@ -42,105 +58,90 @@
     </div>
 </div>
 
-<h1 style="text-align:center; margin-top:30px; color:#1e293b;">הספרייה הדיגיטלית שלי</h1>
+<h1 style="text-align:center; margin-top:30px;">הספרייה הדיגיטלית שלי</h1>
 
-<div id="loader" class="loader">טוען נתונים מהגיליון...</div>
+<div id="loader" class="loader">מתחבר לגיליון הנתונים...</div>
 <div class="library-container" id="library-content"></div>
 
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-    async function loadLibrary() {
+    async function fetchData() {
         try {
             const response = await fetch(sheetUrl);
-            const csvText = await response.text();
+            const csv = await response.text();
+            const lines = csv.split('\n').slice(1);
             
-            // עיבוד שורות ה-CSV תוך התחשבות במירכאות
-            const rows = csvText.split('\n').slice(1);
-            const books = {};
+            const structure = {};
 
-            rows.forEach(row => {
-                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            lines.forEach(line => {
+                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if (cols.length < 4) return;
 
-                const bookName = cols[0].trim().replace(/"/g, '') || "אחר";
-                const unitName = cols[1].trim().replace(/"/g, '');
-                const partName = cols[2].trim().replace(/"/g, '');
+                const book = cols[0].trim().replace(/"/g, '');
+                const unit = cols[1].trim().replace(/"/g, '');
+                const part = cols[2].trim().replace(/"/g, '');
                 const words = cols[3].trim().replace(/"/g, '').replace(/\\n/g, '\n');
 
-                if (!books[bookName]) books[bookName] = {};
-                // כאן הקסם: אם היחידה כבר קיימת, אנחנו רק מוסיפים לה את ה-Part
-                if (!books[bookName][unitName]) books[bookName][unitName] = [];
+                if (!structure[book]) structure[book] = {};
+                if (!structure[book][unit]) structure[book][unit] = [];
                 
-                books[bookName][unitName].push({ name: partName, data: words });
+                structure[book][unit].push({ name: part, data: words });
             });
 
-            renderLibrary(books);
+            buildLibrary(structure);
             document.getElementById('loader').style.display = 'none';
-        } catch (err) {
-            document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים.";
-            console.error(err);
+        } catch (e) {
+            console.error(e);
+            document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים מה-Sheets";
         }
     }
 
-    function renderLibrary(books) {
+    function buildLibrary(data) {
         const container = document.getElementById('library-content');
-        container.innerHTML = '';
-
-        for (const bName in books) {
+        
+        for (const book in data) {
             const col = document.createElement('div');
             col.className = 'book-column';
-            // התאמת קלאס צבע לפי שם הספר (קטנות/גדולות)
-            const colorClass = `book-${bName.toLowerCase().replace(/\s/g, '')}`;
             
-            col.innerHTML = `
-                <div class="book-header ${colorClass}">${bName}</div>
-                <div class="units-list" id="list-${bName.replace(/\s/g, '')}"></div>
-            `;
+            // הגדרת צבע לפי שם הספר
+            let colorClass = 'book-default';
+            if (book.includes("Magical")) colorClass = 'book-magical';
+            else if (book.includes("Legendary")) colorClass = 'book-legendary';
+            else if (book.includes("Epic")) colorClass = 'book-epic';
+            else if (book.includes("כיתה ו")) colorClass = 'book-grade6';
+
+            col.innerHTML = `<div class="book-header ${colorClass}">${book}</div><div class="units-list" id="list-${book.replace(/\s/g, '')}"></div>`;
             container.appendChild(col);
 
-            const list = document.getElementById(`list-${bName.replace(/\s/g, '')}`);
-            for (const uName in books[bName]) {
-                const dropdown = document.createElement('div');
-                dropdown.className = 'unit-dropdown';
+            const list = document.getElementById(`list-${book.replace(/\s/g, '')}`);
+            
+            for (const unit in data[book]) {
+                const group = document.createElement('div');
+                group.className = 'unit-group';
                 
-                let partsHTML = '';
-                // מעבר על כל ה-Parts שנאספו תחת היחידה הזו
-                books[bName][uName].forEach(p => {
+                let partsHtml = '';
+                data[book][unit].forEach(p => {
                     const encoded = btoa(unescape(encodeURIComponent(p.data)));
-                    partsHTML += `<button class="part-btn" onclick="goToGame('${uName}', '${p.name}', '${encoded}')">${p.name}</button>`;
+                    partsHtml += `<div class="part-link" onclick="play('${unit}', '${p.name}', '${encoded}')">${p.name}</div>`;
                 });
 
-                dropdown.innerHTML = `
-                    <div class="unit-header" onclick="toggleDropdown(this)">
-                        ${uName}
-                    </div>
-                    <div class="parts-content">
-                        ${partsHTML}
-                    </div>
+                group.innerHTML = `
+                    <div class="unit-name" onclick="this.parentElement.classList.toggle('open')">${unit}</div>
+                    <div class="parts-area">${partsHtml}</div>
                 `;
-                list.appendChild(dropdown);
+                list.appendChild(group);
             }
         }
     }
 
-    function toggleDropdown(el) {
-        const parent = el.parentElement;
-        // סגירת דרופדאונים אחרים באותו טור (אופציונלי - למראה נקי יותר)
-        const allInList = parent.parentElement.querySelectorAll('.unit-dropdown');
-        allInList.forEach(item => {
-            if (item !== parent) item.classList.remove('open');
-        });
-        parent.classList.toggle('open');
-    }
-
-    function goToGame(u, p, data) {
+    function play(u, p, data) {
         const words = decodeURIComponent(escape(atob(data)));
         sessionStorage.setItem('currentWords', `${u} - ${p}\n${words}`);
         window.location.href = 'index.html?source=library';
     }
 
-    window.onload = loadLibrary;
+    window.onload = fetchData;
 </script>
 </body>
 </html>
