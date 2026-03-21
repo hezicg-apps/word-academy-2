@@ -11,8 +11,8 @@
         .auth-card { background: white; border-radius: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
         .input-field { background: #f1f5f9; border: none; border-radius: 16px; padding: 16px; width: 100%; outline: none; transition: all 0.2s; }
         .input-field:focus { background: white; box-shadow: 0 0 0 2px #2563eb; }
-        .btn-register { background: #2563eb; color: white; padding: 16px; border-radius: 16px; width: 100%; font-weight: 800; font-size: 18px; transition: all 0.2s; }
-        .btn-register:hover { background: #1e40af; transform: translateY(-2px); shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+        .btn-register { background: #2563eb; color: white; padding: 16px; border-radius: 16px; width: 100%; font-weight: 800; font-size: 18px; transition: all 0.2s; cursor: pointer; border: none; }
+        .btn-register:hover { background: #1e40af; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -33,9 +33,15 @@
                 <input type="text" id="teacherName" class="input-field" placeholder="למשל: ישראל ישראלי" required>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">שם בית הספר</label>
-                <input type="text" id="schoolName" class="input-field" placeholder="שם בית הספר והעיר" required>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">שם בית הספר</label>
+                    <input type="text" id="schoolName" class="input-field" placeholder="שם ביה''ס" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">עיר</label>
+                    <input type="text" id="cityName" class="input-field" placeholder="עיר" required>
+                </div>
             </div>
 
             <div>
@@ -49,7 +55,7 @@
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="btn-register shadow-lg shadow-blue-100">צור חשבון והמשך לדשבורד</button>
+                <button type="submit" class="btn-register shadow-lg shadow-blue-100">צרו חשבון</button>
             </div>
         </form>
 
@@ -64,18 +70,17 @@
     document.getElementById('registerForm').onsubmit = function(e) {
         e.preventDefault();
         
-        // אובייקט הנתונים שאנחנו אוספים
         const userData = {
             name: document.getElementById('teacherName').value,
             school: document.getElementById('schoolName').value,
+            city: document.getElementById('cityName').value,
             email: document.getElementById('email').value,
             password: document.getElementById('password').value
         };
 
         console.log("נתוני מורה חדש:", userData);
         
-        // כאן יבוא חיבור Firebase בעתיד
-        alert("החשבון נוצר בהצלחה! מעביר אותך לדשבורד ליצירת כיתות.");
+        alert("החשבון נוצר בהצלחה!");
         window.location.href = "teacher-dashboard.html";
     };
 </script>
