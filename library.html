@@ -6,78 +6,29 @@
     <title>Word Academy - Library</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background-color: #f0f4f8; overflow-y: auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        .library-container { 
-            display: flex; gap: 20px; justify-content: center; 
-            padding: 40px 20px; flex-wrap: wrap; max-width: 1400px; margin: 0 auto;
-        }
-
-        .book-column { 
-            background: white; border-radius: 20px; border: 2px solid #e2e8f0; 
-            width: 320px; min-height: 400px; display: flex; flex-direction: column; 
-            overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-        }
-
+        body { background-color: #f0f4f8; overflow-y: auto; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .library-container { display: flex; gap: 20px; justify-content: center; padding: 40px 20px; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; }
+        .book-column { background: white; border-radius: 20px; border: 2px solid #e2e8f0; width: 320px; min-height: 400px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .book-header { padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 24px; }
         .book-magical { background-color: #6366f1; }
         .book-legendary { background-color: #f59e0b; }
         .book-epic { background-color: #10b981; }
-        /* טור נוסף אם קיים בגיליון ללא שם מוגדר */
         .book-default { background-color: #64748b; }
 
         .units-list { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
-        /* עיצוב ה-Dropdown */
-        .unit-dropdown {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .unit-header {
-            background: #f8fafc;
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            color: #1e293b;
-            border-bottom: 1px solid transparent;
-        }
-
+        .unit-dropdown { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; }
+        .unit-header { background: #f8fafc; padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #1e293b; border-bottom: 1px solid transparent; }
         .unit-header:hover { background: #f1f5f9; }
-
-        .unit-header::after {
-            content: '▼';
-            font-size: 12px;
-            transition: transform 0.3s;
-        }
-
+        .unit-header::after { content: '▼'; font-size: 12px; transition: transform 0.3s; }
         .unit-dropdown.open .unit-header::after { transform: rotate(180deg); }
-        .unit-dropdown.open .unit-header { border-bottom-color: #e2e8f0; background: #f1f5f9; }
+        .unit-dropdown.open { border-color: #3b82f6; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        .parts-content {
-            display: none;
-            padding: 10px;
-            background: white;
-            flex-direction: column;
-            gap: 8px;
-        }
-
+        .parts-content { display: none; padding: 10px; background: white; flex-direction: column; gap: 8px; }
         .unit-dropdown.open .parts-content { display: flex; }
 
-        .part-btn { 
-            width: 100%;
-            background: white; border: 1px solid #3b82f6; color: #3b82f6; 
-            padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; 
-            transition: 0.2s; text-align: center;
-        }
-        
+        .part-btn { width: 100%; background: white; border: 1px solid #3b82f6; color: #3b82f6; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center; }
         .part-btn:hover { background: #3b82f6; color: white; }
-
         .loader { text-align: center; margin-top: 50px; font-size: 20px; color: #64748b; }
     </style>
 </head>
@@ -93,7 +44,7 @@
 
 <h1 style="text-align:center; margin-top:30px; color:#1e293b;">הספרייה הדיגיטלית שלי</h1>
 
-<div id="loader" class="loader">טוען את היחידות מהגיליון...</div>
+<div id="loader" class="loader">טוען נתונים מהגיליון...</div>
 <div class="library-container" id="library-content"></div>
 
 <script>
@@ -102,21 +53,23 @@
     async function loadLibrary() {
         try {
             const response = await fetch(sheetUrl);
-            const data = await response.text();
-            const rows = data.split('\n').slice(1);
-
+            const csvText = await response.text();
+            
+            // עיבוד שורות ה-CSV תוך התחשבות במירכאות
+            const rows = csvText.split('\n').slice(1);
             const books = {};
 
             rows.forEach(row => {
                 const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if (cols.length < 4) return;
 
-                const bookName = cols[0].trim().replace(/"/g, '') || "כללי";
+                const bookName = cols[0].trim().replace(/"/g, '') || "אחר";
                 const unitName = cols[1].trim().replace(/"/g, '');
                 const partName = cols[2].trim().replace(/"/g, '');
                 const words = cols[3].trim().replace(/"/g, '').replace(/\\n/g, '\n');
 
                 if (!books[bookName]) books[bookName] = {};
+                // כאן הקסם: אם היחידה כבר קיימת, אנחנו רק מוסיפים לה את ה-Part
                 if (!books[bookName][unitName]) books[bookName][unitName] = [];
                 
                 books[bookName][unitName].push({ name: partName, data: words });
@@ -126,35 +79,40 @@
             document.getElementById('loader').style.display = 'none';
         } catch (err) {
             document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים.";
+            console.error(err);
         }
     }
 
     function renderLibrary(books) {
         const container = document.getElementById('library-content');
+        container.innerHTML = '';
+
         for (const bName in books) {
             const col = document.createElement('div');
             col.className = 'book-column';
-            const colorClass = `book-${bName.toLowerCase()}`;
+            // התאמת קלאס צבע לפי שם הספר (קטנות/גדולות)
+            const colorClass = `book-${bName.toLowerCase().replace(/\s/g, '')}`;
             
             col.innerHTML = `
                 <div class="book-header ${colorClass}">${bName}</div>
-                <div class="units-list" id="list-${bName}"></div>
+                <div class="units-list" id="list-${bName.replace(/\s/g, '')}"></div>
             `;
             container.appendChild(col);
 
-            const list = document.getElementById(`list-${bName}`);
+            const list = document.getElementById(`list-${bName.replace(/\s/g, '')}`);
             for (const uName in books[bName]) {
                 const dropdown = document.createElement('div');
                 dropdown.className = 'unit-dropdown';
                 
                 let partsHTML = '';
+                // מעבר על כל ה-Parts שנאספו תחת היחידה הזו
                 books[bName][uName].forEach(p => {
                     const encoded = btoa(unescape(encodeURIComponent(p.data)));
                     partsHTML += `<button class="part-btn" onclick="goToGame('${uName}', '${p.name}', '${encoded}')">${p.name}</button>`;
                 });
 
                 dropdown.innerHTML = `
-                    <div class="unit-header" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="unit-header" onclick="toggleDropdown(this)">
                         ${uName}
                     </div>
                     <div class="parts-content">
@@ -164,6 +122,16 @@
                 list.appendChild(dropdown);
             }
         }
+    }
+
+    function toggleDropdown(el) {
+        const parent = el.parentElement;
+        // סגירת דרופדאונים אחרים באותו טור (אופציונלי - למראה נקי יותר)
+        const allInList = parent.parentElement.querySelectorAll('.unit-dropdown');
+        allInList.forEach(item => {
+            if (item !== parent) item.classList.remove('open');
+        });
+        parent.classList.toggle('open');
     }
 
     function goToGame(u, p, data) {
