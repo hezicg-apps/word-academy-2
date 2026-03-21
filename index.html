@@ -1,101 +1,130 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | מאגר אוצר מילים</title>
+    <title>Word Academy | תרגול אוצר מילים בכיף</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; }
-        .category-card { 
-            background: white; border-radius: 20px; padding: 20px; 
-            border: 1px solid #e2e8f0; transition: all 0.2s;
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        
+        .grade-section { 
+            background: white; border-radius: 24px; padding: 25px; 
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
-        .category-card:hover { border-color: #3b82f6; transform: translateY(-2px); shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .grade-badge { @apply text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 inline-block; }
+        
+        .custom-select {
+            appearance: none;
+            background: #f1f5f9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat left 1rem center;
+            background-size: 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 15px;
+            width: 100%;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .hero-title { line-height: 0.9; }
     </style>
 </head>
 <body>
 
-<header class="bg-white border-b border-slate-200 p-4 shadow-sm">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <img src="logo.svg" alt="WA" class="w-10 h-10">
-            <span class="text-xl font-extrabold text-slate-800">Word Academy</span>
+<header class="bg-white border-b border-slate-200 p-6 shadow-sm">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <img src="logo.svg" alt="WA" class="w-16 h-16">
+            <div class="hero-title">
+                <h1 class="text-5xl font-black text-blue-900 tracking-tighter">Word Academy</h1>
+                <p class="text-slate-500 font-bold mt-1 text-lg">תרגול אוצר מילים בכיף 🦉</p>
+            </div>
         </div>
-        <div class="flex gap-4">
-            <button onclick="window.location.href='student-login.html'" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold text-sm hover:bg-blue-700">כניסת תלמידים</button>
-            <button onclick="window.location.href='login.html'" class="text-slate-600 font-bold text-sm border border-slate-300 px-5 py-2 rounded-xl hover:bg-slate-50">כניסת מורים</button>
+        <div class="flex gap-3">
+            <button onclick="window.location.href='student-login.html'" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md">כניסת תלמידים</button>
+            <button onclick="window.location.href='login.html'" class="text-slate-600 font-bold border border-slate-300 px-6 py-3 rounded-xl hover:bg-slate-50 transition-all">כניסת מורים</button>
         </div>
     </div>
 </header>
 
-<main class="max-w-7xl mx-auto p-8">
-    <div class="mb-12">
-        <h1 class="text-3xl font-black text-slate-800">מאגר אוצר מילים - Band 1</h1>
-        <p class="text-slate-500 font-medium">יחידות לימוד מותאמות לתכנית הלימודים החדשה באנגלית.</p>
+<main class="max-w-4xl mx-auto p-8">
+    <div class="mb-10">
+        <h2 class="text-2xl font-black text-slate-800">מאגר יחידות לימוד - Band 1</h2>
+        <p class="text-slate-500 font-medium italic underline decoration-blue-200">חינמי ופתוח לקהילת המורים והתלמידים</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="space-y-6">
         
-        <div class="space-y-4">
-            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-yellow-400 pr-3">כיתה ג'</h3>
-            <div class="category-card">
-                <span class="grade-badge bg-yellow-100 text-yellow-700">BAND 1</span>
-                <h4 class="font-bold text-slate-800">צבעים ומספרים</h4>
-                <p class="text-xs text-slate-400 mt-1 italic">12 מילים בסיסיות</p>
-                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
-            </div>
+        <div class="grade-section">
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4">3rd Grade | כיתה ג'</h3>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו נושא לתרגול...</option>
+                <option value="practice.html?grade=3&topic=colors">Colors (צבעים)</option>
+                <option value="practice.html?grade=3&topic=numbers">Numbers (מספרים)</option>
+                <option value="practice.html?grade=3&topic=body">Body Parts (חלקי גוף)</option>
+            </select>
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-green-400 pr-3">כיתה ד'</h3>
-            <div class="category-card">
-                <span class="grade-badge bg-green-100 text-green-700">BAND 1</span>
-                <h4 class="font-bold text-slate-800">בתוך הבית</h4>
-                <p class="text-xs text-slate-400 mt-1 italic">20 מילים - רהיטים וחפצים</p>
-                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
-            </div>
+        <div class="grade-section">
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4">4th Grade | כיתה ד'</h3>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו נושא לתרגול...</option>
+                <option value="practice.html?grade=4&topic=home">My Home (הבית שלי)</option>
+                <option value="practice.html?grade=4&topic=family">Family Members (בני משפחה)</option>
+                <option value="practice.html?grade=4&topic=animals">Animals (חיות)</option>
+            </select>
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-blue-400 pr-3">כיתה ה'</h3>
-            <div class="category-card">
-                <span class="grade-badge bg-blue-100 text-blue-700">BAND 1</span>
-                <h4 class="font-bold text-slate-800">סדר היום שלי</h4>
-                <p class="text-xs text-slate-400 mt-1 italic">פעלים ושגרת יום</p>
-                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
-            </div>
+        <div class="grade-section">
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4">5th Grade | כיתה ה'</h3>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו נושא לתרגול...</option>
+                <option value="practice.html?grade=5&topic=routine">My Daily Routine (סדר היום שלי)</option>
+                <option value="practice.html?grade=5&topic=food">Food and Drinks (אוכל ושתייה)</option>
+                <option value="practice.html?grade=5&topic=jobs">Occupations (מקצועות)</option>
+            </select>
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-purple-400 pr-3">כיתה ו'</h3>
-            <div class="category-card">
-                <span class="grade-badge bg-purple-100 text-purple-700">BAND 1</span>
-                <h4 class="font-bold text-slate-800">בעלי חיים בטבע</h4>
-                <p class="text-xs text-slate-400 mt-1 italic">אוצר מילים מתקדם</p>
-                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
-            </div>
+        <div class="grade-section">
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4">6th Grade | כיתה ו'</h3>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו נושא לתרגול...</option>
+                <option value="practice.html?grade=6&topic=world">Around the World (מסביב לעולם)</option>
+                <option value="practice.html?grade=6&topic=tech">Technology (טכנולוגיה)</option>
+                <option value="practice.html?grade=6&topic=past">Past Tense Verbs (פעלים בעבר)</option>
+            </select>
         </div>
+
     </div>
 
-    <section class="mt-16 bg-blue-50 rounded-[32px] p-10 border border-blue-100">
-        <div class="max-w-3xl">
-            <h2 class="text-2xl font-black text-blue-900 mb-4">ניהול כיתה ומטלות מתוקשבות</h2>
-            <p class="text-blue-800 opacity-80 mb-6 font-medium leading-relaxed">
-                מורים המעוניינים לנהל את תלמידיהם, לעקוב אחר ציונים ולשייך יחידות לימוד מותאמות (כולל רשימות מתוך ספרי הלימוד הנלמדים), מוזמנים להירשם למערכת הניהול.
+    <section class="mt-16 bg-blue-50 rounded-[40px] p-10 border border-blue-100 shadow-sm relative overflow-hidden">
+        <div class="relative z-10">
+            <h2 class="text-3xl font-black text-blue-900 mb-4">ניהול כיתה ומטלות מתוקשבות</h2>
+            <p class="text-blue-800 opacity-90 mb-8 font-medium leading-relaxed text-lg max-w-2xl">
+                מורים המעוניינים לנהל את תלמידיהם, לעקוב אחר ציונים ולשייך יחידות לימוד מותאמות מתוך ספרי הלימוד (כולל זכויות יוצרים מסודרות), מוזמנים להצטרף למערכת הניהול המקצועית.
             </p>
-            <div class="flex gap-4">
-                <button onclick="window.location.href='register.html'" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">פתיחת חשבון מורה</button>
-                <button class="text-blue-600 font-bold px-6 py-3">למידע נוסף על המנוי המקצועי</button>
+            <div class="flex flex-wrap items-center gap-8">
+                <button onclick="window.location.href='register.html'" class="bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all">
+                    פתיחת חשבון מורה
+                </button>
+                <div class="bg-white/50 px-6 py-3 rounded-2xl border border-blue-200">
+                    <span class="text-sm block font-bold text-blue-400 line-through">100 ₪ ל-10 חודשים</span>
+                    <span class="text-2xl font-black text-blue-900 leading-none">מבצע מחצית שנה: 50 ₪</span>
+                </div>
             </div>
         </div>
+        <div class="absolute -bottom-10 -left-10 text-9xl opacity-5 select-none">🦉</div>
     </section>
 </main>
 
-<footer class="p-12 text-center text-slate-400 text-xs font-medium">
-    &copy; 2026 Word Academy | הכלי שלך לניהול אוצר מילים באנגלית
+<footer class="p-12 text-center text-slate-400 text-sm font-bold border-t border-slate-200 mt-12 bg-white">
+    © 2026 Word Academy | האתר פותח ונוצר ע"י חזי כהן גלמן
 </footer>
 
 </body>
