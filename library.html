@@ -6,75 +6,101 @@
     <title>Word Academy - Library</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* עיצוב ספציפי לדף הספרייה */
+        body { overflow-y: auto; } /* מאפשר גלילה אנכית בדף זה */
+        
         .library-container {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             justify-content: center;
-            padding: 20px;
+            padding: 30px 20px;
             flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
         }
+        
         .book-column {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             border: 2px solid var(--border);
-            width: 300px;
-            min-height: 500px;
+            width: 320px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
         }
+        .book-column:hover { transform: translateY(-5px); }
+
         .book-header {
-            padding: 15px;
+            padding: 20px;
             text-align: center;
             color: white;
             font-weight: bold;
-            font-size: 22px;
+            font-size: 24px;
+            letter-spacing: 1px;
         }
-        .magical { background-color: #6366f1; } /* סגול */
-        .legendary { background-color: #f59e0b; } /* כתום/זהב */
-        .epic { background-color: #10b981; } /* ירוק */
+        /* צבעים מותאמים לספרים */
+        .book-magical { background-color: #6366f1; }   /* Indigo */
+        .book-legendary { background-color: #f59e0b; } /* Amber */
+        .book-epic { background-color: #10b981; }      /* Emerald */
 
         .units-list {
-            padding: 10px;
+            padding: 20px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
+        
         .unit-item {
             background: #f8fafc;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 16px;
+            padding: 15px;
         }
-        .unit-item:hover {
-            border-color: var(--blue);
-            transform: translateY(-2px);
-        }
+        
         .unit-title {
             font-weight: bold;
             color: var(--navy);
+            font-size: 18px;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            text-align: right;
         }
+        
         .parts-container {
             display: flex;
-            gap: 5px;
+            gap: 8px;
         }
+        
         .part-btn {
             flex: 1;
             background: white;
-            border: 1px solid var(--blue);
+            border: 2px solid var(--blue);
             color: var(--blue);
-            padding: 5px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         .part-btn:hover {
             background: var(--blue);
             color: white;
+            transform: scale(1.03);
+        }
+        
+        /* כותרת הדף הנקייה */
+        .page-title {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--navy);
+            font-size: 32px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -88,57 +114,75 @@
     </div>
 </div>
 
-<h1 style="text-align:center; margin-top:30px;">הספרייה הדיגיטלית שלי ✨</h1>
+<h1 class="page-title">הספרייה הדיגיטלית שלי</h1>
 
-<div class="library-container">
-    
-    <div class="book-column">
-        <div class="book-header magical">Magical</div>
-        <div class="units-list">
-            <div class="unit-item">
-                <span class="unit-title">Unit 1</span>
-                <div class="parts-container">
-                    <div class="part-btn" onclick="launchGame('Magical U1 P1')">Part 1</div>
-                    <div class="part-btn" onclick="launchGame('Magical U1 P2')">Part 2</div>
-                </div>
-            </div>
-            </div>
+<div class="library-container" id="library-content">
     </div>
 
-    <div class="book-column">
-        <div class="book-header legendary">Legendary</div>
-        <div class="units-list">
-            <div class="unit-item">
-                <span class="unit-title">Unit 1</span>
-                <div class="parts-container">
-                    <div class="part-btn" onclick="launchGame('Legendary U1 P1')">Part 1</div>
-                    <div class="part-btn" onclick="launchGame('Legendary U1 P2')">Part 2</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="book-column">
-        <div class="book-header epic">Epic</div>
-        <div class="units-list">
-            <div class="unit-item">
-                <span class="unit-title">Unit 1</span>
-                <div class="parts-container">
-                    <div class="part-btn" onclick="launchGame('Epic U1 P1')">Part 1</div>
-                    <div class="part-btn" onclick="launchGame('Epic U1 P2')">Part 2</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
+<script src="js/data.js"></script>
 
 <script>
-    function launchGame(unitName) {
-        // בעתיד, כאן המערכת תמשוך את רשימת המילים מה-Database לפי השם
-        // כרגע זה רק לצורך הדגמה - זה יעביר אותנו לאתר המשחק
-        window.location.href = `index.html?unit=${encodeURIComponent(unitName)}`;
+    // פונקציה להצגת הנתונים מקובץ data.js על המסך
+    function renderLibrary() {
+        const container = document.getElementById('library-content');
+        if (!container || typeof courseData === 'undefined') return;
+
+        container.innerHTML = ''; // ניקוי תוכן קודם
+
+        // מעבר על כל ספר בנתונים (Magical, Legendary, Epic)
+        for (const bookName in courseData) {
+            const units = courseData[bookName];
+            if (units.length === 0) continue;
+
+            // יצירת הטור של הספר
+            const bookCol = document.createElement('div');
+            bookCol.className = 'book-column';
+            
+            // קביעת צבע הכותרת לפי שם הספר
+            const colorClass = `book-${bookName.toLowerCase()}`;
+            
+            bookCol.innerHTML = `
+                <div class="book-header ${colorClass}">${bookName}</div>
+                <div class="units-list" id="units-${bookName}"></div>
+            `;
+            container.appendChild(bookCol);
+
+            const unitsList = document.getElementById(`units-${bookName}`);
+
+            // מעבר על כל יחידה בספר (Unit 1, Unit 2...)
+            units.forEach(unit => {
+                const unitItem = document.createElement('div');
+                unitItem.className = 'unit-item';
+                
+                let partsHTML = '';
+                // מעבר על כל חלק ביחידה (Part 1, Part 2...)
+                unit.parts.forEach(part => {
+                    partsHTML += `
+                        <button class="part-btn" onclick="launchGame('${bookName}', '${unit.unit}', '${part.name}')">
+                            ${part.name}
+                        </button>
+                    `;
+                });
+
+                unitItem.innerHTML = `
+                    <span class="unit-title">${unit.unit}</span>
+                    <div class="parts-container">${partsHTML}</div>
+                `;
+                unitsList.appendChild(unitItem);
+            });
+        }
     }
+
+    // פונקציה להפעלת המשחק - מעבירה ל-index.html עם הפרמטרים
+    function launchGame(book, unit, part) {
+        // יצירת מפתח ייחודי ליחידה (למשל: Magical-Unit1-Part1)
+        const unitKey = `${book}-${unit.replace(/\s+/g, '')}-${part.replace(/\s+/g, '')}`;
+        // העברה ל-index.html
+        window.location.href = `index.html?unitKey=${encodeURIComponent(unitKey)}`;
+    }
+
+    // הפעלת הפונקציה בעת טעינת הדף
+    window.onload = renderLibrary;
 </script>
 
 </body>
