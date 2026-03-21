@@ -45,46 +45,35 @@
             }
         }
 
-       function parseCSV(text) {
+      function parseCSV(text) {
     const lines = text.split('\n');
     const books = {};
     
     for (let i = 1; i < lines.length; i++) {
         const row = lines[i];
         const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        
         if (cols.length < 5) continue;
 
         const bookName = cols[0]?.trim().replace(/"/g, '') || "";
         const grade    = cols[1]?.trim().replace(/"/g, '') || "";
         const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
-        const unit     = cols[3]?.trim().replace(/"/g, '') || "";
-        const link     = cols[4]?.trim().replace(/"/g, '') || ""; // טור E
-        const color    = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
+        const unitName = cols[3]?.trim().replace(/"/g, '') || ""; // Part a, Part 1...
+        const link     = cols[4]?.trim().replace(/"/g, '') || "";
 
-        let finalWords = "";
-
-        // חילוץ המילים מהלינק (טור E)
+        let words = "";
         if (link.includes('w=')) {
             try {
-                const base64Part = link.split('w=')[1].split('&')[0];
-                // פענוח Base64 לעברית/אנגלית
-                finalWords = decodeURIComponent(escape(atob(base64Part)));
-            } catch (e) {
-                console.error("שגיאה בפענוח הלינק ביחידה:", unit);
-            }
+                const base64 = link.split('w=')[1].split('&')[0];
+                words = decodeURIComponent(escape(atob(base64)));
+            } catch (e) { console.error("Error decoding", unitName); }
         }
 
-        if (!books[bookName]) {
-            books[bookName] = { grade, color, chapters: {} };
-        }
-        if (!books[bookName].chapters[chapter]) {
-            books[bookName].chapters[chapter] = [];
-        }
+        if (!books[bookName]) books[bookName] = { grade, color: cols[5] || '#3b82f6', chapters: {} };
+        if (!books[bookName].chapters[chapter]) books[bookName].chapters[chapter] = [];
         
-        // מוסיפים רק אם הצלחנו לחלץ מילים
-        if (finalWords) {
-            books[bookName].chapters[chapter].push({ unit, words: finalWords });
+        // מוסיף את היחידה לרשימה של הפרק (מניע דריסה)
+        if (words) {
+            books[bookName].chapters[chapter].push({ unit: unitName, words: words });
         }
     }
     return books;
