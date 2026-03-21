@@ -5,13 +5,12 @@ let wrongAnswers = [];
 let currentUnitName = "";
 
 window.onload = () => {
-    // בדיקה אם הגענו מהספרייה
     const params = new URLSearchParams(window.location.search);
     if (params.get('source') === 'library') {
         const savedData = sessionStorage.getItem('currentWords');
         if (savedData) {
             document.getElementById('wordInput').value = savedData;
-            initApp(); // מתחיל את המשחק אוטומטית
+            initApp();
         }
     }
 };
@@ -21,7 +20,7 @@ function initApp() {
     if (!text) return;
 
     const lines = text.split('\n');
-    currentUnitName = lines[0]; // השורה הראשונה היא שם היחידה
+    currentUnitName = lines[0]; 
     currentWords = [];
 
     for (let i = 1; i < lines.length; i++) {
@@ -40,10 +39,9 @@ function initApp() {
     startQuiz();
 }
 
-// לוגיקת המבחן (הקוד המקורי שלך שנשאר ללא שינוי)
 function startQuiz() {
     quizIndex = 0; score = 0; wrongAnswers = [];
-    currentWords = currentWords.sort(() => Math.random() - 0.5);
+    currentWords = [...currentWords].sort(() => Math.random() - 0.5);
     showQuestion();
 }
 
@@ -97,6 +95,18 @@ function showSummary() {
     document.getElementById('btn-c4').disabled = !canPlay;
     document.getElementById('btn-mem').disabled = !canPlay;
     document.getElementById('lock-msg').innerText = canPlay ? "🔓 המשחקים פתוחים!" : "🔒 צריך 70% כדי לשחק";
+
+    // הוספת כפתור חזרה לספרייה אם הוא לא קיים
+    if (!document.getElementById('back-to-lib')) {
+        const btn = document.createElement('button');
+        btn.id = 'back-to-lib';
+        btn.className = 'opt-btn'; // משתמש בעיצוב הקיים שלך
+        btn.style.marginTop = '20px';
+        btn.style.backgroundColor = '#64748b';
+        btn.innerText = "חזרה לספריית היחידות";
+        btn.onclick = () => window.location.href = 'library.html';
+        document.getElementById('screen-summary').appendChild(btn);
+    }
 }
 
 function showScreen(id) {
