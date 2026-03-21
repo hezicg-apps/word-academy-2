@@ -8,143 +8,228 @@
     <link rel="icon" type="image/png" href="favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* שימוש בגופן Segoe UI עם גיבוי של Open Sans לקריאות מקסימלית לילדים */
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Open Sans', 'Assistant', sans-serif; 
-            background-color: #f8fafc; 
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #fdfdfe; 
             margin: 0; 
-            color: #1e293b;
+            color: #334155;
         }
         
+        /* כרטיסיות רמת מתחילים */
         .unit-card { 
-            background: white; border-radius: 20px; padding: 20px; 
+            background: white; border-radius: 24px; padding: 24px; 
             border: 1px solid #e2e8f0; transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         
         .unit-card:hover { 
-            border-color: #3b82f6; 
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+            border-color: #60a5fa; 
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(59, 130, 246, 0.08);
         }
 
+        /* כותרות רמה - פחות כבד */
         .level-header {
-            border-right: 5px solid #3b82f6;
-            padding-right: 15px;
-            margin: 45px 0 20px 0;
+            border-right: 6px solid #3b82f6;
+            padding-right: 16px;
+            margin-bottom: 20px;
         }
 
+        .level-title {
+            font-weight: 700; /* Bold במקום Black */
+            font-size: 1.5rem;
+            color: #1e293b;
+        }
+
+        /* Dropdowns מעוצבים */
         .custom-select {
             appearance: none;
-            background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat left 1rem center;
-            background-size: 1.2rem;
+            background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat left 1rem center;
+            background-size: 1.1rem;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px 18px;
+            border-radius: 16px;
+            padding: 14px 16px;
             width: 100%;
-            font-weight: 700;
-            color: #334155;
+            font-weight: 600;
+            color: #475569;
             cursor: pointer;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
 
-        .custom-select:focus { border-color: #3b82f6; }
+        .custom-select:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
 
-        .hero-gradient {
-            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+        .hero-section {
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+            border-bottom: 1px solid #e2e8f0;
         }
     </style>
 </head>
 <body>
 
-<header class="bg-white border-b border-slate-200 p-5 sticky top-0 z-50 shadow-sm">
+<header class="bg-white/80 backdrop-blur-md border-b border-slate-100 p-4 sticky top-0 z-50 shadow-sm">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <img src="logo.svg" alt="Word Academy" class="w-14 h-14">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+                <span class="text-white text-2xl">🦉</span>
+            </div>
             <div>
-                <h1 class="text-4xl font-black text-blue-900 tracking-tighter leading-none">Word Academy</h1>
-                <p class="text-slate-500 font-bold text-sm mt-1">אנגלית בכיף לבית הספר היסודי 🦉</p>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Word Academy</h1>
+                <p class="text-slate-400 text-xs font-semibold">Learning English is Fun!</p>
             </div>
         </div>
-        <div class="flex gap-3">
-            <button onclick="window.location.href='student-login.html'" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md active:scale-95">כניסת תלמידים</button>
-            <button onclick="window.location.href='login.html'" class="text-slate-600 font-bold border border-slate-300 px-6 py-2.5 rounded-xl hover:bg-slate-50 transition-all">מורים</button>
+        <div class="flex gap-2">
+            <button onclick="window.location.href='student-login.html'" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all active:scale-95 text-sm">כניסת תלמידים</button>
+            <button onclick="window.location.href='login.html'" class="text-slate-500 font-bold px-4 py-2 rounded-xl hover:bg-slate-50 text-sm">מורים</button>
         </div>
     </div>
 </header>
 
-<main class="max-w-5xl mx-auto p-6 md:p-10">
+<main class="max-w-6xl mx-auto p-6">
     
-    <section class="hero-gradient rounded-[40px] p-10 text-center mb-16 border border-blue-50">
-        <h2 class="text-4xl font-black text-slate-800 mb-4">מאגר יחידות הלימוד - Band 1</h2>
-        <p class="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
-            למידת אוצר מילים בהדרגה, מהצעד הראשון ועד לשליטה מלאה. 
-            <span class="text-blue-600 font-bold italic">פתוח וחינמי לכולם.</span>
+    <section class="hero-section rounded-[32px] p-8 md:p-12 text-center mb-12 border border-blue-50/50">
+        <h2 class="text-3xl font-bold text-slate-800 mb-3">ברוכים הבאים למאגר Band 1</h2>
+        <p class="text-slate-500 max-w-xl mx-auto font-medium leading-relaxed">
+            כל המילים שצריך לדעת בבית הספר היסודי, מחולקות ל-33 יחידות לימוד חווייתיות.
         </p>
     </section>
 
-    <div class="level-header border-blue-500">
-        <h3 class="text-2xl font-black text-slate-800">Beginner Level | רמת מתחילים</h3>
-        <p class="text-slate-500 font-bold">הצעדים הראשונים באנגלית (יחידות 1-3)</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="unit-card text-center">
-            <span class="text-xs font-black text-blue-500 uppercase tracking-widest">Unit 01</span>
-            <h4 class="font-bold text-xl text-blue-900 mt-1 mb-4" dir="ltr">First Steps</h4>
-            <p class="text-slate-500 text-sm mb-6">צעדים ראשונים, ברכות ובסיס</p>
-            <button onclick="window.location.href='practice.html?unit=1'" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-extrabold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
+    <div class="mb-12">
+        <div class="level-header border-blue-400">
+            <h3 class="level-title">Beginner Level | מתחילים</h3>
+            <p class="text-slate-400 text-sm font-semibold">יחידות 1-3: צעדים ראשונים</p>
         </div>
-        <div class="unit-card text-center">
-            <span class="text-xs font-black text-blue-500 uppercase tracking-widest">Unit 02</span>
-            <h4 class="font-bold text-xl text-blue-900 mt-1 mb-4" dir="ltr">Colors & Numbers</h4>
-            <p class="text-slate-500 text-sm mb-6">צבעים ומספרים עד 12</p>
-            <button onclick="window.location.href='practice.html?unit=2'" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-extrabold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
-        </div>
-        <div class="unit-card text-center">
-            <span class="text-xs font-black text-blue-500 uppercase tracking-widest">Unit 03</span>
-            <h4 class="font-bold text-xl text-blue-900 mt-1 mb-4" dir="ltr">My Family</h4>
-            <p class="text-slate-500 text-sm mb-6">בני משפחה, חיות מחמד והבית</p>
-            <button onclick="window.location.href='practice.html?unit=3'" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-extrabold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="unit-card flex flex-col justify-between">
+                <div>
+                    <span class="text-blue-500 font-bold text-xs">UNIT 01</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">First Steps</h4>
+                </div>
+                <button onclick="location.href='practice.html?unit=1'" class="mt-4 w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
+            </div>
+            <div class="unit-card flex flex-col justify-between">
+                <div>
+                    <span class="text-blue-500 font-bold text-xs">UNIT 02</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Colors & Numbers</h4>
+                </div>
+                <button onclick="location.href='practice.html?unit=2'" class="mt-4 w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
+            </div>
+            <div class="unit-card flex flex-col justify-between">
+                <div>
+                    <span class="text-blue-500 font-bold text-xs">UNIT 03</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">My Family</h4>
+                </div>
+                <button onclick="location.href='practice.html?unit=3'" class="mt-4 w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition-all">תרגול חופשי</button>
+            </div>
         </div>
     </div>
 
-    <div class="level-header border-green-500 mt-16">
-        <h3 class="text-2xl font-black text-slate-800">Basic Level | רמת יסוד</h3>
-        <p class="text-slate-500 font-bold">ביסוס אוצר המילים (יחידות 4-10)</p>
-    </div>
-    <select class="custom-select shadow-sm" onchange="if(this.value) window.location.href=this.value">
-        <option value="">בחרו יחידה לתרגול...</option>
-        <option value="practice.html?unit=4">Unit 4: My Body (הגוף שלי)</option>
-        <option value="practice.html?unit=5">Unit 5: In the Classroom (בתוך הכיתה)</option>
-        <option value="practice.html?unit=6">Unit 6: Action Time! (זמן פעולה - פעלים)</option>
-        <option value="practice.html?unit=7">Unit 7: Food & Drinks (אוכל ושתייה)</option>
-        <option value="practice.html?unit=8">Unit 8: At Home (בבית ובחדרים)</option>
-        <option value="practice.html?unit=9">Unit 9: Animals Everywhere (חיות וטבע)</option>
-        <option value="practice.html?unit=10">Unit 10: Time & Calendar (זמן ולוח שנה)</option>
-    </select>
+    <hr class="border-slate-100 mb-12">
 
-    <div class="level-header border-orange-400 mt-16">
-        <h3 class="text-2xl font-black text-slate-800">Intermediate Level | רמת ביניים</h3>
-        <p class="text-slate-500 font-bold">הרחבת היכולת והבנת משפטים (יחידות 11-20)</p>
-    </div>
-    <select class="custom-select shadow-sm" onchange="if(this.value) window.location.href=this.value">
-        <option value="">בחרו יחידה לתרגול...</option>
-        <option value="practice.html?unit=11">Unit 11: Question Words (מילות שאלה)</option>
-        <option value="practice.html?unit=12">Unit 12: Where is it? (מילות יחס ומיקום)</option>
-        <option value="practice.html?unit=13">Unit 13: Describing People (תיאור אנשים ותכונות)</option>
-        <option value="practice.html?unit=14">Unit 14: What's the Weather? (מזג אוויר ועונות)</option>
-        <option value="practice.html?unit=15">Unit 15: Clothes (בגדים ולבוש)</option>
-        <option value="practice.html?unit=16">Unit 16: Daily Routine (סדר יום ופעלים)</option>
-        <option value="practice.html?unit=17">Unit 17: Important Small Words (מילות קישור ודקדוק)</option>
-        <option value="practice.html?unit=18">Unit 18: Around the City (מקומות בעיר)</option>
-        <option value="practice.html?unit=19">Unit 19: Transportation (כלי תחבורה ותנועה)</option>
-        <option value="practice.html?unit=20">Unit 20: Feelings & Emotions (רגשות ותחושות)</option>
-    </select>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20">
+        
+        <div class="space-y-4">
+            <div class="level-header border-green-400">
+                <h3 class="text-xl font-bold text-slate-800">Basic Level</h3>
+                <p class="text-slate-400 text-xs font-bold">יחידות 4-10</p>
+            </div>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו יחידה...</option>
+                <option value="practice.html?unit=4">Unit 4: My Body</option>
+                <option value="practice.html?unit=5">Unit 5: In the Classroom</option>
+                <option value="practice.html?unit=6">Unit 6: Action Time!</option>
+                <option value="practice.html?unit=7">Unit 7: Food & Drinks</option>
+                <option value="practice.html?unit=8">Unit 8: At Home</option>
+                <option value="practice.html?unit=9">Unit 9: Animals Everywhere</option>
+                <option value="practice.html?unit=10">Unit 10: Time & Calendar</option>
+            </select>
+            <div class="bg-green-50/50 p-4 rounded-2xl border border-green-100/50 text-xs text-green-700 leading-relaxed">
+                ביסוס אוצר המילים הבסיסי ומושגים יומיומיים מהסביבה הקרובה של הילד.
+            </div>
+        </div>
 
-    <div class="level-header border-purple-600 mt-16">
-        <h3 class="text-2xl font-black text-slate-800">Advanced Level | רמת מתקדמים</h3>
-        <p class="text-slate-500 font
+        <div class="space-y-4">
+            <div class="level-header border-orange-400">
+                <h3 class="text-xl font-bold text-slate-800">Intermediate</h3>
+                <p class="text-slate-400 text-xs font-bold">יחידות 11-20</p>
+            </div>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו יחידה...</option>
+                <option value="practice.html?unit=11">Unit 11: Question Words</option>
+                <option value="practice.html?unit=12">Unit 12: Where is it?</option>
+                <option value="practice.html?unit=13">Unit 13: Describing People</option>
+                <option value="practice.html?unit=14">Unit 14: What's the Weather?</option>
+                <option value="practice.html?unit=15">Unit 15: Clothes</option>
+                <option value="practice.html?unit=16">Unit 16: Daily Routine</option>
+                <option value="practice.html?unit=17">Unit 17: Small Words</option>
+                <option value="practice.html?unit=18">Unit 18: Around the City</option>
+                <option value="practice.html?unit=19">Unit 19: Transportation</option>
+                <option value="practice.html?unit=20">Unit 20: Feelings</option>
+            </select>
+            <div class="bg-orange-50/50 p-4 rounded-2xl border border-orange-100/50 text-xs text-orange-700 leading-relaxed">
+                הרחבת יכולת הביטוי, שימוש במילות שאלה והבנת מבני שפה מורכבים יותר.
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="level-header border-purple-400">
+                <h3 class="text-xl font-bold text-slate-800">Advanced</h3>
+                <p class="text-slate-400 text-xs font-bold">יחידות 21-33</p>
+            </div>
+            <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
+                <option value="">בחרו יחידה...</option>
+                <optgroup label="עולם ואנשים">
+                    <option value="practice.html?unit=21">Unit 21: Jobs & People</option>
+                    <option value="practice.html?unit=22">Unit 22: Hobbies & Fun</option>
+                    <option value="practice.html?unit=23">Unit 23: Nature & World</option>
+                    <option value="practice.html?unit=24">Unit 24: Time Expressions</option>
+                    <option value="practice.html?unit=25">Unit 25: House Objects</option>
+                </optgroup>
+                <optgroup label="חשיבה ומעגלי חיים">
+                    <option value="practice.html?unit=26">Unit 26: Thinking & Knowing</option>
+                    <option value="practice.html?unit=27">Unit 27: Health & Body 2</option>
+                    <option value="practice.html?unit=28">Unit 28: Communication</option>
+                    <option value="practice.html?unit=29">Unit 29: Money & Shopping</option>
+                    <option value="practice.html?unit=30">Unit 30: Travel & Holidays</option>
+                    <option value="practice.html?unit=31">Unit 31: Adjectives</option>
+                    <option value="practice.html?unit=32">Unit 32: Life Events</option>
+                    <option value="practice.html?unit=33">Unit 33: Everyday Verbs</option>
+                </optgroup>
+            </select>
+            <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100/50 text-xs text-purple-700 leading-relaxed">
+                שליטה מלאה באוצר המילים של Band 1. הכנה למעבר לרמות הבאות.
+            </div>
+        </div>
+    </div>
+
+    <section class="bg-slate-900 rounded-[32px] p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 md:flex items-center justify-between">
+            <div class="md:max-w-xl">
+                <h2 class="text-3xl font-bold mb-4">מערכת ניהול למורים</h2>
+                <p class="text-slate-400 font-medium mb-8">רוצים לעקוב אחרי ציוני התלמידים ולנהל כיתות? הצטרפו למערכת המקצועית שלנו.</p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <button onclick="location.href='register.html'" class="bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">הרשמה למורים</button>
+                    <div class="border-r border-white/10 pr-6">
+                        <span class="text-xs block opacity-50">מנוי מחצית</span>
+                        <span class="text-xl font-bold text-blue-300">רק 50 ₪</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:block text-8xl opacity-10">🦉</div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="p-10 text-center text-slate-400 text-xs font-bold border-t border-slate-50 mt-12 bg-white">
+    © 2026 Word Academy | נוצר ע"י חזי כהן גלמן
+</footer>
+
+</body>
+</html>
