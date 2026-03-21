@@ -1,4 +1,4 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,15 @@
     <link rel="icon" type="image/png" href="favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&family=Assistant:wght@400;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        /* הגדרת גופן Segue/Open Sans כברירת מחדל לכל האתר */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Open Sans', 'Assistant', sans-serif; 
+            background-color: #f8fafc; 
+            margin: 0; 
+        }
         
         .grade-section { 
             background: white; border-radius: 24px; padding: 25px; 
@@ -30,9 +36,13 @@
             color: #1e293b;
             cursor: pointer;
             outline: none;
+            font-family: inherit; /* יורש את הסגואה */
         }
 
         .hero-title { line-height: 0.9; }
+        
+        /* סגנון מיוחד לאנגלית בתוך ה-Dropdown */
+        option { font-family: 'Segoe UI', 'Open Sans', sans-serif; }
     </style>
 </head>
 <body>
@@ -62,7 +72,7 @@
     <div class="space-y-6">
         
         <div class="grade-section">
-            <h3 class="text-xl font-extrabold text-slate-800 mb-4">3rd Grade | כיתה ג'</h3>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4" dir="ltr">3rd Grade | כיתה ג'</h3>
             <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
                 <option value="">בחרו נושא לתרגול...</option>
                 <option value="practice.html?grade=3&topic=colors">Colors (צבעים)</option>
@@ -72,7 +82,7 @@
         </div>
 
         <div class="grade-section">
-            <h3 class="text-xl font-extrabold text-slate-800 mb-4">4th Grade | כיתה ד'</h3>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4" dir="ltr">4th Grade | כיתה ד'</h3>
             <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
                 <option value="">בחרו נושא לתרגול...</option>
                 <option value="practice.html?grade=4&topic=home">My Home (הבית שלי)</option>
@@ -82,7 +92,7 @@
         </div>
 
         <div class="grade-section">
-            <h3 class="text-xl font-extrabold text-slate-800 mb-4">5th Grade | כיתה ה'</h3>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4" dir="ltr">5th Grade | כיתה ה'</h3>
             <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
                 <option value="">בחרו נושא לתרגול...</option>
                 <option value="practice.html?grade=5&topic=routine">My Daily Routine (סדר היום שלי)</option>
@@ -92,7 +102,7 @@
         </div>
 
         <div class="grade-section">
-            <h3 class="text-xl font-extrabold text-slate-800 mb-4">6th Grade | כיתה ו'</h3>
+            <h3 class="text-xl font-extrabold text-slate-800 mb-4" dir="ltr">6th Grade | כיתה ו'</h3>
             <select class="custom-select" onchange="if(this.value) window.location.href=this.value">
                 <option value="">בחרו נושא לתרגול...</option>
                 <option value="practice.html?grade=6&topic=world">Around the World (מסביב לעולם)</option>
