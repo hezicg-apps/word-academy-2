@@ -3,47 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | דף הבית</title>
+    <title>Word Academy | מאגר אוצר מילים</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
-        .hero-gradient { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); }
-        .btn-main { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; }
+        .category-card { 
+            background: white; border-radius: 20px; padding: 20px; 
+            border: 1px solid #e2e8f0; transition: all 0.2s;
+        }
+        .category-card:hover { border-color: #3b82f6; transform: translateY(-2px); shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .grade-badge { @apply text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 inline-block; }
     </style>
 </head>
-<body class="hero-gradient min-h-screen flex flex-col">
+<body>
 
-<header class="p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3">
-        <img src="logo.svg" alt="WA" class="w-12 h-12">
-        <span class="text-2xl font-black text-blue-900">Word Academy</span>
+<header class="bg-white border-b border-slate-200 p-4 shadow-sm">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="logo.svg" alt="WA" class="w-10 h-10">
+            <span class="text-xl font-extrabold text-slate-800">Word Academy</span>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="window.location.href='student-login.html'" class="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold text-sm hover:bg-blue-700">כניסת תלמידים</button>
+            <button onclick="window.location.href='login.html'" class="text-slate-600 font-bold text-sm border border-slate-300 px-5 py-2 rounded-xl hover:bg-slate-50">כניסת מורים</button>
+        </div>
     </div>
-    <button onclick="window.location.href='login.html'" class="text-blue-600 font-bold hover:underline">כניסת מורים</button>
 </header>
 
-<main class="flex-1 flex flex-col items-center justify-center text-center px-4">
-    <h1 class="text-6xl md:text-8xl font-black text-slate-800 mb-6 tracking-tighter">
-        ללמוד אנגלית <br> <span class="text-blue-600">בדרך שלך.</span>
-    </h1>
-    <p class="text-xl text-slate-500 max-w-2xl mb-12 font-medium">
-        המערכת המתקדמת לניהול אוצר מילים, יצירת משחקים ומעקב אחרי התקדמות התלמידים.
-    </p>
-
-    <div class="flex flex-col md:flex-row gap-6 w-full max-w-lg">
-        <button onclick="window.location.href='student-login.html'" class="btn-main flex-1 bg-blue-600 text-white p-8 rounded-[32px] text-2xl font-black shadow-xl shadow-blue-200">
-            כניסת תלמידים
-        </button>
-        
-        <button onclick="window.location.href='register.html'" class="btn-main flex-1 bg-white text-blue-600 border-4 border-blue-50 p-8 rounded-[32px] text-2xl font-black shadow-sm">
-            הרשמת מורים
-        </button>
+<main class="max-w-7xl mx-auto p-8">
+    <div class="mb-12">
+        <h1 class="text-3xl font-black text-slate-800">מאגר אוצר מילים - Band 1</h1>
+        <p class="text-slate-500 font-medium">יחידות לימוד מותאמות לתכנית הלימודים החדשה באנגלית.</p>
     </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-yellow-400 pr-3">כיתה ג'</h3>
+            <div class="category-card">
+                <span class="grade-badge bg-yellow-100 text-yellow-700">BAND 1</span>
+                <h4 class="font-bold text-slate-800">צבעים ומספרים</h4>
+                <p class="text-xs text-slate-400 mt-1 italic">12 מילים בסיסיות</p>
+                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-green-400 pr-3">כיתה ד'</h3>
+            <div class="category-card">
+                <span class="grade-badge bg-green-100 text-green-700">BAND 1</span>
+                <h4 class="font-bold text-slate-800">בתוך הבית</h4>
+                <p class="text-xs text-slate-400 mt-1 italic">20 מילים - רהיטים וחפצים</p>
+                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-blue-400 pr-3">כיתה ה'</h3>
+            <div class="category-card">
+                <span class="grade-badge bg-blue-100 text-blue-700">BAND 1</span>
+                <h4 class="font-bold text-slate-800">סדר היום שלי</h4>
+                <p class="text-xs text-slate-400 mt-1 italic">פעלים ושגרת יום</p>
+                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-lg font-bold text-slate-700 border-r-4 border-purple-400 pr-3">כיתה ו'</h3>
+            <div class="category-card">
+                <span class="grade-badge bg-purple-100 text-purple-700">BAND 1</span>
+                <h4 class="font-bold text-slate-800">בעלי חיים בטבע</h4>
+                <p class="text-xs text-slate-400 mt-1 italic">אוצר מילים מתקדם</p>
+                <button class="mt-4 text-blue-600 text-sm font-bold hover:underline">תרגול חופשי ←</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-16 bg-blue-50 rounded-[32px] p-10 border border-blue-100">
+        <div class="max-w-3xl">
+            <h2 class="text-2xl font-black text-blue-900 mb-4">ניהול כיתה ומטלות מתוקשבות</h2>
+            <p class="text-blue-800 opacity-80 mb-6 font-medium leading-relaxed">
+                מורים המעוניינים לנהל את תלמידיהם, לעקוב אחר ציונים ולשייך יחידות לימוד מותאמות (כולל רשימות מתוך ספרי הלימוד הנלמדים), מוזמנים להירשם למערכת הניהול.
+            </p>
+            <div class="flex gap-4">
+                <button onclick="window.location.href='register.html'" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">פתיחת חשבון מורה</button>
+                <button class="text-blue-600 font-bold px-6 py-3">למידע נוסף על המנוי המקצועי</button>
+            </div>
+        </div>
+    </section>
 </main>
 
-<footer class="p-8 text-center text-slate-400 text-sm font-bold">
-    &copy; 2026 Word Academy - פותח עבור מורי אנגלית בישראל
+<footer class="p-12 text-center text-slate-400 text-xs font-medium">
+    &copy; 2026 Word Academy | הכלי שלך לניהול אוצר מילים באנגלית
 </footer>
 
 </body>
