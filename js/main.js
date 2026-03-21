@@ -1,20 +1,3 @@
-let currentWords = [];
-let quizIndex = 0;
-let score = 0;
-let wrongAnswers = [];
-let currentUnitName = "";
-
-window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('source') === 'library') {
-        const savedData = sessionStorage.getItem('currentWords');
-        if (savedData) {
-            document.getElementById('wordInput').value = savedData;
-            initApp();
-        }
-    }
-};
-
 function initApp() {
     const text = document.getElementById('wordInput').value.trim();
     if (!text) return;
@@ -31,59 +14,13 @@ function initApp() {
     }
 
     if (currentWords.length < 4) {
-        alert("צריך לפחות 4 מילים למבחן");
+        alert("צריך לפחות 4 מילים");
         return;
     }
 
-    showScreen('screen-quiz');
-    startQuiz();
-}
-
-function startQuiz() {
-    quizIndex = 0; score = 0; wrongAnswers = [];
-    currentWords = [...currentWords].sort(() => Math.random() - 0.5);
-    showQuestion();
-}
-
-function showQuestion() {
-    const word = currentWords[quizIndex];
-    document.getElementById('quiz-unit-display').innerText = currentUnitName;
-    document.getElementById('quiz-progress').innerText = `שאלה ${quizIndex + 1} מתוך ${currentWords.length}`;
-    document.getElementById('quiz-eng').innerText = word.eng;
-
-    const options = [word.heb];
-    while (options.length < 4) {
-        const rand = currentWords[Math.floor(Math.random() * currentWords.length)].heb;
-        if (!options.includes(rand)) options.push(rand);
-    }
-    options.sort(() => Math.random() - 0.5);
-
-    const container = document.getElementById('quiz-options');
-    container.innerHTML = '';
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(opt, btn);
-        container.appendChild(btn);
-    });
-}
-
-function checkAnswer(selected, btn) {
-    const correct = currentWords[quizIndex].heb;
-    if (selected === correct) {
-        btn.classList.add('correct');
-        score++;
-    } else {
-        btn.classList.add('wrong');
-        wrongAnswers.push(currentWords[quizIndex]);
-    }
-
-    setTimeout(() => {
-        quizIndex++;
-        if (quizIndex < currentWords.length) showQuestion();
-        else showSummary();
-    }, 1000);
+    // במקום להתחיל מבחן - מציגים את מסך הלימוד (Flashcards)
+    renderFlashcards(); 
+    showScreen('screen-intro'); 
 }
 
 function showSummary() {
@@ -94,29 +31,19 @@ function showSummary() {
     const canPlay = percent >= 70;
     document.getElementById('btn-c4').disabled = !canPlay;
     document.getElementById('btn-mem').disabled = !canPlay;
-    document.getElementById('lock-msg').innerText = canPlay ? "🔓 המשחקים פתוחים!" : "🔒 צריך 70% כדי לשחק";
-
-    // הוספת כפתור חזרה לספרייה אם הוא לא קיים
-    if (!document.getElementById('back-to-lib')) {
-        const btn = document.createElement('button');
-        btn.id = 'back-to-lib';
-        btn.className = 'opt-btn'; // משתמש בעיצוב הקיים שלך
-        btn.style.marginTop = '20px';
-        btn.style.backgroundColor = '#64748b';
-        btn.innerText = "חזרה לספריית היחידות";
-        btn.onclick = () => window.location.href = 'library.html';
-        document.getElementById('screen-summary').appendChild(btn);
-    }
+    
+    // הצגת הודעת הנעילה
+    const lockMsg = document.getElementById('lock-msg');
+    if(lockMsg) lockMsg.innerText = canPlay ? "🔓 המשחקים פתוחים!" : "🔒 צריך 70% כדי לשחק";
 }
 
-function showScreen(id) {
-    document.querySelectorAll('.card-box').forEach(s => s.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+// פונקציות עזר לכפתורים (וודא שהן קיימות)
+function restartQuiz() {
+    showScreen('screen-quiz');
+    startQuiz();
 }
 
-function speak() {
-    const text = document.getElementById('quiz-eng').innerText;
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = 'en-US';
-    window.speechSynthesis.speak(msg);
+function shareWatsapp() {
+    const text = `הצלחתי במבחן המילים של Word Academy ביחידה ${currentUnitName} בציון ${score}/${currentWords.length}!`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
 }
