@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy | Teacher Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        
+        /* Header - זהה לדף הנחיתה */
+        .main-header {
+            background: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .header-left { display: flex; gap: 10px; }
+        .brand-name { font-size: 22px; font-weight: 800; color: #1e3a8a; }
+        .logo-img { width: 40px; height: 40px; }
+
+        .btn-nav { padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 14px; border: 2px solid #2563eb; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-secondary { background: white; color: #2563eb; }
+
+        /* Dashboard Cards */
+        .class-card { background: white; border-radius: 24px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 8px solid #2563eb; transition: transform 0.2s; }
+        .class-card:hover { transform: translateY(-5px); }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-right">
+        <img src="logo.svg" alt="WA" class="logo-img">
+        <span class="brand-name">Word Academy</span>
+    </div>
+    <div class="header-left">
+        <button class="btn-nav btn-primary">כניסת תלמידים</button>
+        <button class="btn-nav btn-secondary">התנתקות</button>
+    </div>
+</header>
+
+<main class="max-w-6xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="text-3xl font-black text-slate-800">ניהול כיתות</h2>
+            <p class="text-slate-500">שלום מורה, כאן ניתן לנהל את הכיתות והתלמידים שלך.</p>
+        </div>
+        <button onclick="toggleModal('newClassModal', true)" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+            + יצירת כיתה חדשה
+        </button>
+    </div>
+
+    <div id="classes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="class-card">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase tracking-wider">קוד כיתה: ABC123</span>
+                <button class="text-slate-300 hover:text-slate-500 text-xl">⋮</button>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 mb-1 italic">כיתה ה' 2 - שילוב</h3>
+            <p class="text-sm text-slate-500 mb-6 font-medium">14 תלמידים • 3 יחידות פתוחות</p>
+            
+            <div class="space-y-2">
+                <button class="w-full py-2.5 bg-slate-50 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors">ניהול תלמידים</button>
+                <button class="w-full py-2.5 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm hover:bg-blue-100 transition-colors">בחירת תוכן מהמאגר</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="newClassModal" class="modal">
+    <div class="bg-white rounded-[32px] p-8 max-w-md w-full mx-4 shadow-2xl">
+        <h3 class="text-2xl font-black mb-2">כיתה חדשה במערכת</h3>
+        <p class="text-slate-500 text-sm mb-6">הגדר שם כיתה והוסף את רשימת התלמידים שלך.</p>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">שם הכיתה</label>
+                <input type="text" id="className" class="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="למשל: כיתה ו' 1 - הקנייה">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">רשימת שמות תלמידים</label>
+                <textarea id="studentList" class="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="דני כהן&#10;שרה לוי&#10;נועם אברהם..."></textarea>
+                <p class="text-[10px] text-slate-400 mt-1 mr-2">* יש להפריד שמות בשורות חדשות</p>
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-8">
+            <button onclick="saveClass()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100">צור כיתה</button>
+            <button onclick="toggleModal('newClassModal', false)" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-bold">ביטול</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleModal(id, show) {
+        document.getElementById(id).classList.toggle('active', show);
+    }
+
+    function saveClass() {
+        const name = document.getElementById('className').value;
+        const students = document.getElementById('studentList').value;
+        
+        if (!name || !students) {
+            alert("נא למלא את כל הפרטים");
+            return;
+        }
+
+        // לוגיקת שמירה זמנית (עד לחיבור Firebase)
+        console.log("Saving Class:", { name, students: students.split('\n') });
+        alert(`הכיתה ${name} הוקמה! כעת חברו אותה למאגר המילים.`);
+        toggleModal('newClassModal', false);
+    }
+</script>
+
+</body>
+</html>
