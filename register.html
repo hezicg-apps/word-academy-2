@@ -11,16 +11,16 @@
             font-family: 'Assistant', sans-serif; 
             background-color: #f8fafc; 
             margin: 0;
-            height: 100vh; /* גובה מסך מלא */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* מניעת גלילה כללית */
+            overflow: hidden;
         }
         .auth-card { 
             background: white; 
             border-radius: 28px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-            max-height: 85vh; /* הגבלה קצת יותר מחמירה כדי לתת מקום להדר הגדול */
+            max-height: 85vh;
         }
         .input-field { 
             background: #f1f5f9; 
@@ -33,7 +33,7 @@
             font-size: 14px;
         }
         .input-field:focus { background: white; box-shadow: 0 0 0 2px #2563eb; }
-        .btn-register { 
+        .btn-primary { 
             background: #2563eb; 
             color: white; 
             padding: 14px; 
@@ -45,22 +45,20 @@
             border: none; 
             transition: all 0.2s; 
         }
-        .btn-register:hover { background: #1e40af; transform: translateY(-1px); }
+        .btn-primary:hover { background: #1e40af; transform: translateY(-1px); }
         
-        /* התאמה למסכים קטנים/לפטופים */
         @media (max-height: 750px) {
-            header { p: 4; }
-            .auth-card { p: 6; max-height: 75vh; }
-            h2 { font-size: 1.25rem; margin-bottom: 0.25rem; }
-            .mb-6 { margin-bottom: 1rem; }
-            form.space-y-3 { space-y: 2; }
+            header { padding: 1rem; }
+            .auth-card { padding: 1.5rem; max-height: 75vh; }
         }
     </style>
 </head>
 <body class="flex flex-col">
 
 <header class="p-8 flex justify-center items-center gap-4 bg-white shadow-sm border-b">
-    <img src="logo.svg" alt="WA" class="w-20 h-20"> <h1 class="text-5xl font-black text-blue-900 tracking-tighter">Word Academy</h1> </header>
+    <img src="logo.svg" alt="WA" class="w-20 h-20">
+    <h1 class="text-5xl font-black text-blue-900 tracking-tighter">Word Academy</h1>
+</header>
 
 <main class="flex-1 flex items-center justify-center p-4">
     <div class="auth-card max-w-md w-full p-8">
@@ -95,7 +93,7 @@
             </div>
 
             <div class="pt-2">
-                <button type="submit" class="btn-register shadow-md shadow-blue-100">צרו חשבון</button>
+                <button type="submit" class="btn-primary shadow-md shadow-blue-100">צרו חשבון</button>
             </div>
         </form>
 
@@ -109,14 +107,8 @@
 <script>
     document.getElementById('registerForm').onsubmit = function(e) {
         e.preventDefault();
-        const userData = {
-            name: document.getElementById('teacherName').value,
-            school: document.getElementById('schoolName').value,
-            city: document.getElementById('cityName').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value
-        };
-        console.log("נתוני מורה חדש:", userData);
+        const teacherName = document.getElementById('teacherName').value;
+        localStorage.setItem('loggedTeacherName', teacherName);
         alert("החשבון נוצר בהצלחה!");
         window.location.href = "teacher-dashboard.html";
     };
