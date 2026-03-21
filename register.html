@@ -7,59 +7,99 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; }
-        .auth-card { background: white; border-radius: 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
-        .input-field { background: #f1f5f9; border: none; border-radius: 16px; padding: 16px; width: 100%; outline: none; transition: all 0.2s; }
+        body { 
+            font-family: 'Assistant', sans-serif; 
+            background-color: #f8fafc; 
+            margin: 0;
+            height: 100vh; /* גובה מסך מלא */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* מניעת גלילה כללית */
+        }
+        .auth-card { 
+            background: white; 
+            border-radius: 28px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
+            max-height: 90vh; /* הגבלה שלא יצא מהמסך */
+        }
+        .input-field { 
+            background: #f1f5f9; 
+            border: none; 
+            border-radius: 14px; 
+            padding: 12px 16px; /* צמצום קל של הריפוד */
+            width: 100%; 
+            outline: none; 
+            transition: all 0.2s; 
+            font-size: 14px;
+        }
         .input-field:focus { background: white; box-shadow: 0 0 0 2px #2563eb; }
-        .btn-register { background: #2563eb; color: white; padding: 16px; border-radius: 16px; width: 100%; font-weight: 800; font-size: 18px; transition: all 0.2s; cursor: pointer; border: none; }
-        .btn-register:hover { background: #1e40af; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); }
+        .btn-register { 
+            background: #2563eb; 
+            color: white; 
+            padding: 14px; 
+            border-radius: 14px; 
+            width: 100%; 
+            font-weight: 800; 
+            font-size: 17px; 
+            cursor: pointer; 
+            border: none; 
+            transition: all 0.2s; 
+        }
+        .btn-register:hover { background: #1e40af; transform: translateY(-1px); }
+        
+        /* התאמה למסכים קטנים/לפטופים */
+        @media (max-height: 700px) {
+            .auth-card { p: 6; }
+            h2 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+            .mb-8 { margin-bottom: 1rem; }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="flex flex-col">
 
-<header class="p-6 flex justify-center items-center gap-3">
-    <img src="logo.svg" alt="WA" class="w-12 h-12">
-    <h1 class="text-3xl font-black text-blue-900 tracking-tight">Word Academy</h1>
+<header class="p-4 flex justify-center items-center gap-2">
+    <img src="logo.svg" alt="WA" class="w-10 h-10">
+    <h1 class="text-2xl font-black text-blue-900 tracking-tight">Word Academy</h1>
 </header>
 
 <main class="flex-1 flex items-center justify-center p-4">
-    <div class="auth-card max-w-md w-full p-10">
-        <h2 class="text-2xl font-black text-slate-800 mb-2">הרשמת מורה חדש</h2>
-        <p class="text-slate-500 mb-8">הצטרפו לקהילת המורים של Word Academy</p>
+    <div class="auth-card max-w-md w-full p-8">
+        <h2 class="text-xl font-black text-slate-800 mb-1">הרשמת מורה חדש</h2>
+        <p class="text-slate-500 mb-6 text-sm">הצטרפו לקהילת המורים של Word Academy</p>
 
-        <form id="registerForm" class="space-y-4">
+        <form id="registerForm" class="space-y-3">
             <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">שם מלא</label>
-                <input type="text" id="teacherName" class="input-field" placeholder="למשל: ישראל ישראלי" required>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1 mr-1">שם מלא</label>
+                <input type="text" id="teacherName" class="input-field" placeholder="שמך המלא" required>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">שם בית הספר</label>
-                    <input type="text" id="schoolName" class="input-field" placeholder="שם ביה''ס" required>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1 mr-1">שם בית הספר</label>
+                    <input type="text" id="schoolName" class="input-field" placeholder="ביה''ס" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">עיר</label>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1 mr-1">עיר</label>
                     <input type="text" id="cityName" class="input-field" placeholder="עיר" required>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">אימייל (לשחזור סיסמה)</label>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1 mr-1">אימייל (לשחזור סיסמה)</label>
                 <input type="email" id="email" class="input-field" placeholder="email@example.com" dir="ltr" required>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1 mr-2">בחירת סיסמה</label>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1 mr-1">בחירת סיסמה</label>
                 <input type="password" id="password" class="input-field" placeholder="מינימום 6 תווים" required>
             </div>
 
-            <div class="pt-4">
-                <button type="submit" class="btn-register shadow-lg shadow-blue-100">צרו חשבון</button>
+            <div class="pt-2">
+                <button type="submit" class="btn-register shadow-md shadow-blue-100">צרו חשבון</button>
             </div>
         </form>
 
-        <p class="text-center mt-8 text-sm text-slate-500 font-medium">
+        <p class="text-center mt-6 text-xs text-slate-500 font-medium">
             כבר יש לך חשבון? 
             <a href="login.html" class="text-blue-600 font-bold hover:underline">כניסת מורים</a>
         </p>
@@ -69,7 +109,6 @@
 <script>
     document.getElementById('registerForm').onsubmit = function(e) {
         e.preventDefault();
-        
         const userData = {
             name: document.getElementById('teacherName').value,
             school: document.getElementById('schoolName').value,
@@ -77,9 +116,7 @@
             email: document.getElementById('email').value,
             password: document.getElementById('password').value
         };
-
         console.log("נתוני מורה חדש:", userData);
-        
         alert("החשבון נוצר בהצלחה!");
         window.location.href = "teacher-dashboard.html";
     };
