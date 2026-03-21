@@ -1,95 +1,169 @@
-// js/main.js
+// משתנים גלובליים
+let currentWords = [];
+let quizIndex = 0;
+let score = 0;
+let wrongAnswers = [];
+let currentUnitName = "";
 
-let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, score: 0 };
-
+// פונקציית טעינה ראשונית
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has('list')) {
-        try {
-            const data = JSON.parse(decodeURIComponent(escape(atob(params.get('list')))));
-            document.getElementById('wordInput').value = data.u + '\n' + data.w.map(x => `${x.eng} - ${x.heb}`).join('\n');
-        } catch (e) {}
+    const unitKey = params.get('unitKey');
+
+    // אם הגענו מהספרייה עם מפתח יחידה
+    if (unitKey && typeof courseData !== 'undefined') {
+        loadFromLibrary(unitKey);
     }
 };
 
-function showScreen(id) {
-    document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+// שליפת מילים מתוך data.js לפי המפתח מה-URL
+function loadFromLibrary(unitKey) {
+    // פירוק המפתח (למשל: Magical-Unit1-Part1)
+    for (const book in courseData) {
+        courseData[book].forEach(unit => {
+            unit.parts.forEach(part => {
+                const checkKey = `${book}-${unit.unit.replace(/\s+/g, '')}-${part.name.replace(/\s+/g, '')}`;
+                if (checkKey === unitKey) {
+                    document.getElementById('wordInput').value = `${unit.unit} - ${part.name}\n${part.words}`;
+                    initApp(); // הפעלה אוטומטית של המשחק
+                }
+            });
+        });
+    }
 }
 
 function initApp() {
-    const input = document.getElementById('wordInput').value.trim();
-    const lines = input.split('\n');
-    if (lines.length < 2) return;
-    state.unit = lines[0];
-    state.words = lines.slice(1).filter(l => l.includes('-')).map(l => {
-        const parts = l.split('-');
-        return { eng: parts[0].trim(), heb: parts[1].trim() };
-    });
-    restartQuiz();
-}
+    const text = document.getElementById('wordInput').value.trim();
+    if (!text) return;
 
-function restartQuiz() {
-    state.qIdx = 0; state.qCorrect = 0;
+    const lines = text.split('\n');
+    currentUnitName = lines[0];
+    currentWords = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split('-');
+        if (parts.length === 2) {
+            currentWords.push({
+                eng: parts[0].trim(),
+                heb: parts[1].trim()
+            });
+        }
+    }
+
+    if (currentWords.length < 4) {
+        alert("יש להזין לפחות 4 מילים");
+        return;
+    }
+
     showScreen('screen-quiz');
-    renderQuiz();
+    startQuiz();
 }
 
-function renderQuiz() {
-    if (state.qIdx >= state.words.length) return endQuiz();
-    document.getElementById('quiz-unit-display').innerText = state.unit;
-    document.getElementById('quiz-progress').innerText = `מילה ${state.qIdx + 1} מתוך ${state.words.length}`;
-    const q = state.words[state.qIdx];
-    document.getElementById('quiz-eng').innerText = q.eng;
-    const distractors = state.words.filter(x => x.heb !== q.heb).map(x => x.heb);
-    const opts = [q.heb, ...distractors].slice(0, 4).sort(() => Math.random() - 0.5);
-    const cont = document.getElementById('quiz-options');
-    cont.innerHTML = '';
-    opts.forEach(o => {
-        const b = document.createElement('button');
-        b.className = 'opt-btn';
-        b.innerText = o;
-        b.onclick = () => {
-            cont.querySelectorAll('button').forEach(btn => btn.style.pointerEvents = 'none');
-            if (o === q.heb) { b.classList.add('correct'); state.qCorrect++; }
-            else { b.classList.add('wrong'); }
-            setTimeout(() => { state.qIdx++; renderQuiz(); }, 1000);
-        };
-        cont.appendChild(b);
+function startQuiz() {
+    quizIndex = 0;
+    score = 0;
+    wrongAnswers = [];
+    currentWords = currentWords.sort(() => Math.random() - 0.5);
+    showQuestion();
+}
+
+function showQuestion() {
+    const word = currentWords[quizIndex];
+    document.getElementById('quiz-unit-display').innerText = currentUnitName;
+    document.getElementById('quiz-progress').innerText = `שאלה ${quizIndex + 1} מתוך ${currentWords.length}`;
+    document.getElementById('quiz-eng').innerText = word.eng;
+
+    const options = [word.heb];
+    while (options.length < 4) {
+        const rand = currentWords[Math.floor(Math.random() * currentWords.length)].heb;
+        if (!options.includes(rand)) options.push(rand);
+    }
+    options.sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById('quiz-options');
+    container.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt, btn);
+        container.appendChild(btn);
     });
 }
 
-function endQuiz() {
-    state.score = Math.round((state.qCorrect / state.words.length) * 100);
-    document.getElementById('final-score').innerText = state.score + '%';
-    const isOpen = state.score >= 70;
-    document.getElementById('btn-c4').disabled = !isOpen;
-    document.getElementById('btn-mem').disabled = !isOpen;
-    showScreen('screen-summary');
+function checkAnswer(selected, btn) {
+    const correct = currentWords[quizIndex].heb;
+    const allBtns = document.querySelectorAll('.opt-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        allBtns.forEach(b => {
+            if (b.innerText === correct) b.classList.add('correct');
+        });
+        wrongAnswers.push(currentWords[quizIndex]);
+    }
+
+    setTimeout(() => {
+        quizIndex++;
+        if (quizIndex < currentWords.length) {
+            showQuestion();
+        } else {
+            showSummary();
+        }
+    }, 1200);
 }
 
-function speak(text) {
+function showSummary() {
+    showScreen('screen-summary');
+    const percent = Math.round((score / currentWords.length) * 100);
+    document.getElementById('final-score').innerText = percent + "%";
+
+    const btnC4 = document.getElementById('btn-c4');
+    const btnMem = document.getElementById('btn-mem');
+    const lockMsg = document.getElementById('lock-msg');
+
+    if (percent >= 70) {
+        btnC4.disabled = false;
+        btnMem.disabled = false;
+        lockMsg.innerText = "🔓 המשחקים פתוחים! כל הכבוד!";
+    } else {
+        btnC4.disabled = true;
+        btnMem.disabled = true;
+        lockMsg.innerText = "🔒 המשחקים ייפתחו ב-70% הצלחה";
+    }
+}
+
+function showScreen(screenId) {
+    document.querySelectorAll('.card-box').forEach(s => s.classList.add('hidden'));
+    document.getElementById(screenId).classList.remove('hidden');
+}
+
+function speak(id) {
+    const text = document.getElementById(id).innerText;
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = 'en-US';
     window.speechSynthesis.speak(msg);
 }
 
+function restartQuiz() {
+    startQuiz();
+}
+
+// פונקציות שיתוף (וואטסאפ וקישור)
 function shareAchievement() {
-    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
-    const url = "https://word-academy-8b91d.web.app/"; 
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
+    const percent = document.getElementById('final-score').innerText;
+    const text = `הצלחתי לקבל ${percent} ביחידה ${currentUnitName} ב-Word Academy! 🎓`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
 }
 
 function shareList() {
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
-    const link = `${window.location.href.split('?')[0]}?list=${data}`;
-    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n${link}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
+    const listText = document.getElementById('wordInput').value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('list', listText);
+    navigator.clipboard.writeText(url.href);
+    alert("הקישור הועתק! ניתן לשלוח לתלמידים.");
 }
-
-function openMsg(html, color) {
-    document.getElementById('msg-body').innerHTML = html;
-    document.getElementById('msg-stripe').style.background = color || 'var(--blue)';
-    document.getElementById('msg-modal').style.display = 'flex';
-}
-function closeMsg() { document.getElementById('msg-modal').style.display = 'none'; }
