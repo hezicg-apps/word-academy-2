@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy | כניסת מורים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { 
+            font-family: 'Assistant', sans-serif; 
+            background-color: #f8fafc; 
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .auth-card { 
+            background: white; 
+            border-radius: 28px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
+        }
+        .input-field { 
+            background: #f1f5f9; 
+            border: none; 
+            border-radius: 14px; 
+            padding: 16px; 
+            width: 100%; 
+            outline: none; 
+            transition: all 0.2s; 
+        }
+        .input-field:focus { background: white; box-shadow: 0 0 0 2px #2563eb; }
+        .btn-login { 
+            background: #2563eb; color: white; padding: 16px; 
+            border-radius: 16px; width: 100%; font-weight: 800; 
+            font-size: 18px; cursor: pointer; border: none; 
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+
+<header class="p-8 flex justify-center items-center gap-4 bg-white border-b">
+    <img src="logo.svg" alt="WA" class="w-20 h-20">
+    <h1 class="text-5xl font-black text-blue-900 tracking-tighter">Word Academy</h1>
+</header>
+
+<main class="flex-1 flex items-center justify-center p-4">
+    <div class="auth-card max-w-md w-full p-10">
+        <h2 class="text-2xl font-black text-slate-800 mb-1">כניסת מורים</h2>
+        <p class="text-slate-500 mb-8 text-sm">חזרו לנהל את הכיתות שלכם</p>
+
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1 mr-1">אימייל</label>
+                <input type="email" id="email" class="input-field" placeholder="email@example.com" dir="ltr" required>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1 mr-1 text-flex justify-between">
+                    <span>סיסמה</span>
+                </label>
+                <input type="password" id="password" class="input-field" placeholder="הזינו סיסמה" required>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="btn-login shadow-lg shadow-blue-100">כניסה</button>
+            </div>
+        </form>
+
+        <p class="text-center mt-8 text-sm text-slate-500 font-medium">
+            עדיין אין לך חשבון? 
+            <a href="register.html" class="text-blue-600 font-bold hover:underline">הרשמה מהירה</a>
+        </p>
+    </div>
+</main>
+
+<script>
+    document.getElementById('loginForm').onsubmit = function(e) {
+        e.preventDefault();
+        // כאן יבוא אימות מול Firebase
+        window.location.href = "teacher-dashboard.html";
+    };
+</script>
+
+</body>
+</html>
