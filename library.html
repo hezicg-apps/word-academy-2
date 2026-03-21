@@ -22,12 +22,12 @@
             <img src="logo.svg" alt="WA" class="w-12 h-12">
             <h1 class="text-2xl font-black text-blue-900">Word Academy</h1>
         </div>
-        <h2 class="text-lg font-bold text-slate-500">ספריית המילים למשחקים</h2>
+        <h2 class="text-lg font-bold text-slate-500">ספריית היחידות</h2>
     </header>
 
     <main class="max-w-7xl mx-auto p-6 md:p-12">
         <div id="library-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <p class="text-center col-span-full text-slate-500 animate-pulse">מתחבר למאגר המילים...</p>
+            <p class="text-center col-span-full text-slate-500 animate-pulse">טוען נתונים מהגיליון...</p>
         </div>
     </main>
 
@@ -41,51 +41,55 @@
                 const booksData = parseCSV(data);
                 renderLibrary(booksData);
             } catch (error) {
-                console.error("Error loading library:", error);
+                console.error("Error:", error);
+                document.getElementById('library-grid').innerHTML = "<p class='text-center col-span-full'>שגיאה בחיבור לגיליון.</p>";
             }
         }
 
-      function parseCSV(text) {
-    const lines = text.split('\n');
-    const books = {};
-    
-    for (let i = 1; i < lines.length; i++) {
-        const row = lines[i];
-        const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        if (cols.length < 5) continue;
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const books = {};
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i];
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length < 5) continue;
 
-        const bookName = cols[0]?.trim().replace(/"/g, '') || "";
-        const grade    = cols[1]?.trim().replace(/"/g, '') || "";
-        const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
-        const unitName = cols[3]?.trim().replace(/"/g, '') || ""; // Part a, Part 1...
-        const link     = cols[4]?.trim().replace(/"/g, '') || "";
+                const bookName = cols[0]?.trim().replace(/"/g, '') || "";
+                const grade    = cols[1]?.trim().replace(/"/g, '') || "";
+                const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
+                const unitName = cols[3]?.trim().replace(/"/g, '') || ""; 
+                const link     = cols[4]?.trim().replace(/"/g, '') || "";
+                const color    = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
 
-        let words = "";
-        if (link.includes('w=')) {
-            try {
-                const base64 = link.split('w=')[1].split('&')[0];
-                words = decodeURIComponent(escape(atob(base64)));
-            } catch (e) { console.error("Error decoding", unitName); }
+                let decodedWords = "";
+                if (link.includes('w=')) {
+                    try {
+                        const base64Part = link.split('w=')[1].split('&')[0];
+                        decodedWords = decodeURIComponent(escape(atob(base64Part)));
+                    } catch (e) { console.error("Error decoding", unitName); }
+                }
+
+                if (!books[bookName]) {
+                    books[bookName] = { grade, color, chapters: {} };
+                }
+                if (!books[bookName].chapters[chapter]) {
+                    books[bookName].chapters[chapter] = [];
+                }
+                if (decodedWords) {
+                    books[bookName].chapters[chapter].push({ unit: unitName, words: decodedWords });
+                }
+            }
+            return books;
         }
 
-        if (!books[bookName]) books[bookName] = { grade, color: cols[5] || '#3b82f6', chapters: {} };
-        if (!books[bookName].chapters[chapter]) books[bookName].chapters[chapter] = [];
-        
-        // מוסיף את היחידה לרשימה של הפרק (מניע דריסה)
-        if (words) {
-            books[bookName].chapters[chapter].push({ unit: unitName, words: words });
-        }
-    }
-    return books;
-}
-        
         function renderLibrary(books) {
             const grid = document.getElementById('library-grid');
             grid.innerHTML = '';
 
             Object.entries(books).forEach(([bookName, info]) => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col hover:translate-y-[-5px] transition-all duration-300";
+                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col transition-all duration-300";
                 card.style.borderTop = `8px solid ${info.color}`;
 
                 let accordionHtml = '';
@@ -120,9 +124,7 @@
                         </div>
                         <h2 class="text-xl font-extrabold text-slate-800 ltr-content">${bookName}</h2>
                     </div>
-                    <div class="flex-grow">
-                        ${accordionHtml}
-                    </div>
+                    <div class="flex-grow">${accordionHtml}</div>
                 `;
                 grid.appendChild(card);
             });
