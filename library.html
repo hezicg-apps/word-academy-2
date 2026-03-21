@@ -16,7 +16,6 @@
     </style>
 </head>
 <body class="min-h-screen">
-
     <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
             <img src="logo.svg" alt="WA" class="w-12 h-12">
@@ -41,41 +40,35 @@
                 const booksData = parseCSV(data);
                 renderLibrary(booksData);
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('library-grid').innerHTML = "<p class='text-center col-span-full'>שגיאה בחיבור לגיליון.</p>";
+                document.getElementById('library-grid').innerHTML = "<p class='text-center col-span-full'>שגיאה בטעינת הנתונים.</p>";
             }
         }
 
         function parseCSV(text) {
             const lines = text.split('\n');
             const books = {};
-            
             for (let i = 1; i < lines.length; i++) {
-                const row = lines[i];
-                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if (cols.length < 5) continue;
 
                 const bookName = cols[0]?.trim().replace(/"/g, '') || "";
-                const grade    = cols[1]?.trim().replace(/"/g, '') || "";
-                const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
+                const grade = cols[1]?.trim().replace(/"/g, '') || "";
+                const chapter = cols[2]?.trim().replace(/"/g, '') || "";
                 const unitName = cols[3]?.trim().replace(/"/g, '') || ""; 
-                const link     = cols[4]?.trim().replace(/"/g, '') || "";
-                const color    = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
+                const link = cols[4]?.trim().replace(/"/g, '') || "";
+                const color = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
 
                 let decodedWords = "";
                 if (link.includes('w=')) {
                     try {
-                        const base64Part = link.split('w=')[1].split('&')[0];
-                        decodedWords = decodeURIComponent(escape(atob(base64Part)));
-                    } catch (e) { console.error("Error decoding", unitName); }
+                        const base64 = link.split('w=')[1].split('&')[0];
+                        decodedWords = decodeURIComponent(escape(atob(base64)));
+                    } catch (e) {}
                 }
 
-                if (!books[bookName]) {
-                    books[bookName] = { grade, color, chapters: {} };
-                }
-                if (!books[bookName].chapters[chapter]) {
-                    books[bookName].chapters[chapter] = [];
-                }
+                if (!books[bookName]) books[bookName] = { grade, color, chapters: {} };
+                if (!books[bookName].chapters[chapter]) books[bookName].chapters[chapter] = [];
+                
                 if (decodedWords) {
                     books[bookName].chapters[chapter].push({ unit: unitName, words: decodedWords });
                 }
@@ -86,56 +79,46 @@
         function renderLibrary(books) {
             const grid = document.getElementById('library-grid');
             grid.innerHTML = '';
-
             Object.entries(books).forEach(([bookName, info]) => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col transition-all duration-300";
+                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col";
                 card.style.borderTop = `8px solid ${info.color}`;
-
-                let accordionHtml = '';
-                Object.entries(info.chapters).forEach(([chapter, units]) => {
-                    accordionHtml += `
+                
+                let accHtml = '';
+                Object.entries(info.chapters).forEach(([chap, units]) => {
+                    accHtml += `
                         <div class="border-b border-slate-50 accordion-item">
                             <button onclick="this.parentElement.classList.toggle('accordion-open')" class="w-full py-4 px-6 flex justify-between items-center hover:bg-slate-50 group">
                                 <span class="chevron text-slate-300 group-hover:text-blue-500">▼</span>
-                                <span class="ltr-content font-bold text-slate-700">${chapter}</span>
+                                <span class="ltr-content font-bold text-slate-700">${chap}</span>
                             </button>
                             <div class="accordion-content bg-slate-50/50">
                                 <div class="px-6 py-2 flex flex-col gap-2 ltr-content">
                                     ${units.map(u => {
-                                        const encoded = btoa(unescape(encodeURIComponent(u.words)));
-                                        return `
-                                            <button onclick="playGame('${chapter}', '${u.unit}', '${encoded}')" class="text-left py-2 text-blue-500 hover:text-blue-700 font-medium flex items-center gap-2 group/btn">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-300 group-hover/btn:bg-blue-600 transition-colors"></span>
-                                                ${u.unit}
-                                            </button>
-                                        `;
+                                        const enc = btoa(unescape(encodeURIComponent(u.words)));
+                                        return `<button onclick="playGame('${chap}', '${u.unit}', '${enc}')" class="text-left py-2 text-blue-500 hover:text-blue-700 font-medium flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-300"></span>${u.unit}</button>`;
                                     }).join('')}
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
 
                 card.innerHTML = `
                     <div class="p-6 flex justify-between items-center bg-slate-50/30">
-                        <div class="bg-white/80 backdrop-blur px-4 py-1.5 rounded-full text-xs font-black shadow-sm border border-slate-100 uppercase tracking-wider" style="color: ${info.color}">
-                            ${info.grade}
-                        </div>
+                        <div class="bg-white/80 backdrop-blur px-4 py-1.5 rounded-full text-xs font-black shadow-sm" style="color:${info.color}">${info.grade}</div>
                         <h2 class="text-xl font-extrabold text-slate-800 ltr-content">${bookName}</h2>
                     </div>
-                    <div class="flex-grow">${accordionHtml}</div>
-                `;
+                    <div class="flex-grow">${accHtml}</div>`;
                 grid.appendChild(card);
             });
         }
 
-        function playGame(chapter, unit, encodedWords) {
-            const words = decodeURIComponent(escape(atob(encodedWords)));
-            sessionStorage.setItem('currentWords', `${chapter} - ${unit}\n${words}`);
+        function playGame(chap, unit, enc) {
+            const words = decodeURIComponent(escape(atob(enc)));
+            sessionStorage.setItem('currentWords', `${chap} - ${unit}\n${words}`);
             window.location.href = 'index.html?source=library';
         }
-
         window.onload = initLibrary;
     </script>
 </body>
