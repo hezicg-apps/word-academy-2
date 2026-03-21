@@ -3,145 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy - Library</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Word Academy | Game Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
-        .library-container { display: flex; gap: 20px; justify-content: center; padding: 40px 20px; flex-wrap: wrap; }
-        
-        /* עיצוב הטורים */
-        .book-column { 
-            background: white; border-radius: 20px; border: 2px solid #e2e8f0; 
-            width: 320px; min-height: 450px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-        }
-        .book-header { padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 22px; }
-        
-        /* צבעים לפי כיתות/ספרים */
-        .book-magical { background-color: #6366f1; } /* כיתה ה */
-        .book-legendary { background-color: #f59e0b; } /* כיתה ד */
-        .book-epic { background-color: #10b981; } /* כיתה ג */
-        .book-grade6 { background-color: #ef4444; } /* כיתה ו - הוספתי צבע אדום */
-
-        .units-list { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-
-        /* עיצוב ה-Dropdown של היחידה */
-        .unit-group { border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
-        .unit-name { 
-            padding: 12px; cursor: pointer; font-weight: bold; color: #1e293b; 
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .unit-name:hover { background: #f1f5f9; }
-        .unit-name::after { content: '▼'; font-size: 10px; transition: 0.3s; }
-        .unit-group.open .unit-name::after { transform: rotate(180deg); }
-
-        /* אזור הכפתורים בתוך היחידה */
-        .parts-area { display: none; padding: 10px; background: white; border-top: 1px solid #e2e8f0; gap: 8px; flex-direction: column; }
-        .unit-group.open .parts-area { display: flex; }
-
-        .part-link { 
-            background: #fff; border: 1px solid #3b82f6; color: #3b82f6; 
-            padding: 8px; border-radius: 6px; text-align: center; cursor: pointer; 
-            font-weight: bold; transition: 0.2s; text-decoration: none;
-        }
-        .part-link:hover { background: #3b82f6; color: white; }
-
-        .loader { text-align: center; margin-top: 50px; font-size: 18px; color: #64748b; }
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f3f4f6; }
+        .ltr-content { direction: ltr; text-align: left; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); }
+        .accordion-open .accordion-content { max-height: 1000px; transition: max-height 0.4s ease-in; }
+        .chevron { transition: transform 0.3s ease; }
+        .accordion-open .chevron { transform: rotate(180deg); }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-<div class="header">
-    <div id="user-display">שלום, מורה יקר!</div>
-    <div class="header-left">
-        <img src="logo.svg" alt="WA" class="logo-img">
-        <h2 style="font-size:18px; color:#3b82f6; margin:0;">Word Academy</h2>
-    </div>
-</div>
+    <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <img src="logo.svg" alt="WA" class="w-12 h-12">
+            <h1 class="text-2xl font-black text-blue-900">Word Academy</h1>
+        </div>
+        <h2 class="text-lg font-bold text-slate-500">ספריית המילים למשחקים</h2>
+    </header>
 
-<h1 style="text-align:center; margin-top:30px;">הספרייה הדיגיטלית שלי</h1>
+    <main class="max-w-7xl mx-auto p-6 md:p-12">
+        <div id="library-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <p class="text-center col-span-full text-slate-500 animate-pulse">מתחבר למאגר המילים...</p>
+        </div>
+    </main>
 
-<div id="loader" class="loader">מתחבר לגיליון הנתונים...</div>
-<div class="library-container" id="library-content"></div>
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-<script>
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
-
-    async function fetchData() {
-        try {
-            const response = await fetch(sheetUrl);
-            const csv = await response.text();
-            const lines = csv.split('\n').slice(1);
-            
-            const structure = {};
-
-            lines.forEach(line => {
-                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if (cols.length < 4) return;
-
-                const book = cols[0].trim().replace(/"/g, '');
-                const unit = cols[1].trim().replace(/"/g, '');
-                const part = cols[2].trim().replace(/"/g, '');
-                const words = cols[3].trim().replace(/"/g, '').replace(/\\n/g, '\n');
-
-                if (!structure[book]) structure[book] = {};
-                if (!structure[book][unit]) structure[book][unit] = [];
-                
-                structure[book][unit].push({ name: part, data: words });
-            });
-
-            buildLibrary(structure);
-            document.getElementById('loader').style.display = 'none';
-        } catch (e) {
-            console.error(e);
-            document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים מה-Sheets";
-        }
-    }
-
-    function buildLibrary(data) {
-        const container = document.getElementById('library-content');
-        
-        for (const book in data) {
-            const col = document.createElement('div');
-            col.className = 'book-column';
-            
-            // הגדרת צבע לפי שם הספר
-            let colorClass = 'book-default';
-            if (book.includes("Magical")) colorClass = 'book-magical';
-            else if (book.includes("Legendary")) colorClass = 'book-legendary';
-            else if (book.includes("Epic")) colorClass = 'book-epic';
-            else if (book.includes("כיתה ו")) colorClass = 'book-grade6';
-
-            col.innerHTML = `<div class="book-header ${colorClass}">${book}</div><div class="units-list" id="list-${book.replace(/\s/g, '')}"></div>`;
-            container.appendChild(col);
-
-            const list = document.getElementById(`list-${book.replace(/\s/g, '')}`);
-            
-            for (const unit in data[book]) {
-                const group = document.createElement('div');
-                group.className = 'unit-group';
-                
-                let partsHtml = '';
-                data[book][unit].forEach(p => {
-                    const encoded = btoa(unescape(encodeURIComponent(p.data)));
-                    partsHtml += `<div class="part-link" onclick="play('${unit}', '${p.name}', '${encoded}')">${p.name}</div>`;
-                });
-
-                group.innerHTML = `
-                    <div class="unit-name" onclick="this.parentElement.classList.toggle('open')">${unit}</div>
-                    <div class="parts-area">${partsHtml}</div>
-                `;
-                list.appendChild(group);
+        async function initLibrary() {
+            try {
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
+                const booksData = parseCSV(data);
+                renderLibrary(booksData);
+            } catch (error) {
+                console.error("Error loading library:", error);
             }
         }
-    }
 
-    function play(u, p, data) {
-        const words = decodeURIComponent(escape(atob(data)));
-        sessionStorage.setItem('currentWords', `${u} - ${p}\n${words}`);
-        window.location.href = 'index.html?source=library';
-    }
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const books = {};
+            
+            // עיבוד השורות תוך התחשבות במירכאות סביב רשימת המילים
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i];
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                
+                if (cols.length < 4) continue;
 
-    window.onload = fetchData;
-</script>
+                const book = cols[0].trim().replace(/"/g, '');
+                const grade = cols[1].trim().replace(/"/g, '');
+                const chapter = cols[2].trim().replace(/"/g, '');
+                const unit = cols[3].trim().replace(/"/g, '');
+                const words = cols[4] ? cols[4].trim().replace(/"/g, '').replace(/\\n/g, '\n') : "";
+                const color = cols[5] ? cols[5].trim().replace(/"/g, '') : '#3b82f6';
+
+                if (!books[book]) {
+                    books[book] = { grade, color, chapters: {} };
+                }
+                if (!books[book].chapters[chapter]) {
+                    books[book].chapters[chapter] = [];
+                }
+                books[book].chapters[chapter].push({ unit, words });
+            }
+            return books;
+        }
+
+        function renderLibrary(books) {
+            const grid = document.getElementById('library-grid');
+            grid.innerHTML = '';
+
+            Object.entries(books).forEach(([bookName, info]) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col hover:translate-y-[-5px] transition-all duration-300";
+                card.style.borderTop = `8px solid ${info.color}`;
+
+                let accordionHtml = '';
+                Object.entries(info.chapters).forEach(([chapter, units]) => {
+                    accordionHtml += `
+                        <div class="border-b border-slate-50 accordion-item">
+                            <button onclick="this.parentElement.classList.toggle('accordion-open')" class="w-full py-4 px-6 flex justify-between items-center hover:bg-slate-50 group">
+                                <span class="chevron text-slate-300 group-hover:text-blue-500">▼</span>
+                                <span class="ltr-content font-bold text-slate-700">${chapter}</span>
+                            </button>
+                            <div class="accordion-content bg-slate-50/50">
+                                <div class="px-6 py-2 flex flex-col gap-2 ltr-content">
+                                    ${units.map(u => {
+                                        const encoded = btoa(unescape(encodeURIComponent(u.words)));
+                                        return `
+                                            <button onclick="playGame('${chapter}', '${u.unit}', '${encoded}')" class="text-left py-2 text-blue-500 hover:text-blue-700 font-medium flex items-center gap-2 group/btn">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-300 group-hover/btn:bg-blue-600 transition-colors"></span>
+                                                ${u.unit}
+                                            </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="p-6 flex justify-between items-center bg-slate-50/30">
+                        <div class="bg-white/80 backdrop-blur px-4 py-1.5 rounded-full text-xs font-black shadow-sm border border-slate-100 uppercase tracking-wider" style="color: ${info.color}">
+                            ${info.grade}
+                        </div>
+                        <h2 class="text-xl font-extrabold text-slate-800 ltr-content">${bookName}</h2>
+                    </div>
+                    <div class="flex-grow">
+                        ${accordionHtml}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function playGame(chapter, unit, encodedWords) {
+            const words = decodeURIComponent(escape(atob(encodedWords)));
+            sessionStorage.setItem('currentWords', `${chapter} - ${unit}\n${words}`);
+            window.location.href = 'index.html?source=library';
+        }
+
+        window.onload = initLibrary;
+    </script>
 </body>
 </html>
