@@ -20,13 +20,13 @@
             background: white; 
             border-radius: 28px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-            max-height: 90vh; /* הגבלה שלא יצא מהמסך */
+            max-height: 85vh; /* הגבלה קצת יותר מחמירה כדי לתת מקום להדר הגדול */
         }
         .input-field { 
             background: #f1f5f9; 
             border: none; 
             border-radius: 14px; 
-            padding: 12px 16px; /* צמצום קל של הריפוד */
+            padding: 12px 16px; 
             width: 100%; 
             outline: none; 
             transition: all 0.2s; 
@@ -48,19 +48,19 @@
         .btn-register:hover { background: #1e40af; transform: translateY(-1px); }
         
         /* התאמה למסכים קטנים/לפטופים */
-        @media (max-height: 700px) {
-            .auth-card { p: 6; }
+        @media (max-height: 750px) {
+            header { p: 4; }
+            .auth-card { p: 6; max-height: 75vh; }
             h2 { font-size: 1.25rem; margin-bottom: 0.25rem; }
-            .mb-8 { margin-bottom: 1rem; }
+            .mb-6 { margin-bottom: 1rem; }
+            form.space-y-3 { space-y: 2; }
         }
     </style>
 </head>
 <body class="flex flex-col">
 
-<header class="p-4 flex justify-center items-center gap-2">
-    <img src="logo.svg" alt="WA" class="w-10 h-10">
-    <h1 class="text-2xl font-black text-blue-900 tracking-tight">Word Academy</h1>
-</header>
+<header class="p-8 flex justify-center items-center gap-4 bg-white shadow-sm border-b">
+    <img src="logo.svg" alt="WA" class="w-20 h-20"> <h1 class="text-5xl font-black text-blue-900 tracking-tighter">Word Academy</h1> </header>
 
 <main class="flex-1 flex items-center justify-center p-4">
     <div class="auth-card max-w-md w-full p-8">
