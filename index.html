@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy | דף הבית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        .hero-gradient { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); }
+        .btn-main { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="hero-gradient min-h-screen flex flex-col">
+
+<header class="p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3">
+        <img src="logo.svg" alt="WA" class="w-12 h-12">
+        <span class="text-2xl font-black text-blue-900">Word Academy</span>
+    </div>
+    <button onclick="window.location.href='login.html'" class="text-blue-600 font-bold hover:underline">כניסת מורים</button>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center text-center px-4">
+    <h1 class="text-6xl md:text-8xl font-black text-slate-800 mb-6 tracking-tighter">
+        ללמוד אנגלית <br> <span class="text-blue-600">בדרך שלך.</span>
+    </h1>
+    <p class="text-xl text-slate-500 max-w-2xl mb-12 font-medium">
+        המערכת המתקדמת לניהול אוצר מילים, יצירת משחקים ומעקב אחרי התקדמות התלמידים.
+    </p>
+
+    <div class="flex flex-col md:flex-row gap-6 w-full max-w-lg">
+        <button onclick="window.location.href='student-login.html'" class="btn-main flex-1 bg-blue-600 text-white p-8 rounded-[32px] text-2xl font-black shadow-xl shadow-blue-200">
+            כניסת תלמידים
+        </button>
+        
+        <button onclick="window.location.href='register.html'" class="btn-main flex-1 bg-white text-blue-600 border-4 border-blue-50 p-8 rounded-[32px] text-2xl font-black shadow-sm">
+            הרשמת מורים
+        </button>
+    </div>
+</main>
+
+<footer class="p-8 text-center text-slate-400 text-sm font-bold">
+    &copy; 2026 Word Academy - פותח עבור מורי אנגלית בישראל
+</footer>
+
+</body>
+</html>
