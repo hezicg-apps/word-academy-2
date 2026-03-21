@@ -6,184 +6,111 @@
     <title>Word Academy - Library</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* עיצוב ספציפי לדף הספרייה */
-        body { overflow-y: auto; } /* מאפשר גלילה אנכית בדף זה */
-        
-        .library-container {
-            display: flex;
-            gap: 25px;
-            justify-content: center;
-            padding: 30px 20px;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: 0 auto;
+        body { background-color: #f0f4f8; overflow-y: auto; }
+        .library-container { display: flex; gap: 20px; justify-content: center; padding: 40px 20px; flex-wrap: wrap; }
+        .book-column { 
+            background: white; border-radius: 20px; border: 2px solid #e2e8f0; 
+            width: 320px; min-height: 500px; display: flex; flex-direction: column; 
+            overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
         }
-        
-        .book-column {
-            background: white;
-            border-radius: 24px;
-            border: 2px solid var(--border);
-            width: 320px;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
+        .book-header { padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 24px; }
+        .book-magical { background-color: #6366f1; }
+        .book-legendary { background-color: #f59e0b; }
+        .book-epic { background-color: #10b981; }
+        .units-list { padding: 15px; flex: 1; }
+        .unit-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; padding: 12px; }
+        .unit-title { font-weight: bold; color: #1e293b; display: block; margin-bottom: 8px; font-size: 18px; }
+        .parts-container { display: flex; gap: 8px; }
+        .part-btn { 
+            flex: 1; background: white; border: 2px solid #3b82f6; color: #3b82f6; 
+            padding: 6px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;
         }
-        .book-column:hover { transform: translateY(-5px); }
-
-        .book-header {
-            padding: 20px;
-            text-align: center;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        /* צבעים מותאמים לספרים */
-        .book-magical { background-color: #6366f1; }   /* Indigo */
-        .book-legendary { background-color: #f59e0b; } /* Amber */
-        .book-epic { background-color: #10b981; }      /* Emerald */
-
-        .units-list {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .unit-item {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 15px;
-        }
-        
-        .unit-title {
-            font-weight: bold;
-            color: var(--navy);
-            font-size: 18px;
-            display: block;
-            margin-bottom: 10px;
-            text-align: right;
-        }
-        
-        .parts-container {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .part-btn {
-            flex: 1;
-            background: white;
-            border: 2px solid var(--blue);
-            color: var(--blue);
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .part-btn:hover {
-            background: var(--blue);
-            color: white;
-            transform: scale(1.03);
-        }
-        
-        /* כותרת הדף הנקייה */
-        .page-title {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--navy);
-            font-size: 32px;
-            font-weight: bold;
-        }
+        .part-btn:hover { background: #3b82f6; color: white; }
+        .loader { text-align: center; margin-top: 50px; font-size: 20px; color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div id="user-display">שלום, אורח/ת!</div>
+    <div id="user-display">שלום, מורה יקר!</div>
     <div class="header-left">
         <img src="logo.svg" alt="WA" class="logo-img">
-        <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
+        <h2 style="font-size:18px; color:#3b82f6; margin:0;">Word Academy</h2>
     </div>
 </div>
 
-<h1 class="page-title">הספרייה הדיגיטלית שלי</h1>
+<h1 style="text-align:center; margin-top:30px; color:#1e293b;">הספרייה הדיגיטלית שלי</h1>
 
-<div class="library-container" id="library-content">
-    </div>
-
-<script src="js/data.js"></script>
+<div id="loader" class="loader">טוען את כל היחידות מהגיליון...</div>
+<div class="library-container" id="library-content"></div>
 
 <script>
-    // פונקציה להצגת הנתונים מקובץ data.js על המסך
-    function renderLibrary() {
-        const container = document.getElementById('library-content');
-        if (!container || typeof courseData === 'undefined') return;
+    // הקישור לגיליון שלך בפורמט CSV
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-        container.innerHTML = ''; // ניקוי תוכן קודם
+    async function loadLibrary() {
+        try {
+            const response = await fetch(sheetUrl);
+            const data = await response.text();
+            const rows = data.split('\n').slice(1); // דלג על כותרות
 
-        // מעבר על כל ספר בנתונים (Magical, Legendary, Epic)
-        for (const bookName in courseData) {
-            const units = courseData[bookName];
-            if (units.length === 0) continue;
+            const books = {};
 
-            // יצירת הטור של הספר
-            const bookCol = document.createElement('div');
-            bookCol.className = 'book-column';
-            
-            // קביעת צבע הכותרת לפי שם הספר
-            const colorClass = `book-${bookName.toLowerCase()}`;
-            
-            bookCol.innerHTML = `
-                <div class="book-header ${colorClass}">${bookName}</div>
-                <div class="units-list" id="units-${bookName}"></div>
-            `;
-            container.appendChild(bookCol);
+            rows.forEach(row => {
+                // פיצול חכם שמתחשב במירכאות ופסיקים בתוך המילים
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length < 4) return;
 
-            const unitsList = document.getElementById(`units-${bookName}`);
+                const bookName = cols[0].trim().replace(/"/g, '');
+                const unitName = cols[1].trim().replace(/"/g, '');
+                const partName = cols[2].trim().replace(/"/g, '');
+                const words = cols[3].trim().replace(/"/g, '').replace(/\\n/g, '\n');
 
-            // מעבר על כל יחידה בספר (Unit 1, Unit 2...)
-            units.forEach(unit => {
-                const unitItem = document.createElement('div');
-                unitItem.className = 'unit-item';
+                if (!books[bookName]) books[bookName] = {};
+                if (!books[bookName][unitName]) books[bookName][unitName] = [];
                 
-                let partsHTML = '';
-                // מעבר על כל חלק ביחידה (Part 1, Part 2...)
-                unit.parts.forEach(part => {
-                    partsHTML += `
-                        <button class="part-btn" onclick="launchGame('${bookName}', '${unit.unit}', '${part.name}')">
-                            ${part.name}
-                        </button>
-                    `;
-                });
-
-                unitItem.innerHTML = `
-                    <span class="unit-title">${unit.unit}</span>
-                    <div class="parts-container">${partsHTML}</div>
-                `;
-                unitsList.appendChild(unitItem);
+                books[bookName][unitName].push({ name: partName, data: words });
             });
+
+            renderLibrary(books);
+            document.getElementById('loader').style.display = 'none';
+        } catch (err) {
+            document.getElementById('loader').innerText = "שגיאה בטעינת הנתונים. וודא שהגיליון מפורסם.";
         }
     }
 
-    // פונקציה להפעלת המשחק - מעבירה ל-index.html עם הפרמטרים
-    function launchGame(book, unit, part) {
-        // יצירת מפתח ייחודי ליחידה (למשל: Magical-Unit1-Part1)
-        const unitKey = `${book}-${unit.replace(/\s+/g, '')}-${part.replace(/\s+/g, '')}`;
-        // העברה ל-index.html
-        window.location.href = `index.html?unitKey=${encodeURIComponent(unitKey)}`;
+    function renderLibrary(books) {
+        const container = document.getElementById('library-content');
+        for (const bName in books) {
+            const col = document.createElement('div');
+            col.className = 'book-column';
+            const colorClass = `book-${bName.toLowerCase()}`;
+            col.innerHTML = `<div class="book-header ${colorClass}">${bName}</div><div class="units-list" id="list-${bName}"></div>`;
+            container.appendChild(col);
+
+            const list = document.getElementById(`list-${bName}`);
+            for (const uName in books[bName]) {
+                const item = document.createElement('div');
+                item.className = 'unit-item';
+                let btns = '';
+                books[bName][uName].forEach(p => {
+                    // קידוד המילים כדי להעביר אותן בבטחה ב-URL
+                    const encoded = btoa(unescape(encodeURIComponent(p.data)));
+                    btns += `<button class="part-btn" onclick="goToGame('${uName}', '${p.name}', '${encoded}')">${p.name}</button>`;
+                });
+                item.innerHTML = `<span class="unit-title">${uName}</span><div class="parts-container">${btns}</div>`;
+                list.appendChild(item);
+            }
+        }
     }
 
-    // הפעלת הפונקציה בעת טעינת הדף
-    window.onload = renderLibrary;
-</script>
+    function goToGame(u, p, data) {
+        const words = decodeURIComponent(escape(atob(data)));
+        sessionStorage.setItem('currentWords', `${u} - ${p}\n${words}`);
+        window.location.href = 'index.html?source=library';
+    }
 
+    window.onload = loadLibrary;
+</script>
 </body>
 </html>
