@@ -45,34 +45,44 @@
             }
         }
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            const books = {};
-            
-            // עיבוד השורות תוך התחשבות במירכאות סביב רשימת המילים
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i];
-                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                
-                if (cols.length < 4) continue;
+       function parseCSV(text) {
+    const lines = text.split('\n');
+    const books = {};
+    
+    for (let i = 1; i < lines.length; i++) {
+        const row = lines[i];
+        // פיצול שמתחשב במירכאות סביב רשימת המילים
+        const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        
+        if (cols.length < 5) continue;
 
-                const book = cols[0].trim().replace(/"/g, '');
-                const grade = cols[1].trim().replace(/"/g, '');
-                const chapter = cols[2].trim().replace(/"/g, '');
-                const unit = cols[3].trim().replace(/"/g, '');
-                const words = cols[4] ? cols[4].trim().replace(/"/g, '').replace(/\\n/g, '\n') : "";
-                const color = cols[5] ? cols[5].trim().replace(/"/g, '') : '#3b82f6';
-
-                if (!books[book]) {
-                    books[book] = { grade, color, chapters: {} };
-                }
-                if (!books[book].chapters[chapter]) {
-                    books[book].chapters[chapter] = [];
-                }
-                books[book].chapters[chapter].push({ unit, words });
-            }
-            return books;
+        const bookName = cols[0]?.trim().replace(/"/g, '') || "";
+        const grade    = cols[1]?.trim().replace(/"/g, '') || "";
+        const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
+        const unit     = cols[3]?.trim().replace(/"/g, '') || "";
+        
+        // כאן התיקון: 
+        // אם בגיליון שלך המילים נמצאות אחרי הלינק, זה כנראה cols[5].
+        // אם הלינק הוא מה שמוצג בתמונה, אנחנו צריכים את הטור הבא אחריו.
+        let words = cols[4]?.trim().replace(/"/g, '').replace(/\\n/g, '\n') || "";
+        
+        // בדיקה: אם המילים ששלפנו נראות כמו לינק (מתחיל ב-http), קח את הטור הבא
+        if (words.startsWith('http')) {
+            words = cols[5]?.trim().replace(/"/g, '').replace(/\\n/g, '\n') || "";
         }
+
+        const color = cols[6] ? cols[6].trim().replace(/"/g, '') : '#3b82f6';
+
+        if (!books[bookName]) {
+            books[bookName] = { grade, color, chapters: {} };
+        }
+        if (!books[bookName].chapters[chapter]) {
+            books[bookName].chapters[chapter] = [];
+        }
+        books[bookName].chapters[chapter].push({ unit, words });
+    }
+    return books;
+}
 
         function renderLibrary(books) {
             const grid = document.getElementById('library-grid');
