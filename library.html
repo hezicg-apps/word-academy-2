@@ -51,7 +51,6 @@
     
     for (let i = 1; i < lines.length; i++) {
         const row = lines[i];
-        // פיצול שמתחשב במירכאות סביב רשימת המילים
         const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         
         if (cols.length < 5) continue;
@@ -60,18 +59,21 @@
         const grade    = cols[1]?.trim().replace(/"/g, '') || "";
         const chapter  = cols[2]?.trim().replace(/"/g, '') || "";
         const unit     = cols[3]?.trim().replace(/"/g, '') || "";
-        
-        // כאן התיקון: 
-        // אם בגיליון שלך המילים נמצאות אחרי הלינק, זה כנראה cols[5].
-        // אם הלינק הוא מה שמוצג בתמונה, אנחנו צריכים את הטור הבא אחריו.
-        let words = cols[4]?.trim().replace(/"/g, '').replace(/\\n/g, '\n') || "";
-        
-        // בדיקה: אם המילים ששלפנו נראות כמו לינק (מתחיל ב-http), קח את הטור הבא
-        if (words.startsWith('http')) {
-            words = cols[5]?.trim().replace(/"/g, '').replace(/\\n/g, '\n') || "";
-        }
+        const link     = cols[4]?.trim().replace(/"/g, '') || ""; // טור E
+        const color    = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
 
-        const color = cols[6] ? cols[6].trim().replace(/"/g, '') : '#3b82f6';
+        let finalWords = "";
+
+        // חילוץ המילים מהלינק (טור E)
+        if (link.includes('w=')) {
+            try {
+                const base64Part = link.split('w=')[1].split('&')[0];
+                // פענוח Base64 לעברית/אנגלית
+                finalWords = decodeURIComponent(escape(atob(base64Part)));
+            } catch (e) {
+                console.error("שגיאה בפענוח הלינק ביחידה:", unit);
+            }
+        }
 
         if (!books[bookName]) {
             books[bookName] = { grade, color, chapters: {} };
@@ -79,11 +81,15 @@
         if (!books[bookName].chapters[chapter]) {
             books[bookName].chapters[chapter] = [];
         }
-        books[bookName].chapters[chapter].push({ unit, words });
+        
+        // מוסיפים רק אם הצלחנו לחלץ מילים
+        if (finalWords) {
+            books[bookName].chapters[chapter].push({ unit, words: finalWords });
+        }
     }
     return books;
 }
-
+        
         function renderLibrary(books) {
             const grid = document.getElementById('library-grid');
             grid.innerHTML = '';
