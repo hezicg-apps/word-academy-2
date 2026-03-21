@@ -5,6 +5,8 @@ window.onload = () => {
     if (params.get('source') === 'library') {
         const savedData = sessionStorage.getItem('currentWords');
         if (savedData) {
+            // מוודא שהמסך הראשי מוצג לפני הכל
+            showScreen('screen-input'); 
             document.getElementById('wordInput').value = savedData;
             initApp();
         }
@@ -18,9 +20,12 @@ window.onload = () => {
 };
 
 function showScreen(id) {
-    document.querySelectorAll('.card-box').forEach(d => d.classList.add('hidden'));
+    // בקוד ה-CSS שלך הקונטיינר מכיל תיבות ישירות, לכן נחפש אותן כך:
+    document.querySelectorAll('.container > .card-box').forEach(d => d.classList.add('hidden'));
     const target = document.getElementById(id);
-    if (target) target.classList.remove('hidden');
+    if (target) {
+        target.classList.remove('hidden');
+    }
 }
 
 function initApp() {
@@ -127,13 +132,6 @@ function speak(text) {
 function shareWatsapp() {
     const text = `הצלחתי ב-Word Academy ביחידה "${state.unit}" בציון ${state.score}%!`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-}
-
-function shareList() {
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
-    const link = `${window.location.href.split('?')[0]}?list=${data}`;
-    const shareText = `רשימת המילים שלי לתרגול:\n${link}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
 }
 
 function goHome() { window.location.href = 'library.html'; }
