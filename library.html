@@ -3,123 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | Game Library</title>
+    <title>Word Academy | Library</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f3f4f6; }
-        .ltr-content { direction: ltr; text-align: left; }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); }
-        .accordion-open .accordion-content { max-height: 1000px; transition: max-height 0.4s ease-in; }
-        .chevron { transition: transform 0.3s ease; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        
+        /* Header Style - Matching your landing page */
+        .main-header {
+            background: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            direction: rtl;
+        }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .header-left { display: flex; gap: 10px; }
+        
+        .nav-btn {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #2563eb;
+        }
+        .btn-teachers { background: white; color: #2563eb; }
+        .btn-students { background: #2563eb; color: white; }
+        
+        .logo-img { width: 40px; height: 40px; }
+        .brand-name { font-size: 22px; font-weight: 800; color: #1e3a8a; }
+
+        /* Library Content */
+        .library-grid {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .book-card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; border-top: 6px solid; }
+        .ltr-text { direction: ltr; text-align: left; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-open .accordion-content { max-height: 800px; }
+        .chevron { transition: transform 0.2s; font-size: 10px; color: #94a3b8; }
         .accordion-open .chevron { transform: rotate(180deg); }
     </style>
 </head>
-<body class="min-h-screen">
-    <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-4">
-            <img src="logo.svg" alt="WA" class="w-12 h-12">
-            <h1 class="text-2xl font-black text-blue-900">Word Academy</h1>
-        </div>
-        <h2 class="text-lg font-bold text-slate-500">ספריית היחידות</h2>
-    </header>
+<body>
 
-    <main class="max-w-7xl mx-auto p-6 md:p-12">
-        <div id="library-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <p class="text-center col-span-full text-slate-500 animate-pulse">טוען נתונים מהגיליון...</p>
-        </div>
-    </main>
+<header class="main-header">
+    <div class="header-right">
+        <img src="logo.svg" alt="WA" class="logo-img">
+        <span class="brand-name">Word Academy</span>
+    </div>
+    <div class="header-left">
+        <button class="nav-btn btn-teachers">כניסת מורים</button>
+        <button class="nav-btn btn-students">כניסת תלמידים</button>
+    </div>
+</header>
 
-    <script>
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
+<main class="library-grid" id="library-grid">
+    <p class="text-center col-span-full py-10">טוען את היחידות...</p>
+</main>
 
-        async function initLibrary() {
-            try {
-                const response = await fetch(CSV_URL);
-                const data = await response.text();
-                const booksData = parseCSV(data);
-                renderLibrary(booksData);
-            } catch (error) {
-                document.getElementById('library-grid').innerHTML = "<p class='text-center col-span-full'>שגיאה בטעינת הנתונים.</p>";
-            }
-        }
+<script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            const books = {};
-            for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if (cols.length < 5) continue;
+    async function loadLibrary() {
+        try {
+            const res = await fetch(CSV_URL);
+            const text = await res.text();
+            const lines = text.split('\n').slice(1);
+            const data = {};
 
-                const bookName = cols[0]?.trim().replace(/"/g, '') || "";
-                const grade = cols[1]?.trim().replace(/"/g, '') || "";
-                const chapter = cols[2]?.trim().replace(/"/g, '') || "";
-                const unitName = cols[3]?.trim().replace(/"/g, '') || ""; 
-                const link = cols[4]?.trim().replace(/"/g, '') || "";
-                const color = cols[5]?.trim().replace(/"/g, '') || '#3b82f6';
+            lines.forEach(line => {
+                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length < 5) return;
 
-                let decodedWords = "";
+                const book = cols[0].replace(/"/g, '').trim();
+                const grade = cols[1].replace(/"/g, '').trim();
+                const chapter = cols[2].replace(/"/g, '').trim();
+                const unit = cols[3].replace(/"/g, '').trim();
+                const link = cols[4].replace(/"/g, '').trim();
+                const color = cols[5]?.replace(/"/g, '').trim() || '#2563eb';
+
+                if (!data[book]) data[book] = { grade, color, chapters: {} };
+                // כאן התיקון הקריטי: אנחנו מוודאים שכל יחידה מתווספת למערך בתוך הפרק
+                if (!data[book].chapters[chapter]) data[book].chapters[chapter] = [];
+                
                 if (link.includes('w=')) {
                     try {
-                        const base64 = link.split('w=')[1].split('&')[0];
-                        decodedWords = decodeURIComponent(escape(atob(base64)));
-                    } catch (e) {}
+                        const b64 = link.split('w=')[1].split('&')[0];
+                        const words = decodeURIComponent(escape(atob(b64)));
+                        data[book].chapters[chapter].push({ name: unit, words: words });
+                    } catch(e) {}
                 }
-
-                if (!books[bookName]) books[bookName] = { grade, color, chapters: {} };
-                if (!books[bookName].chapters[chapter]) books[bookName].chapters[chapter] = [];
-                
-                if (decodedWords) {
-                    books[bookName].chapters[chapter].push({ unit: unitName, words: decodedWords });
-                }
-            }
-            return books;
-        }
-
-        function renderLibrary(books) {
-            const grid = document.getElementById('library-grid');
-            grid.innerHTML = '';
-            Object.entries(books).forEach(([bookName, info]) => {
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col";
-                card.style.borderTop = `8px solid ${info.color}`;
-                
-                let accHtml = '';
-                Object.entries(info.chapters).forEach(([chap, units]) => {
-                    accHtml += `
-                        <div class="border-b border-slate-50 accordion-item">
-                            <button onclick="this.parentElement.classList.toggle('accordion-open')" class="w-full py-4 px-6 flex justify-between items-center hover:bg-slate-50 group">
-                                <span class="chevron text-slate-300 group-hover:text-blue-500">▼</span>
-                                <span class="ltr-content font-bold text-slate-700">${chap}</span>
-                            </button>
-                            <div class="accordion-content bg-slate-50/50">
-                                <div class="px-6 py-2 flex flex-col gap-2 ltr-content">
-                                    ${units.map(u => {
-                                        const enc = btoa(unescape(encodeURIComponent(u.words)));
-                                        return `<button onclick="playGame('${chap}', '${u.unit}', '${enc}')" class="text-left py-2 text-blue-500 hover:text-blue-700 font-medium flex items-center gap-2">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-300"></span>${u.unit}</button>`;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        </div>`;
-                });
-
-                card.innerHTML = `
-                    <div class="p-6 flex justify-between items-center bg-slate-50/30">
-                        <div class="bg-white/80 backdrop-blur px-4 py-1.5 rounded-full text-xs font-black shadow-sm" style="color:${info.color}">${info.grade}</div>
-                        <h2 class="text-xl font-extrabold text-slate-800 ltr-content">${bookName}</h2>
-                    </div>
-                    <div class="flex-grow">${accHtml}</div>`;
-                grid.appendChild(card);
             });
+            render(data);
+        } catch (e) {
+            document.getElementById('library-grid').innerHTML = "שגיאה בחיבור לנתונים.";
         }
+    }
 
-        function playGame(chap, unit, enc) {
-            const words = decodeURIComponent(escape(atob(enc)));
-            sessionStorage.setItem('currentWords', `${chap} - ${unit}\n${words}`);
-            window.location.href = 'index.html?source=library';
-        }
-        window.onload = initLibrary;
-    </script>
+    function render(data) {
+        const grid = document.getElementById('library-grid');
+        grid.innerHTML = '';
+        
+        Object.entries(data).forEach(([bookName, info]) => {
+            const card = document.createElement('div');
+            card.className = "book-card";
+            card.style.borderColor = info.color;
+
+            let chaptersHtml = '';
+            Object.entries(info.chapters).forEach(([chName, units]) => {
+                chaptersHtml += `
+                    <div class="border-b border-slate-50">
+                        <button onclick="this.parentElement.classList.toggle('accordion-open')" class="w-full p-4 flex justify-between items-center hover:bg-slate-50">
+                            <span class="chevron">▼</span>
+                            <span class="font-bold text-slate-700 ltr-text">${chName}</span>
+                        </button>
+                        <div class="accordion-content bg-slate-50/50 px-8 pb-3">
+                            ${units.map(u => {
+                                const b64Data = btoa(unescape(encodeURIComponent(u.words)));
+                                return `<button onclick="launchGame('${chName}', '${u.name}', '${b64Data}')" 
+                                        class="block w-full text-left py-2 text-blue-600 hover:text-blue-800 text-sm ltr-text font-medium">
+                                    • ${u.name}
+                                </button>`;
+                            }).join('')}
+                        </div>
+                    </div>`;
+            });
+
+            card.innerHTML = `
+                <div class="p-4 bg-slate-50/50 flex justify-between items-center">
+                    <span class="text-[10px] font-bold px-2 py-1 rounded bg-white shadow-sm" style="color:${info.color}">${info.grade}</span>
+                    <h2 class="text-md font-bold ltr-text">${bookName}</h2>
+                </div>
+                <div>${chaptersHtml}</div>`;
+            grid.appendChild(card);
+        });
+    }
+
+    function launchGame(ch, un, dataEnc) {
+        const decoded = decodeURIComponent(escape(atob(dataEnc)));
+        sessionStorage.setItem('currentWords', `${ch} - ${un}\n${decoded}`);
+        window.location.href = 'index.html?source=library';
+    }
+
+    loadLibrary();
+</script>
 </body>
 </html>
