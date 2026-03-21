@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy - Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .library-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .book-column {
+            background: white;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            width: 300px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .book-header {
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .magical { background-color: #6366f1; } /* סגול */
+        .legendary { background-color: #f59e0b; } /* כתום/זהב */
+        .epic { background-color: #10b981; } /* ירוק */
+
+        .units-list {
+            padding: 10px;
+            flex: 1;
+        }
+        .unit-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .unit-item:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+        .unit-title {
+            font-weight: bold;
+            color: var(--navy);
+            display: block;
+            margin-bottom: 5px;
+        }
+        .parts-container {
+            display: flex;
+            gap: 5px;
+        }
+        .part-btn {
+            flex: 1;
+            background: white;
+            border: 1px solid var(--blue);
+            color: var(--blue);
+            padding: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .part-btn:hover {
+            background: var(--blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div id="user-display">שלום, אורח/ת!</div>
+    <div class="header-left">
+        <img src="logo.svg" alt="WA" class="logo-img">
+        <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
+    </div>
+</div>
+
+<h1 style="text-align:center; margin-top:30px;">הספרייה הדיגיטלית שלי ✨</h1>
+
+<div class="library-container">
+    
+    <div class="book-column">
+        <div class="book-header magical">Magical</div>
+        <div class="units-list">
+            <div class="unit-item">
+                <span class="unit-title">Unit 1</span>
+                <div class="parts-container">
+                    <div class="part-btn" onclick="launchGame('Magical U1 P1')">Part 1</div>
+                    <div class="part-btn" onclick="launchGame('Magical U1 P2')">Part 2</div>
+                </div>
+            </div>
+            </div>
+    </div>
+
+    <div class="book-column">
+        <div class="book-header legendary">Legendary</div>
+        <div class="units-list">
+            <div class="unit-item">
+                <span class="unit-title">Unit 1</span>
+                <div class="parts-container">
+                    <div class="part-btn" onclick="launchGame('Legendary U1 P1')">Part 1</div>
+                    <div class="part-btn" onclick="launchGame('Legendary U1 P2')">Part 2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="book-column">
+        <div class="book-header epic">Epic</div>
+        <div class="units-list">
+            <div class="unit-item">
+                <span class="unit-title">Unit 1</span>
+                <div class="parts-container">
+                    <div class="part-btn" onclick="launchGame('Epic U1 P1')">Part 1</div>
+                    <div class="part-btn" onclick="launchGame('Epic U1 P2')">Part 2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function launchGame(unitName) {
+        // בעתיד, כאן המערכת תמשוך את רשימת המילים מה-Database לפי השם
+        // כרגע זה רק לצורך הדגמה - זה יעביר אותנו לאתר המשחק
+        window.location.href = `index.html?unit=${encodeURIComponent(unitName)}`;
+    }
+</script>
+
+</body>
+</html>
