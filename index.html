@@ -3,174 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | אוצר מילים Band 1</title>
+    <title>Word Academy | לומדים בכיף</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
         body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
         
-        /* Header - העתק מדויק מה-Library */
+        /* Header העתק מדויק מה-Library */
         .main-header {
-            background: white;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: white; padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .header-right { display: flex; align-items: center; gap: 12px; }
         .header-left { display: flex; gap: 10px; }
         
         .nav-btn {
-            padding: 8px 22px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid #2563eb;
+            padding: 8px 22px; border-radius: 50px;
+            font-weight: 700; font-size: 15px; cursor: pointer;
+            transition: all 0.2s; border: 2px solid #2563eb;
         }
         .btn-teachers { background: white; color: #2563eb; }
-        .btn-students { background: #2563eb; color: white; }
-        .btn-teachers:hover { background: #eff6ff; }
+        .btn-students { background: #2563eb; color: white; opacity: 0.6; cursor: not-allowed; } /* כרגע לא פעיל */
         
         .logo-img { width: 45px; height: 45px; }
-        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; }
+        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; display: block; line-height: 1; }
+        .sub-brand { font-size: 14px; color: #64748b; font-weight: 600; margin-top: 4px; }
 
-        /* לוח 3 העמודות של Band 1 */
+        /* לוח 3 העמודות */
         .units-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; max-width: 1200px; margin: 40px auto; padding: 0 20px;
         }
-
         .column-box {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-top: 8px solid #2563eb;
-            min-height: 500px;
+            background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden; border-top: 8px solid #2563eb; display: flex; flex-direction: column;
         }
-
-        .col-header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fcfcfc;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .col-header h3 { margin: 0; font-size: 20px; font-weight: 800; color: #1e293b; }
+        .col-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #fcfcfc; }
         .tag { background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-
-        .units-list { flex: 1; padding: 15px; }
-
-        .unit-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .unit-item:hover {
-            transform: translateY(-2px);
-            border-color: #2563eb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .unit-info b { display: block; color: #1e293b; font-size: 16px; }
-        .unit-info span { font-size: 13px; color: #64748b; font-weight: 600; }
         
-        .hidden { display: none !important; }
+        .unit-item {
+            padding: 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .unit-item:hover { background: #f8fafc; color: #2563eb; }
+        .ltr-text { direction: ltr; text-align: left; }
+
+        /* Footer / CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white; padding: 60px 20px; text-align: center; border-radius: 40px;
+            max-width: 1000px; margin: 60px auto;
+        }
     </style>
 </head>
 <body>
 
 <header class="main-header">
-    <div class="header-right" style="direction: ltr;">
+    <div class="header-right">
         <img src="logo.svg" alt="WA" class="logo-img">
-        <span class="brand-name">Word Academy</span>
+        <div style="display: flex; flex-direction: column; direction: rtl;">
+            <span class="brand-name">Word Academy</span>
+            <span class="sub-brand">תרגול אוצר מילים בכיף 🦉</span>
+        </div>
     </div>
-
     <div class="header-left">
-        <button class="nav-btn btn-students" onclick="location.href='library.html'">כניסת תלמידים</button>
+        <button class="nav-btn btn-students">כניסת תלמידים</button>
         <button class="nav-btn btn-teachers" onclick="location.href='teacher-dashboard.html'">כניסת מורים</button>
     </div>
 </header>
 
-<main id="lobby-screen">
-    <div class="text-center mt-10">
-        <h1 class="text-3xl font-black text-slate-800">אוצר מילים Band 1</h1>
-        <p class="text-slate-500">בחרו יחידת לימוד לתרגול חופשי</p>
+<main class="max-w-6xl mx-auto p-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-slate-800 mb-4">ברוכים הבאים לאקדמיית המילים שלנו</h1>
+        <h2 class="text-xl font-bold text-slate-500 italic">Welcome to Our Word Academy</h2>
+        <p class="text-lg text-slate-500 mt-2">המקום בו אפשר ללמוד בכיף מילים חדשות</p>
     </div>
 
-    <div class="units-grid">
-        <div class="column-box">
-            <div class="col-header"><h3>Magical</h3> <span class="tag">כיתה ה'</span></div>
-            <div class="units-list" id="list-Magical"></div>
-        </div>
-        <div class="column-box">
-            <div class="col-header"><h3>Legendary</h3> <span class="tag">כיתה ד'</span></div>
-            <div class="units-list" id="list-Legendary"></div>
-        </div>
-        <div class="column-box">
-            <div class="col-header"><h3>Epic</h3> <span class="tag">כיתה ג'</span></div>
-            <div class="units-list" id="list-Epic"></div>
-        </div>
+    <div class="units-grid" id="main-grid">
+        <p class="text-center col-span-full py-10 text-slate-400">טוען יחידות לימוד...</p>
     </div>
+
+    <section class="cta-section">
+        <h3 class="text-3xl font-black mb-4">רוצים סביבת למידה אישית לכיתה שלכם?</h3>
+        <p class="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+            במרחב המורים של Word Academy תוכלו ליצור רשימות מילים מספרי הלימוד, 
+            לעקוב אחר התקדמות התלמידים ולקבל דוחות ציונים בזמן אמת.
+        </p>
+        <button class="bg-white text-blue-600 px-10 py-4 rounded-full font-black text-lg hover:scale-105 transition-transform">
+            צרו קשר לפרטים על המנוי הבית ספרי
+        </button>
+    </section>
 </main>
 
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-
 <script>
-    firebase.initializeApp({
-        apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
-        authDomain: "word-academy-8b91d.firebaseapp.com",
-        projectId: "word-academy-8b91d"
-    });
-    const db = firebase.firestore();
+    // URL של ה-Band 1 (אוצר מילים ציבורי)
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
 
     async function loadBand1() {
-        const snapshot = await db.collection("band1").orderBy("order").get();
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const listContainer = document.getElementById(`list-${data.level}`);
+        try {
+            const res = await fetch(CSV_URL);
+            const text = await res.text();
+            const lines = text.split('\n').slice(1);
+            const data = { 'Magical': [], 'Legendary': [], 'Epic': [] };
+
+            lines.forEach(line => {
+                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length < 5) return;
+                
+                const grade = cols[1].replace(/"/g, '').trim(); // כיתה ה'/ד'/ג'
+                const unitName = cols[3].replace(/"/g, '').trim();
+                const link = cols[4].replace(/"/g, '').trim();
+                
+                let category = 'Epic';
+                if (grade.includes('ה')) category = 'Magical';
+                else if (grade.includes('ד')) category = 'Legendary';
+
+                if (link.includes('w=')) {
+                    data[category].push({ name: unitName, link: link });
+                }
+            });
+            renderGrid(data);
+        } catch (e) {
+            document.getElementById('main-grid').innerHTML = "שגיאה בטעינת הנתונים.";
+        }
+    }
+
+    function renderGrid(data) {
+        const grid = document.getElementById('main-grid');
+        grid.innerHTML = '';
+
+        Object.entries(data).forEach(([level, units]) => {
+            const col = document.createElement('div');
+            col.className = 'column-box';
             
-            if (listContainer) {
-                const item = document.createElement('div');
-                item.className = 'unit-item';
-                item.innerHTML = `
-                    <div class="unit-info">
-                        <b>Unit ${data.num}</b>
-                        <span>${data.title}</span>
-                    </div>
-                    <div style="color: #2563eb;">◀</div>
-                `;
-                item.onclick = () => {
-                    sessionStorage.setItem('currentWords', JSON.stringify(data.words));
-                    window.location.href = 'quiz.html';
-                };
-                listContainer.appendChild(item);
-            }
+            const gradeText = level === 'Magical' ? "כיתה ה'" : level === 'Legendary' ? "כיתה ד'" : "כיתה ג'";
+            
+            col.innerHTML = `
+                <div class="col-header">
+                    <h3 class="font-black text-xl">${level}</h3>
+                    <span class="tag">${gradeText}</span>
+                </div>
+                <div class="flex-1">
+                    ${units.map(u => `
+                        <div class="unit-item" onclick="startBandGame('${u.link}')">
+                            <span class="font-bold text-slate-700">${u.name}</span>
+                            <span class="text-blue-500">◀</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            grid.appendChild(col);
         });
     }
 
-    window.onload = loadBand1;
-</script>
+    function startBandGame(link) {
+        const b64 = link.split('w=')[1].split('&')[0];
+        const words = decodeURIComponent(escape(atob(b64)));
+        sessionStorage.setItem('currentWords', words);
+        window.location.href = 'quiz.html?source=band1';
+    }
 
+    loadBand1();
+</script>
 </body>
 </html>
