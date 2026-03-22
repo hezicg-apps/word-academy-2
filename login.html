@@ -50,9 +50,18 @@
 </head>
 <body class="flex flex-col">
 
-<header class="p-8 flex justify-center items-center gap-4 bg-white shadow-sm border-b">
-    <img src="logo.svg" alt="WA" class="w-16 h-16">
-    <h1 class="text-4xl font-black text-blue-900 tracking-tighter">Word Academy</h1>
+<header class="p-6 flex justify-center items-center gap-6 bg-white shadow-sm border-b">
+    <div class="flex items-center gap-6" style="direction: ltr;">
+        <img src="logo.svg" alt="WA Logo" class="w-16 h-16">
+        
+        <div class="flex flex-col text-left">
+            <h1 class="text-3xl font-extrabold text-[#1d3a8a] tracking-tight leading-tight">Word Academy</h1>
+            <div class="flex items-center gap-1 text-[#4f46e5] font-medium text-lg" style="direction: rtl;">
+                <span>תרגול אוצר מילים בכיף</span>
+                <span>🦉</span>
+            </div>
+        </div>
+    </div>
 </header>
 
 <main class="flex-1 flex items-center justify-center p-4">
@@ -89,7 +98,27 @@
 
 <script>
     // 1. הגדרות Firebase - העתק מהקונסול שלך
-   npm install firebase
+ // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
+  authDomain: "word-academy-8b91d.firebaseapp.com",
+  projectId: "word-academy-8b91d",
+  storageBucket: "word-academy-8b91d.firebasestorage.app",
+  messagingSenderId: "422537496030",
+  appId: "1:422537496030:web:c2264930ca04481213494f",
+  measurementId: "G-D67J19K57G"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
     };
 
     // אתחול
