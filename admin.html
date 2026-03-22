@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול יחידות | Word Academy</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="logo.svg" alt="WA" class="logo-img">
+            <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy Admin</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card-box">
+            <h2 style="margin-top:0;">הוספת יחידה לשרת ☁️</h2>
+            <input type="number" id="uNum" placeholder="מספר יחידה (למשל 26)" class="opt-btn" style="text-align:center; margin-bottom:10px;">
+            <input type="text" id="uTitle" placeholder="שם היחידה (למשל: Thinking)" class="opt-btn" style="text-align:center; margin-bottom:10px;">
+            <textarea id="uWords" placeholder="Apple - תפוח&#10;Sun - שמש" style="width:100%; height:150px; border-radius:15px; border:2px solid var(--border); padding:10px; direction:ltr;"></textarea>
+            
+            <button id="saveBtn" class="btn" onclick="saveToDB()">שמור ב-Firebase</button>
+            <p id="status" style="margin-top:10px; font-weight:bold;"></p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
+            authDomain: "word-academy-8b91d.firebaseapp.com",
+            projectId: "word-academy-8b91d",
+            storageBucket: "word-academy-8b91d.firebasestorage.app",
+            messagingSenderId: "422537496030",
+            appId: "1:422537496030:web:c2264930ca04481213494f",
+            measurementId: "G-D67J19K57G"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function saveToDB() {
+            const num = document.getElementById('uNum').value;
+            const title = document.getElementById('uTitle').value;
+            const raw = document.getElementById('uWords').value;
+            const status = document.getElementById('status');
+
+            if(!num || !title || !raw) return alert("נא למלא את כל השדות");
+
+            const wordList = raw.split('\n').filter(l => l.includes('-')).map(l => {
+                const p = l.split('-');
+                return { eng: p[0].trim(), heb: p[1].trim() };
+            });
+
+            try {
+                await db.collection("units").doc(num).set({
+                    title: title,
+                    words: wordList
+                });
+                status.innerText = "✅ נשמר בהצלחה! יחידה " + num;
+                status.style.color = "var(--green)";
+            } catch (e) {
+                status.innerText = "❌ שגיאה בשמירה";
+                status.style.color = "var(--red)";
+            }
+        }
+    </script>
+</body>
+</html>
