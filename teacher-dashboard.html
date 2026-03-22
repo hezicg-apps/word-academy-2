@@ -76,10 +76,7 @@
 </div>
 
 <script>
-    // הגדרות Firebase - יש להחליף בפרטי הפרויקט שלך
-    const firebaseConfig = { /* הקונפיגורציה שלך כאן */ };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+   npm install firebase
 
     let currentUser = JSON.parse(localStorage.getItem('user')) || { firstName: "חזי", schools: ["ביה״ס אדנים", "ביה״ס דקלים"], id: "teacher123" };
     let currentSchool = currentUser.schools[0];
