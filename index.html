@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | לומדים בכיף</title>
+    <title>Word Academy | ברוכים הבאים</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
         body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
         
+        /* Header אחיד לכל האתר */
         .main-header {
             background: white; padding: 15px 40px;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .header-right { display: flex; align-items: center; gap: 12px; }
+        .logo-img { width: 45px; height: 45px; }
+        
+        /* כותרות בגודל 24px אחיד */
+        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; line-height: 1.2; }
+        .sub-brand { font-size: 14px; color: #64748b; font-weight: 600; }
+
         .nav-btn {
             padding: 8px 22px; border-radius: 50px;
             font-weight: 700; font-size: 15px; cursor: pointer;
@@ -22,27 +29,27 @@
         }
         .btn-teachers { background: white; color: #2563eb; }
         .btn-students { background: #2563eb; color: white; }
-        
-        .logo-img { width: 45px; height: 45px; }
-        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; line-height: 1; }
-        .sub-brand { font-size: 14px; color: #64748b; font-weight: 600; margin-top: 4px; }
 
-        .units-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px; max-width: 1200px; margin: 40px auto; padding: 0 20px;
+        /* סקציית הברכה */
+        .hero-section { text-align: center; padding: 80px 20px; }
+        .hero-title { font-size: 36px; font-weight: 800; color: #1e293b; margin-bottom: 15px; }
+        .hero-subtitle { font-size: 20px; color: #64748b; max-width: 700px; margin: 0 auto; }
+
+        /* CTA למורים */
+        .cta-box {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white; padding: 60px 40px; border-radius: 32px;
+            max-width: 900px; margin: 40px auto; text-align: center;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
         }
-        .column-box {
-            background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            overflow: hidden; border-top: 8px solid #2563eb;
+        .cta-title { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        .cta-text { font-size: 18px; opacity: 0.9; margin-bottom: 30px; line-height: 1.6; }
+        .cta-btn {
+            background: white; color: #2563eb; padding: 12px 35px;
+            border-radius: 50px; font-weight: 800; font-size: 18px;
+            transition: transform 0.2s;
         }
-        .col-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #fcfcfc; }
-        .tag { background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-        
-        .unit-item {
-            padding: 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .unit-item:hover { background: #f8fafc; color: #2563eb; }
+        .cta-btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -57,78 +64,28 @@
     </div>
     <div class="header-left">
         <button class="nav-btn btn-students" onclick="location.href='library.html'">כניסת תלמידים</button>
-        <button class="nav-btn btn-teachers" onclick="location.href='teacher-dashboard.html'">כניסת מורים</button>
+        <button class="nav-btn btn-teachers" onclick="location.href='admin.html'">כניסת מורים</button>
     </div>
 </header>
 
-<main class="max-w-6xl mx-auto p-8">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-black text-slate-800 mb-4">ברוכים הבאים לאקדמיית המילים שלנו</h1>
-        <h2 class="text-xl font-bold text-slate-500 italic uppercase">Welcome to Our Word Academy</h2>
-        <p class="text-lg text-slate-500 mt-2">המקום בו אפשר ללמוד בכיף מילים חדשות</p>
-    </div>
+<main>
+    <section class="hero-section">
+        <h1 class="hero-title">ברוכים הבאים לאקדמיית המילים שלנו</h1>
+        <h2 class="hero-title" style="direction: ltr;">Welcome to Our Word Academy</h2>
+        <p class="hero-subtitle">המקום בו אפשר ללמוד בכיף מילים חדשות</p>
+    </section>
 
-    <div class="units-grid" id="band-grid">
-        </div>
+    <div id="units-container" class="max-w-6xl mx-auto px-6"></div>
+
+    <section class="cta-box">
+        <h3 class="cta-title">רוצים סביבת למידה אישית לכיתה שלכם?</h3>
+        <p class="cta-text">
+            במרחב המורים של Word Academy תוכלו ליצור יחידות לימוד מותאמות אישית,
+            לעקוב אחר התקדמות התלמידים ולקבל דוחות ביצועים בזמן אמת.
+        </p>
+        <button class="cta-btn">צרו קשר לפרטים על המנוי הבית ספרי</button>
+    </section>
 </main>
 
-<script>
-    // שימוש ב-URL של ה-CSV הציבורי בלבד!
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTBLf3lCxJ0JcbeEc9nCB7eoyFKN98wIem2rDUYMBoup8Yw6kkv_T41BqwnILLBQXE5ibWV9HJAOzC/pub?output=csv';
-
-    async function loadPublicData() {
-        const res = await fetch(CSV_URL);
-        const text = await res.text();
-        const lines = text.split('\n').slice(1);
-        const categories = { 'Magical': [], 'Legendary': [], 'Epic': [] };
-
-        lines.forEach(line => {
-            const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            if (cols.length < 5) return;
-            
-            const grade = cols[1].replace(/"/g, '').trim();
-            const unitName = cols[3].replace(/"/g, '').trim();
-            const link = cols[4].replace(/"/g, '').trim();
-            
-            let cat = 'Epic'; // ג'
-            if (grade.includes('ה')) cat = 'Magical';
-            else if (grade.includes('ד')) cat = 'Legendary';
-
-            categories[cat].push({ name: unitName, link: link });
-        });
-
-        const grid = document.getElementById('band-grid');
-        grid.innerHTML = '';
-
-        Object.entries(categories).forEach(([level, units]) => {
-            const gradeLabel = level === 'Magical' ? "כיתה ה'" : level === 'Legendary' ? "כיתה ד'" : "כיתה ג'";
-            grid.innerHTML += `
-                <div class="column-box">
-                    <div class="col-header">
-                        <h3 class="font-black text-xl">${level}</h3>
-                        <span class="tag">${gradeLabel}</span>
-                    </div>
-                    <div>
-                        ${units.map(u => `
-                            <div class="unit-item" onclick="launchGame('${u.link}')">
-                                <span class="font-bold">${u.name}</span>
-                                <span>◀</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function launchGame(link) {
-        const b64 = link.split('w=')[1].split('&')[0];
-        const words = decodeURIComponent(escape(atob(b64)));
-        sessionStorage.setItem('currentWords', words);
-        window.location.href = 'quiz.html';
-    }
-
-    loadPublicData();
-</script>
 </body>
 </html>
