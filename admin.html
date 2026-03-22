@@ -2,85 +2,57 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ניהול יחידות | Word Academy</title>
+    <title>Admin | Word Academy</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* הסתרת התוכן עד להזנת סיסמה נכונה */
-        body { display: none; }
-    </style>
+    <style>body { display: none; }</style>
 </head>
 <body>
+    <script>
+        const pass = prompt("סיסמת מנהל:");
+        if (pass === "1234") { document.body.style.display = "block"; }
+        else { location.href = 'index.html'; }
+    </script>
+
     <div class="header">
         <div class="header-left">
             <img src="logo.svg" alt="WA" class="logo-img">
-            <h2 style="font-size:18px; color:var(--blue); margin:0;">ניהול מערכת</h2>
+            <h2>ניהול יחידות</h2>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" style="margin-top:20px;">
         <div class="card-box">
-            <h2 style="margin-top:0;">הוספת יחידה לשרת ☁️</h2>
-            <input type="number" id="uNum" placeholder="מספר יחידה (למשל 26)" class="opt-btn" style="text-align:center; margin-bottom:10px;">
-            <input type="text" id="uTitle" placeholder="שם היחידה (למשל: Thinking)" class="opt-btn" style="text-align:center; margin-bottom:10px;">
-            <textarea id="uWords" placeholder="Apple - תפוח&#10;Sun - שמש" style="width:100%; height:150px; border-radius:15px; border:2px solid var(--border); padding:10px; direction:ltr;"></textarea>
-            
-            <button id="saveBtn" class="btn" onclick="saveToDB()">שמור ב-Firebase</button>
-            <p id="status" style="margin-top:10px; font-weight:bold;"></p>
+            <h3>הוספת יחידה ל-Firebase ☁️</h3>
+            <input type="number" id="uNum" placeholder="מספר יחידה" class="opt-btn" style="text-align:center;">
+            <input type="text" id="uTitle" placeholder="שם היחידה" class="opt-btn" style="text-align:center;">
+            <textarea id="uWords" placeholder="English - עברית" style="width:100%; height:150px; margin:10px 0; padding:10px; border-radius:10px; border:1px solid #ccc;"></textarea>
+            <button class="btn" onclick="saveToDB()">שמור בשרת ☁️</button>
+            <p id="status"></p>
+            <button class="btn" style="background:none; border:1px solid #2563eb; color:#2563eb; margin-top:10px;" onclick="location.href='index.html'">חזרה לאתר</button>
         </div>
-        <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="location.href='index.html'">חזרה לאתר</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script>
-        // בדיקת סיסמה בכניסה
-        const SECRET_PASS = "3699";
-        
-        const userPass = prompt("אנא הזן סיסמת מנהל:");
-        if (userPass === SECRET_PASS) {
-            document.body.style.display = "flex"; // מציג את הדף אם הסיסמה נכונה
-        } else {
-            alert("סיסמה שגויה!");
-            location.href = 'index.html'; // מחזיר לדף הבית
-        }
-
-        const firebaseConfig = {
+        firebase.initializeApp({
             apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
             authDomain: "word-academy-8b91d.firebaseapp.com",
-            projectId: "word-academy-8b91d",
-            storageBucket: "word-academy-8b91d.firebasestorage.app",
-            messagingSenderId: "422537496030",
-            appId: "1:422537496030:web:c2264930ca04481213494f",
-            measurementId: "G-D67J19K57G"
-        };
-        firebase.initializeApp(firebaseConfig);
+            projectId: "word-academy-8b91d"
+        });
         const db = firebase.firestore();
 
         async function saveToDB() {
             const num = document.getElementById('uNum').value;
             const title = document.getElementById('uTitle').value;
-            const raw = document.getElementById('uWords').value;
-            const status = document.getElementById('status');
-
-            if(!num || !title || !raw) return alert("נא למלא את כל השדות");
-
-            const wordList = raw.split('\n').filter(l => l.includes('-')).map(l => {
+            const words = document.getElementById('uWords').value.split('\n').filter(l => l.includes('-')).map(l => {
                 const p = l.split('-');
                 return { eng: p[0].trim(), heb: p[1].trim() };
             });
-
             try {
-                await db.collection("units").doc(num).set({
-                    title: title,
-                    words: wordList
-                });
-                status.innerText = "✅ נשמר בהצלחה! יחידה " + num;
-                status.style.color = "var(--green)";
-            } catch (e) {
-                status.innerText = "❌ שגיאה בשמירה";
-                status.style.color = "var(--red)";
-            }
+                await db.collection("units").doc(num).set({ title, words });
+                document.getElementById('status').innerText = "✅ נשמר בהצלחה!";
+            } catch (e) { alert("שגיאה בשמירה"); }
         }
     </script>
 </body>
