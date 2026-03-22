@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="css/style.css">
     
     <style>
-        /* הסתרת הגוף עד לאימות סיסמה */
         body { 
             display: none; 
             flex-direction: column; 
@@ -17,7 +16,6 @@
             margin: 0; 
         }
 
-        /* מִרְכּוּז מכולת התוכן */
         .container {
             display: flex;
             flex-direction: column;
@@ -35,7 +33,6 @@
             text-align: center;
         }
 
-        /* עיצוב שדות קלט ממורכזים */
         .opt-btn {
             width: 100%;
             max-width: 400px;
@@ -43,7 +40,6 @@
             margin-bottom: 15px;
         }
 
-        /* עיצוב תיבת המילים - יישור לשמאל LTR */
         textarea#uWords {
             width: 100%;
             max-width: 400px;
@@ -52,32 +48,34 @@
             padding: 15px;
             border-radius: 15px;
             border: 2px solid var(--border);
-            /* הגדרות כיוון טקסט LTR */
             direction: ltr !important;
             text-align: left !important;
-            font-family: monospace; /* גופן קבוע לאנגלית */
-            resize: none; /* ביטול אפשרות שינוי גודל ידני */
+            font-family: monospace;
+            resize: none;
         }
 
-        /* עיצוב כפתורים ממורכזים */
         .btn {
             width: 100%;
             max-width: 400px;
             margin: 10px 0;
+            cursor: pointer;
         }
 
-        /* עיצוב כותרות ללא אייקונים */
-        h2, h3 {
+        h3 {
             margin-top: 0;
             margin-bottom: 20px;
             color: var(--blue);
+        }
+
+        #status {
+            margin: 10px 0;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <script>
         const pass = prompt("סיסמת מנהל:");
-        // שנה כאן את הסיסמה למה שתרצה
         if (pass === "1234") { 
             document.body.style.display = "flex"; 
         } else { 
@@ -104,7 +102,7 @@
             <button class="btn" onclick="saveToDB()">שמור בשרת</button>
             <p id="status"></p>
             
-            <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="location.href='index.html'">חזרה לאתר</button>
+            <button class="btn" style="background:white; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="location.href='index.html'">חזרה לדף הבית</button>
         </div>
     </div>
 
@@ -112,7 +110,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     
     <script>
-        // קונפיגורציית Firebase שלך
         firebase.initializeApp({
             apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
             authDomain: "word-academy-8b91d.firebaseapp.com",
@@ -131,25 +128,23 @@
                 return;
             }
 
-            // עיבוד המילים בפורמט LTR
             const words = wordsRaw.split('\n').filter(l => l.includes('-')).map(l => {
                 const p = l.split('-');
                 return { eng: p[0].trim(), heb: p[1].trim() };
             });
 
             if (words.length === 0) {
-                alert("פורמט המילים שגוי. יש להשתמש ב: English - Hebrew");
+                alert("יש להשתמש בפורמט: English - Hebrew");
                 return;
             }
 
             try {
                 await db.collection("units").doc(num).set({ title, words });
                 status.innerText = "נשמר בהצלחה";
-                status.style.color = "var(--green)";
+                status.style.color = "green";
             } catch (e) { 
-                console.error(e);
                 status.innerText = "שגיאה בשמירה";
-                status.style.color = "var(--red)";
+                status.style.color = "red";
             }
         }
     </script>
