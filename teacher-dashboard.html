@@ -7,185 +7,181 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; margin: 0; }
-        .tab-active { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 800; }
-    </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 min-h-screen font-[Assistant]">
 
-<header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
-    <div class="flex items-center gap-6">
-        <img src="logo.svg" alt="WA" class="w-12 h-12 cursor-pointer" onclick="location.href='index.html'">
+<header class="bg-white shadow-sm p-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+        <img src="logo.svg" alt="Logo" class="w-12 h-12">
         <div>
-            <h1 id="teacher-greeting" class="text-2xl font-black text-slate-800">שלום,</h1>
-            <div class="flex items-center gap-2">
-                <select id="school-selector" onchange="switchSchool()" class="text-sm font-semibold text-blue-600 bg-blue-50 border-none rounded-lg px-2 py-1 cursor-pointer">
-                    </select>
-            </div>
+            <h1 id="teacher-greeting" class="text-xl font-bold text-slate-800">טוען...</h1>
+            <div id="school-display" class="text-sm text-blue-600 font-semibold"></div>
         </div>
     </div>
-    <button onclick="logout()" class="text-slate-500 hover:text-red-600 font-bold transition-colors">התנתקות</button>
+    <button onclick="logout()" class="text-slate-500 font-bold px-4 hover:text-red-600">התנתקות</button>
 </header>
 
-<main class="max-w-7xl mx-auto p-8">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-xl font-extrabold text-slate-700">ניהול כיתות וביצועים</h2>
-        <button onclick="openAddClassModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-bold shadow-lg transition-transform active:scale-95">
-            + כיתה חדשה
-        </button>
+<main class="max-w-6xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-black text-slate-700">ניהול כיתות וביצועים</h2>
+        <button onclick="openAddClassModal()" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-blue-700 transition-all">+ כיתה חדשה</button>
     </div>
 
-    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
-        <div class="flex border-b border-slate-200 bg-slate-50/50 overflow-x-auto" id="class-tabs">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 min-h-[400px] flex flex-col">
+        <div id="class-tabs" class="flex border-b overflow-x-auto bg-slate-50/50">
             </div>
-        <div id="tab-content" class="p-8">
-            <div class="flex flex-col items-center justify-center py-20 text-slate-400">
-                <p class="text-lg">בחר כיתה מהלשוניות למעלה או צור כיתה חדשה</p>
-            </div>
+        <div id="tab-content" class="p-10 flex-grow flex flex-col items-center justify-center text-slate-400">
+            <p id="status-message">טוען נתונים...</p>
         </div>
     </div>
 </main>
 
-<div id="class-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100]">
-    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
-        <h3 id="modal-title" class="text-2xl font-black mb-6 text-slate-800">הוספת כיתה חדשה</h3>
-        <div class="space-y-4">
-            <input type="text" id="input-class-name" placeholder="שם הכיתה (למשל: ה'1)" class="w-full p-3 bg-slate-100 rounded-xl outline-none">
-            <select id="input-class-grade" class="w-full p-3 bg-slate-100 rounded-xl outline-none">
-                <option value="ג">כיתה ג'</option>
-                <option value="ד">כיתה ד'</option>
-                <option value="ה">כיתה ה'</option>
-                <option value="ו">כיתה ו'</option>
-            </select>
-        </div>
-        <div class="flex gap-3 mt-8">
-            <button onclick="closeModal()" class="flex-1 py-3 font-bold text-slate-500">ביטול</button>
-            <button id="btn-save-class" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl">שמירה</button>
+<div id="class-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[100] backdrop-blur-sm">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl">
+        <h3 class="text-xl font-bold mb-4 text-slate-800">הוספת כיתה חדשה</h3>
+        <input type="text" id="input-class-name" placeholder="שם הכיתה (למשל: ה'1)" class="w-full p-3 border border-slate-200 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-blue-500">
+        <select id="input-class-grade" class="w-full p-3 border border-slate-200 rounded-xl mb-6 outline-none">
+            <option value="ג">כיתה ג'</option>
+            <option value="ד">כיתה ד'</option>
+            <option value="ה">כיתה ה'</option>
+            <option value="ו">כיתה ו'</option>
+        </select>
+        <div class="flex gap-2">
+            <button onclick="closeModal()" class="flex-1 py-2 text-slate-500 font-bold hover:bg-slate-100 rounded-xl">ביטול</button>
+            <button onclick="saveClass()" class="flex-1 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">שמירה</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- הגדרות FIREBASE ---
+    // הגדרות Firebase - הדבק את שלך כאן
     const firebaseConfig = {
-        // *** הדבק כאן את הקונפיגורציה שלך מה-Firebase Console ***
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // נתוני משתמש - חילוץ מהזיכרון או ברירת מחדל
-    let currentUser = JSON.parse(localStorage.getItem('user')) || { 
-        firstName: "חזי", 
-        schools: ["ביה״ס אדנים", "ביה״ס דקלים"], 
-        id: "teacher_default" 
-    };
-    
-    let currentSchool = currentUser.schools[0];
+    let currentUser = null;
     let allClasses = [];
 
-    function init() {
-        document.getElementById('teacher-greeting').textContent = `שלום ${currentUser.firstName},`;
-        const selector = document.getElementById('school-selector');
-        selector.innerHTML = currentUser.schools.map(s => `<option value="${s}">${s}</option>`).join('');
-        loadClasses();
+    // פונקציית האתחול המרכזית
+    async function init() {
+        const userData = localStorage.getItem('user');
+        
+        if (!userData) {
+            alert("לא נמצא משתמש מחובר. נא להיכנס למערכת.");
+            window.location.href = 'login.html';
+            return;
+        }
+
+        currentUser = JSON.parse(userData);
+        
+        // עדכון ממשק לפי שם המורה האמיתי מה-Login
+        document.getElementById('teacher-greeting').textContent = `שלום ${currentUser.firstName || 'מורה'},`;
+        document.getElementById('school-display').textContent = currentUser.school || "בית ספר לא מוגדר";
+        
+        await loadClasses();
     }
 
     async function loadClasses() {
         try {
+            // שליפת כיתות לפי ה-ID הייחודי של המורה שנכנס
             const snapshot = await db.collection('classes')
-                .where('teacherId', '==', currentUser.id)
-                .where('school', '==', currentSchool)
+                .where('teacherId', '==', currentUser.uid || currentUser.id)
                 .get();
+            
             allClasses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderTabs();
         } catch (e) {
-            console.error("Error loading classes:", e);
+            console.error("שגיאה בטעינת כיתות:", e);
+            document.getElementById('status-message').textContent = "שגיאה בטעינת הנתונים.";
         }
     }
 
     function renderTabs() {
         const container = document.getElementById('class-tabs');
         if (allClasses.length === 0) {
-            container.innerHTML = '<p class="p-5 text-slate-400 text-sm">אין כיתות רשומות בבית ספר זה</p>';
+            container.innerHTML = "";
+            document.getElementById('status-message').textContent = "אין כיתות רשומות. לחץ על '+ כיתה חדשה' כדי להתחיל.";
             return;
         }
+
         container.innerHTML = allClasses.map(c => `
-            <button onclick="selectClass('${c.id}')" id="tab-${c.id}" class="px-8 py-5 text-sm font-bold border-b-4 border-transparent hover:bg-slate-100 transition-all">
+            <button onclick="selectClass('${c.id}')" id="tab-${c.id}" class="px-6 py-4 font-bold border-b-2 border-transparent hover:bg-white transition-all text-slate-500">
                 כיתה ${c.className}
             </button>
         `).join('');
+        
         selectClass(allClasses[0].id);
     }
 
     function selectClass(id) {
-        document.querySelectorAll('#class-tabs button').forEach(b => b.classList.remove('tab-active'));
+        document.querySelectorAll('#class-tabs button').forEach(b => {
+            b.classList.remove('border-blue-600', 'text-blue-600', 'bg-white');
+            b.classList.add('text-slate-500');
+        });
+
         const activeTab = document.getElementById(`tab-${id}`);
-        if(activeTab) activeTab.classList.add('tab-active');
+        activeTab.classList.add('border-blue-600', 'text-blue-600', 'bg-white');
+        activeTab.classList.remove('text-slate-500');
 
         const cls = allClasses.find(c => c.id === id);
         document.getElementById('tab-content').innerHTML = `
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-black">כיתה ${cls.className} (${cls.grade})</h3>
-                <button onclick="openEditModal('${cls.id}')" class="text-blue-600 font-bold">ערוך כיתה</button>
+            <div class="w-full text-right animate-fade-in">
+                <h3 class="text-2xl font-black text-slate-800 mb-2">כיתה ${cls.className} (${cls.grade})</h3>
+                <p class="text-slate-500 mb-8 border-b pb-4">ריכוז ביצועי תלמידים</p>
+                <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center">
+                    <p class="text-slate-400 italic font-medium">כאן יוצגו הציונים והתקדמות התלמידים ביחידות הלימוד.</p>
+                </div>
             </div>
-            <p class="text-slate-400">כאן יוצגו נתוני הביצועים של תלמידי ${cls.className}...</p>
         `;
     }
 
-    async function saveClass(id) {
+    async function saveClass() {
         const name = document.getElementById('input-class-name').value;
         const grade = document.getElementById('input-class-grade').value;
-        if (!name) return alert("נא להזין שם כיתה");
 
-        const classData = {
+        if (!name) {
+            alert("נא להזין שם כיתה");
+            return;
+        }
+
+        const newClass = {
             className: name,
             grade: grade,
-            teacherId: currentUser.id,
-            school: currentSchool,
-            updatedAt: new Date()
+            teacherId: currentUser.uid || currentUser.id,
+            school: currentUser.school,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        if (id) {
-            await db.collection('classes').doc(id).update(classData);
-        } else {
-            await db.collection('classes').add(classData);
+        try {
+            await db.collection('classes').add(newClass);
+            closeModal();
+            await loadClasses(); // רענון הלשוניות
+        } catch (e) {
+            alert("שגיאה בשמירה: " + e.message);
         }
-        closeModal();
-        loadClasses();
+    }
+
+    function openAddClassModal() {
+        document.getElementById('input-class-name').value = '';
+        document.getElementById('class-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('class-modal').classList.add('hidden');
     }
 
     function logout() {
         localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = 'https://hezicg-apps.github.io/word-academy-2/index.html';
+        window.location.href = 'index.html';
     }
-
-    function switchSchool() {
-        currentSchool = document.getElementById('school-selector').value;
-        loadClasses();
-    }
-
-    function openAddClassModal() {
-        document.getElementById('modal-title').textContent = "כיתה חדשה";
-        document.getElementById('input-class-name').value = '';
-        document.getElementById('btn-save-class').onclick = () => saveClass();
-        document.getElementById('class-modal').classList.remove('hidden');
-    }
-
-    function openEditModal(id) {
-        const cls = allClasses.find(c => c.id === id);
-        document.getElementById('modal-title').textContent = "עריכת כיתה";
-        document.getElementById('input-class-name').value = cls.className;
-        document.getElementById('btn-save-class').onclick = () => saveClass(id);
-        document.getElementById('class-modal').classList.remove('hidden');
-    }
-
-    function closeModal() { document.getElementById('class-modal').classList.add('hidden'); }
 
     init();
 </script>
