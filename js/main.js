@@ -1,6 +1,5 @@
 // js/main.js
 
-// 1. הגדרות Firebase - הצינור למסד הנתונים
 const firebaseConfig = {
   apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
   authDomain: "word-academy-8b91d.firebaseapp.com",
@@ -11,30 +10,47 @@ const firebaseConfig = {
   measurementId: "G-D67J19K57G"
 };
 
-// אתחול Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 2. מצב האפליקציה (State)
 let state = { words: [], unit: '', qIdx: 0, qCorrect: 0, score: 0 };
 
-// 3. פונקציית טעינה - בודקת אם יש יחידה בקישור (URL)
+// פונקציה לטעינה מהטבלה הענקית (1,200 מילים)
+async function loadFromGoogleSheets(unitId) {
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTrPQsiWxLFkuoC457oX5WytDYP7f0nFGaJlx87JiOWL-p085UZlhDMPfnKGW4p6MBlaiGOYTEMfdP_/pub?output=csv";
+    try {
+        const response = await fetch(sheetUrl);
+        const csvData = await response.text();
+        const rows = csvData.split('\n').map(row => row.split(','));
+        const unitRows = rows.filter(r => r[0] && r[0].trim() === unitId);
+        
+        if (unitRows.length > 0) {
+            state.unit = "Unit " + unitId;
+            state.words = unitRows.map(r => ({
+                eng: r[1] ? r[1].trim() : '',
+                heb: r[2] ? r[2].trim() : ''
+            })).filter(w => w.eng && w.heb);
+            restartQuiz();
+            return true;
+        }
+    } catch (e) { console.error("Sheet Error:", e); }
+    return false;
+}
+
 window.onload = async () => {
     const params = new URLSearchParams(window.location.search);
-    
     if (params.has('unit')) {
-        const unitId = params.get('unit');
-        try {
-            const doc = await db.collection("units").doc(unitId).get();
+        const uId = params.get('unit');
+        const found = await loadFromGoogleSheets(uId);
+        if (!found) {
+            const doc = await db.collection("units").doc(uId).get();
             if (doc.exists) {
-                const data = doc.data();
-                state.unit = data.title;
-                state.words = data.words;
+                state.unit = doc.data().title;
+                state.words = doc.data().words;
                 restartQuiz();
             }
-        } catch (e) { console.error("Error loading unit:", e); }
-    } 
-    else if (params.has('list')) {
+        }
+    } else if (params.has('list')) {
         try {
             const data = JSON.parse(decodeURIComponent(escape(atob(params.get('list')))));
             document.getElementById('wordInput').value = data.u + '\n' + data.w.map(x => `${x.eng} - ${x.heb}`).join('\n');
@@ -42,7 +58,6 @@ window.onload = async () => {
     }
 };
 
-// 4. פונקציות ניהול מסכים ותצוגה
 function showScreen(id) {
     document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
@@ -66,7 +81,6 @@ function restartQuiz() {
     renderQuiz();
 }
 
-// 5. לוגיקת המבחן (Quiz)
 function renderQuiz() {
     if (state.qIdx >= state.words.length) return endQuiz();
     document.getElementById('quiz-unit-display').innerText = state.unit;
@@ -94,34 +108,24 @@ function renderQuiz() {
 function endQuiz() {
     state.score = Math.round((state.qCorrect / state.words.length) * 100);
     document.getElementById('final-score').innerText = state.score + '%';
-    const isOpen = state.score >= 70; // פתיחת משחקים ב-70% כפי שביקשת
+    const isOpen = state.score >= 70;
     document.getElementById('btn-c4').disabled = !isOpen;
     document.getElementById('btn-mem').disabled = !isOpen;
     showScreen('screen-summary');
 }
 
-// 6. עזרים (דיבור ושיתוף)
-function speak(elementId) {
-    const text = document.getElementById(elementId).innerText;
+function speak(text) {
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = 'en-US';
     window.speechSynthesis.speak(msg);
 }
 
-function shareAchievement() {
-    const text = `הצלחתי לסיים את "${state.unit}" בציון ${state.score}%!`;
-    const url = "https://word-academy-8b91d.web.app/"; 
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`);
-}
+// לחיצה ארוכה על הלוגו לכניסה לניהול
+let pressTimer;
+function startPress() { pressTimer = window.setTimeout(() => location.href = 'admin.html', 3000); }
+function endPress() { clearTimeout(pressTimer); }
 
-function shareList() {
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify({ u: state.unit, w: state.words }))));
-    const link = `${window.location.href.split('?')[0]}?list=${data}`;
-    const shareText = `הנה רשימת המילים שלי לתרגול ב-Word Academy:\n${link}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
-}
-
-// 7. ניהול מודלים (הודעות קופצות למשחקים)
+// עזרים למודלים
 function openMsg(html, color) {
     document.getElementById('msg-body').innerHTML = html;
     document.getElementById('msg-stripe').style.background = color || 'var(--blue)';
