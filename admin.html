@@ -5,136 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ניהול יחידות | Word Academy</title>
     <link rel="stylesheet" href="css/style.css">
-    
     <style>
-        /* מניעת גלילה אנכית בגוף הדף */
-        body { 
-            display: none; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            margin: 0; 
-            overflow: hidden; /* מונע גלילה על ה-body עצמו */
-            height: 100vh;
-        }
-
-        /* מכולת התוכן המרכזית */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; /* הצמדה למעלה כדי למנוע דחיסה */
-            width: 100%;
-            height: calc(100vh - 60px); /* גובה המסך פחות הכותרת */
-            padding: 10px; /* הקטנת פדינג */
-            box-sizing: border-box;
-        }
-
-        /* התיבה הלבנה - התאמה למניעת גלילה */
-        .card-box {
-            width: 100%;
-            max-width: 450px;
-            padding: 15px; /* פדינג קטן יותר */
-            border-radius: 20px;
-            background: white;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /* שימוש ב-gap למרווחים קבועים וקטנים */
-            gap: 10px; 
-            height: auto;
-            max-height: 95%; /* מונע מהתיבה לגדול מעבר למסך */
-        }
-
-        /* התאמת גודל תיבת הכותרת */
-        .card-box h3 {
-            margin: 0;
-            margin-bottom: 5px;
-            font-size: 18px; /* כותרת קטנה יותר */
-        }
-
-        /* התאמת גודל שדות הקלט */
-        .opt-btn {
-            width: 100%;
-            max-width: 380px;
-            margin: 0;
-            padding: 12px; /* פדינג קטן יותר */
-            font-size: 14px;
-            text-align: center;
-        }
-
-        /* התאמת גודל תיבת המילים */
-        textarea#uWords {
-            width: 100%;
-            max-width: 380px;
-            /* גובה קטן ומוגדר כדי למנוע גלילה */
-            height: 100px; 
-            min-height: 80px;
-            margin: 0;
-            padding: 10px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            direction: ltr !important;
-            text-align: left !important;
-            font-family: monospace;
-            resize: none;
-            box-sizing: border-box;
-            overflow-y: auto; /* מאפשר גלילה *בתוך* התיבה בלבד */
-        }
-
-        /* התאמת גודל הכפתורים */
-        .btn {
-            width: 100%;
-            max-width: 380px;
-            margin: 0;
-            padding: 12px 20px;
-            font-size: 16px;
-        }
-
-        /* התאמת הודעת הסטטוס */
-        #status {
-            margin: 0;
-            font-size: 14px;
-            font-weight: bold;
-            height: 1em; /* שומר מקום גם אם ריק */
-        }
+        body { display: none; flex-direction: column; min-height: 100vh; margin: 0; overflow: hidden; height: 100vh; }
+        .container { display: flex; flex-direction: column; align-items: center; width: 100%; height: calc(100vh - 60px); padding: 10px; box-sizing: border-box; }
+        .card-box { width: 100%; max-width: 450px; padding: 15px; border-radius: 20px; background: white; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .opt-btn, select.opt-btn { width: 100%; max-width: 380px; padding: 10px; font-size: 14px; text-align: center; border: 1px solid #ccc; border-radius: 8px; }
+        textarea#uWords { width: 100%; max-width: 380px; height: 120px; padding: 10px; border-radius: 12px; border: 2px solid var(--border); direction: ltr !important; text-align: left !important; font-family: monospace; resize: none; }
+        .btn { width: 100%; max-width: 380px; padding: 12px; font-size: 16px; cursor: pointer; border-radius: 10px; border: none; background: var(--blue); color: white; }
+        h3 { margin: 0; color: var(--blue); font-size: 18px; }
     </style>
 </head>
 <body>
     <script>
         const pass = prompt("סיסמת מנהל:");
-        // שנה כאן את הסיסמה למה שתרצה
-        if (pass === "3699") { 
-            document.body.style.display = "flex"; 
-        } else { 
-            alert("סיסמה שגויה");
-            location.href = 'index.html'; 
-        }
+        if (pass === "3699") { document.body.style.display = "flex"; }
+        else { alert("שגיאה"); location.href = 'index.html'; }
     </script>
 
     <div class="header">
-        <div class="header-right">
-            שלום, מורה!
-        </div>
+        <div class="header-right">שלום, מנהל!</div>
         <div class="header-left">
             <img src="logo.svg" alt="WA" class="logo-img">
-            <h2 style="font-size:18px; color:var(--blue); margin:0; font-family: inherit;">Word Academy</h2>
+            <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
         </div>
     </div>
 
     <div class="container">
         <div class="card-box">
-            <h3>הוספת יחידה לשרת</h3>
+            <h3>הוספת יחידה חדשה</h3>
             
-            <input type="number" id="uNum" placeholder="מספר יחידה" class="opt-btn">
-            <input type="text" id="uTitle" placeholder="שם היחידה" class="opt-btn">
+            <select id="uLevel" class="opt-btn">
+                <option value="Magical">Magical (כיתה ה')</option>
+                <option value="Legendary">Legendary (כיתה ד')</option>
+                <option value="Epic">Epic (כיתה ג')</option>
+            </select>
+
+            <input type="number" id="uNum" placeholder="מספר יחידה (למשל: 1)" class="opt-btn">
+            <input type="text" id="uTitle" placeholder="שם היחידה (למשל: Food)" class="opt-btn">
             
-            <textarea id="uWords" placeholder="הקלידו בפורמט: אנגלית - עברית"></textarea>
+            <textarea id="uWords" placeholder="English - Hebrew (למשל: Apple - תפוח)"></textarea>
             
             <button class="btn" onclick="saveToDB()">שמור בשרת</button>
             <p id="status"></p>
             
-            <button class="btn" style="background:white; border:2px solid var(--blue); color:var(--blue); margin-top:10px;" onclick="location.href='index.html'">חזרה לדף הבית</button>
+            <button class="btn" style="background:white; border:2px solid var(--blue); color:var(--blue);" onclick="location.href='index.html'">חזרה לדף הבית</button>
         </div>
     </div>
 
@@ -142,7 +56,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     
     <script>
-        // קונפיגורציית Firebase שלך
         firebase.initializeApp({
             apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
             authDomain: "word-academy-8b91d.firebaseapp.com",
@@ -151,39 +64,30 @@
         const db = firebase.firestore();
 
         async function saveToDB() {
+            const level = document.getElementById('uLevel').value;
             const num = document.getElementById('uNum').value;
             const title = document.getElementById('uTitle').value;
             const wordsRaw = document.getElementById('uWords').value;
             const status = document.getElementById('status');
 
-            if (!num || !title || !wordsRaw) {
-                alert("נא למלא את כל השדות");
-                return;
-            }
+            if (!num || !title || !wordsRaw) { alert("מלא את כל השדות"); return; }
 
-            // עיבוד המילים (אנגלית קודם, עברית אח"כ)
             const words = wordsRaw.split('\n').filter(l => l.includes('-')).map(l => {
                 const p = l.split('-');
                 return { eng: p[0].trim(), heb: p[1].trim() };
             });
 
-            if (words.length === 0) {
-                alert("פורמט המילים שגוי. השתמשו בפורמט: אנגלית - עברית");
-                return;
-            }
-
             try {
-                await db.collection("units").doc(num).set({ title, words });
-                status.innerText = "נשמר בהצלחה";
+                // שומרים את היחידה עם שדה ה-level
+                await db.collection("units").doc(num).set({ 
+                    title: title, 
+                    level: level, 
+                    words: words,
+                    createdAt: new Date() 
+                });
+                status.innerText = "נשמר בהצלחה!";
                 status.style.color = "green";
-                document.getElementById('uNum').value = '';
-                document.getElementById('uTitle').value = '';
-                document.getElementById('uWords').value = '';
-            } catch (e) { 
-                console.error(e);
-                status.innerText = "שגיאה בשמירה";
-                status.style.color = "red";
-            }
+            } catch (e) { status.innerText = "שגיאה"; status.style.color = "red"; }
         }
     </script>
 </body>
