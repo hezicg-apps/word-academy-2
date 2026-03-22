@@ -2,182 +2,175 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Academy</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Academy | אוצר מילים Band 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* עיצוב לוח היחידות - 3 עמודות */
-        .units-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        .column-card {
-            background: #f8fafc;
-            border-radius: 20px;
-            border-top: 8px solid var(--blue);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            min-height: 400px;
-        }
-
-        .column-header {
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
+        
+        /* Header - העתק מדויק מה-Library */
+        .main-header {
+            background: white;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .header-left { display: flex; gap: 10px; }
+        
+        .nav-btn {
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #2563eb;
+        }
+        .btn-teachers { background: white; color: #2563eb; }
+        .btn-students { background: #2563eb; color: white; }
+        .btn-teachers:hover { background: #eff6ff; }
+        
+        .logo-img { width: 45px; height: 45px; }
+        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; }
+
+        /* לוח 3 העמודות של Band 1 */
+        .units-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        .level-tag {
-            background: #e0f2fe;
-            color: var(--blue);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
+        .column-box {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-top: 8px solid #2563eb;
+            min-height: 500px;
         }
+
+        .col-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fcfcfc;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .col-header h3 { margin: 0; font-size: 20px; font-weight: 800; color: #1e293b; }
+        .tag { background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+
+        .units-list { flex: 1; padding: 15px; }
 
         .unit-item {
             background: white;
-            margin-bottom: 10px;
-            padding: 12px 15px;
-            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.2s;
-            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
         }
 
         .unit-item:hover {
-            transform: scale(1.02);
-            border-color: var(--blue);
+            transform: translateY(-2px);
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        .unit-name { font-weight: bold; color: #1e293b; }
+        .unit-info b { display: block; color: #1e293b; font-size: 16px; }
+        .unit-info span { font-size: 13px; color: #64748b; font-weight: 600; }
         
-        /* הסתרת אלמנטים בזמן מבחן */
         .hidden { display: none !important; }
-
-        .teacher-login-btn {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="header-right">
-        <button class="teacher-login-btn" onclick="showScreen('screen-input')">כניסת מורה</button>
-    </div>
-    <div class="header-left" onmousedown="startPress()" ontouchstart="startPress()" onmouseup="endPress()" ontouchend="endPress()">
+<header class="main-header">
+    <div class="header-right" style="direction: ltr;">
         <img src="logo.svg" alt="WA" class="logo-img">
-        <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy</h2>
-    </div>
-</div>
-
-<div id="main-content">
-    <div id="screen-lobby" class="units-grid">
-        <div class="column-card" id="col-Magical">
-            <div class="column-header"><h3>Magical</h3> <span class="level-tag">כיתה ה'</span></div>
-            <div class="units-list"></div>
-        </div>
-        <div class="column-card" id="col-Legendary">
-            <div class="column-header"><h3>Legendary</h3> <span class="level-tag">כיתה ד'</span></div>
-            <div class="units-list"></div>
-        </div>
-        <div class="column-card" id="col-Epic">
-            <div class="column-header"><h3>Epic</h3> <span class="level-tag">כיתה ג'</span></div>
-            <div class="units-list"></div>
-        </div>
+        <span class="brand-name">Word Academy</span>
     </div>
 
-    <div id="screen-input" class="container hidden">
-        <div class="card-box">
-            <h3>הזנה מהירה</h3>
-            <textarea id="wordInput" placeholder="שם היחידה&#10;Apple - תפוח..."></textarea>
-            <button class="btn" onclick="initApp()">יוצאים לדרך</button>
-            <button class="btn" style="background:none; color:var(--blue);" onclick="showScreen('screen-lobby')">חזרה ללוח היחידות</button>
-        </div>
+    <div class="header-left">
+        <button class="nav-btn btn-students" onclick="location.href='library.html'">כניסת תלמידים</button>
+        <button class="nav-btn btn-teachers" onclick="location.href='teacher-dashboard.html'">כניסת מורים</button>
+    </div>
+</header>
+
+<main id="lobby-screen">
+    <div class="text-center mt-10">
+        <h1 class="text-3xl font-black text-slate-800">אוצר מילים Band 1</h1>
+        <p class="text-slate-500">בחרו יחידת לימוד לתרגול חופשי</p>
     </div>
 
-    <div class="container">
-        <div id="screen-quiz" class="card-box hidden">
-            <div id="quiz-header" style="display:flex; justify-content:space-between; width:100%; margin-bottom:15px;">
-                <span id="quiz-unit-display"></span>
-                <span id="quiz-progress"></span>
-            </div>
-            <div class="question-card">
-                <div id="quiz-eng" style="font-size:32px; font-weight:bold;"></div>
-                <button class="audio-btn" onclick="speak(document.getElementById('quiz-eng').innerText)">🔊 הקשיבו</button>
-            </div>
-            <div id="quiz-options" class="options-grid"></div>
+    <div class="units-grid">
+        <div class="column-box">
+            <div class="col-header"><h3>Magical</h3> <span class="tag">כיתה ה'</span></div>
+            <div class="units-list" id="list-Magical"></div>
         </div>
-
-        <div id="screen-summary" class="card-box hidden">
-            <h2 id="final-score" style="font-size:48px;"></h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;">
-                <button id="btn-c4" class="btn" onclick="startC4()" disabled>4 בשורה</button>
-                <button id="btn-mem" class="btn" onclick="startMemory()" disabled>זיכרון</button>
-            </div>
-            <button class="btn" onclick="location.reload()" style="margin-top:15px; background:white; color:var(--blue); border:2px solid var(--blue);">חזרה לתפריט</button>
+        <div class="column-box">
+            <div class="col-header"><h3>Legendary</h3> <span class="tag">כיתה ד'</span></div>
+            <div class="units-list" id="list-Legendary"></div>
+        </div>
+        <div class="column-box">
+            <div class="col-header"><h3>Epic</h3> <span class="tag">כיתה ג'</span></div>
+            <div class="units-list" id="list-Epic"></div>
         </div>
     </div>
-</div>
+</main>
 
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-<script src="js/main.js"></script>
-<script src="js/connect4.js"></script>
-<script src="js/memory.js"></script>
 
 <script>
-    // פונקציית טעינת היחידות מה-Firebase לדף הבית
-    async function loadLobby() {
-        const snapshot = await db.collection("units").get();
+    firebase.initializeApp({
+        apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
+        authDomain: "word-academy-8b91d.firebaseapp.com",
+        projectId: "word-academy-8b91d"
+    });
+    const db = firebase.firestore();
+
+    async function loadBand1() {
+        const snapshot = await db.collection("band1").orderBy("order").get();
         snapshot.forEach(doc => {
             const data = doc.data();
-            const level = data.level || "Epic"; // ברירת מחדל אם שכחנו
-            const listElement = document.querySelector(`#col-${level} .units-list`);
+            const listContainer = document.getElementById(`list-${data.level}`);
             
-            if (listElement) {
+            if (listContainer) {
                 const item = document.createElement('div');
                 item.className = 'unit-item';
                 item.innerHTML = `
-                    <span class="unit-name">${data.title}</span>
-                    <span style="color:#94a3b8; font-size:12px;">◀</span>
+                    <div class="unit-info">
+                        <b>Unit ${data.num}</b>
+                        <span>${data.title}</span>
+                    </div>
+                    <div style="color: #2563eb;">◀</div>
                 `;
                 item.onclick = () => {
-                    state.unit = data.title;
-                    state.words = data.words;
-                    restartQuiz();
+                    sessionStorage.setItem('currentWords', JSON.stringify(data.words));
+                    window.location.href = 'quiz.html';
                 };
-                listElement.appendChild(item);
+                listContainer.appendChild(item);
             }
         });
     }
 
-    // הפעלה בטעינה
-    window.addEventListener('load', loadLobby);
-
-    function showScreen(id) {
-        document.getElementById('screen-lobby').classList.add('hidden');
-        document.getElementById('screen-input').classList.add('hidden');
-        document.getElementById('screen-quiz').classList.add('hidden');
-        document.getElementById('screen-summary').classList.add('hidden');
-        document.getElementById(id).classList.remove('hidden');
-    }
+    window.onload = loadBand1;
 </script>
+
 </body>
 </html>
