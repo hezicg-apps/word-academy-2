@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ניהול יחידות | Word Academy</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* הסתרת התוכן עד להזנת סיסמה נכונה */
+        body { display: none; }
+    </style>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
             <img src="logo.svg" alt="WA" class="logo-img">
-            <h2 style="font-size:18px; color:var(--blue); margin:0;">Word Academy Admin</h2>
+            <h2 style="font-size:18px; color:var(--blue); margin:0;">ניהול מערכת</h2>
         </div>
     </div>
 
@@ -24,11 +28,23 @@
             <button id="saveBtn" class="btn" onclick="saveToDB()">שמור ב-Firebase</button>
             <p id="status" style="margin-top:10px; font-weight:bold;"></p>
         </div>
+        <button class="btn" style="background:none; border:2px solid var(--blue); color:var(--blue); margin-top:20px;" onclick="location.href='index.html'">חזרה לאתר</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script>
+        // בדיקת סיסמה בכניסה
+        const SECRET_PASS = "3699";
+        
+        const userPass = prompt("אנא הזן סיסמת מנהל:");
+        if (userPass === SECRET_PASS) {
+            document.body.style.display = "flex"; // מציג את הדף אם הסיסמה נכונה
+        } else {
+            alert("סיסמה שגויה!");
+            location.href = 'index.html'; // מחזיר לדף הבית
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyCD7Xb0xOyW5Objw0Q0Fu0HIyyMH2D7B_8",
             authDomain: "word-academy-8b91d.firebaseapp.com",
