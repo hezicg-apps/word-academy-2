@@ -3,159 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Academy | Teacher Dashboard</title>
+    <title>Word Academy | מרחב מורה</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap');
-        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; margin: 0; }
-        
-        .main-header {
-            background: white; padding: 15px 40px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .brand-name { font-size: 24px; font-weight: 800; color: #1e3a8a; }
-        .logo-img { width: 45px; height: 45px; }
-
-        .class-card { 
-            background: white; border-radius: 24px; padding: 24px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 8px solid #2563eb; 
-            transition: all 0.2s; position: relative;
-        }
-        .class-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px); }
-        .modal.active { display: flex; }
-        
-        .import-option { border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .import-option:hover { border-color: #2563eb; background: #eff6ff; }
-        .import-option.selected { border-color: #2563eb; background: #eff6ff; font-weight: bold; }
-
-        .btn-action { @apply flex-1 py-2.5 rounded-xl font-bold text-sm transition-colors; }
+        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; }
+        .tab-active { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 800; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-<header class="main-header">
-    <div class="flex items-center gap-3" style="direction: ltr;">
-        <img src="logo.svg" alt="WA" class="logo-img">
-        <span class="brand-name">Word Academy</span>
+<header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-6">
+        <img src="logo.svg" alt="WA" class="w-12 h-12 cursor-pointer" onclick="location.href='index.html'">
+        <div>
+            <h1 id="teacher-greeting" class="text-2xl font-black text-slate-800">טוען...</h1>
+            <div class="flex items-center gap-2">
+                <select id="school-selector" onchange="switchSchool()" class="text-sm font-semibold text-blue-600 bg-blue-50 border-none rounded-lg px-2 py-1 cursor-pointer focus:ring-2 focus:ring-blue-500">
+                    </select>
+            </div>
+        </div>
     </div>
-    <div class="flex items-center gap-4">
-        <button class="font-bold text-slate-400 hover:text-red-500 transition-colors">התנתקות</button>
-    </div>
+    <button onclick="logout()" class="text-slate-500 hover:text-red-600 font-bold transition-colors">התנתקות</button>
 </header>
 
-<main class="max-w-6xl mx-auto p-8">
-    <div class="mb-10 flex justify-between items-end">
-        <div>
-            <h2 class="text-3xl font-black text-slate-800">שלום <span id="displayTeacherName">מורה</span>,</h2>
-            <p class="text-lg text-slate-500">כאן ניתן לנהל את הכיתות והתלמידים שלך.</p>
-        </div>
-        <button onclick="toggleModal('newClassModal', true)" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">
-            + יצירת כיתה חדשה
+<main class="max-w-7xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-xl font-extrabold text-slate-700">ניהול כיתות וביצועים</h2>
+        <button onclick="openAddClassModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-bold shadow-lg transition-transform active:scale-95">
+            + כיתה חדשה
         </button>
     </div>
 
-    <div id="classes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="class-card" id="example-class">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase tracking-wider">קוד כיתה: DEMO12</span>
-                <div class="flex gap-2">
-                    <button onclick="editClass('דוגמה')" class="text-slate-400 hover:text-blue-500 text-xs font-bold">עריכה</button>
-                    <button onclick="removeClass('example-class')" class="text-slate-400 hover:text-red-500 text-xs font-bold">מחיקה</button>
-                </div>
+    <div class="glass-card rounded-3xl shadow-xl overflow-hidden">
+        <div class="flex border-b border-slate-200 bg-slate-50/50 overflow-x-auto" id="class-tabs">
             </div>
-            <h3 class="text-xl font-black text-slate-800 mb-1 italic">כיתה ה' 1 - דוגמה</h3>
-            <p class="text-sm text-slate-500 mb-6 font-medium">20 תלמידים • 3 יחידות פעילות</p>
-            <div class="flex gap-2">
-                <button class="btn-action bg-slate-100 text-slate-700 hover:bg-slate-200">ניהול תלמידים</button>
-                <button class="btn-action bg-blue-50 text-blue-700 hover:bg-blue-100">בחירת תוכן</button>
+
+        <div id="tab-content" class="p-8">
+            <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+                <p class="text-lg">בחר כיתה כדי לצפות בנתונים</p>
             </div>
         </div>
     </div>
 </main>
 
-<div id="newClassModal" class="modal">
-    <div class="bg-white rounded-[32px] p-8 max-w-2xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[90vh]">
-        <div class="flex justify-between items-start mb-6">
+<div id="class-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100]">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+        <h3 id="modal-title" class="text-2xl font-black mb-6 text-slate-800">הוספת כיתה חדשה</h3>
+        <div class="space-y-4">
             <div>
-                <h3 class="text-2xl font-black text-slate-800" id="modalTitle">יצירת כיתה חדשה</h3>
-                <p class="text-slate-500 text-sm">הגדירו את הכיתה ובחרו את דרך ייבוא התלמידים.</p>
+                <label class="block text-sm font-bold text-slate-600 mb-1">שם הכיתה (למשל: ה'1)</label>
+                <input type="text" id="input-class-name" class="w-full p-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
-            <button onclick="toggleModal('newClassModal', false)" class="text-slate-300 hover:text-slate-500 text-2xl">✕</button>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-2 mr-2 uppercase tracking-wide">שם הכיתה</label>
-                    <input type="text" id="className" class="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none font-bold" placeholder="למשל: ד' 2 שילוב">
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-blue-600 mb-3 mr-2 uppercase tracking-wide">איך להוסיף תלמידים?</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="import-option selected" id="opt-type" onclick="selectImport('type')">⌨️ הקלדה/הדבקה</div>
-                        <div class="import-option" id="opt-file" onclick="selectImport('file')">📁 קובץ חיצוני</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="import-area" class="bg-slate-50 rounded-[24px] p-5 border border-slate-100">
-                <div id="type-section">
-                    <label class="block text-[11px] font-bold text-slate-400 mb-2 uppercase">רשימת שמות (שם בשורה):</label>
-                    <textarea id="studentList" class="w-full p-4 bg-white border-none rounded-xl h-44 text-sm outline-none shadow-sm" placeholder="ישראל ישראלי&#10;שרה לוי&#10;נועם אברהם..."></textarea>
-                </div>
-                <div id="file-section" class="hidden h-full flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
-                    <div class="text-3xl mb-2">📄</div>
-                    <p class="text-xs text-slate-500 font-bold mb-1">גררו קובץ לכאן</p>
-                    <button class="text-blue-600 font-extrabold text-xs hover:underline">או בחרו מהמחשב</button>
-                    <p class="text-[9px] text-slate-300 mt-4 uppercase">XLSX, CSV, PDF, DOCX</p>
-                </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-600 mb-1">שכבת גיל</label>
+                <select id="input-class-grade" class="w-full p-3 bg-slate-100 border-none rounded-xl outline-none">
+                    <option value="ג">כיתה ג'</option>
+                    <option value="ד">כיתה ד'</option>
+                    <option value="ה">כיתה ה'</option>
+                    <option value="ו">כיתה ו'</option>
+                </select>
             </div>
         </div>
-
-        <div class="flex gap-4">
-            <button onclick="saveClass()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-extrabold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all text-lg">שמירת כיתה</button>
-            <button onclick="toggleModal('newClassModal', false)" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-bold hover:bg-slate-200">ביטול</button>
+        <div class="flex gap-3 mt-8">
+            <button onclick="closeModal()" class="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors">ביטול</button>
+            <button id="btn-save-class" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-blue-200 shadow-lg hover:bg-blue-700 transition-all">שמירה</button>
         </div>
     </div>
 </div>
 
 <script>
-    function toggleModal(id, show) { 
-        document.getElementById(id).classList.toggle('active', show); 
-        if(show) document.getElementById('modalTitle').innerText = "יצירת כיתה חדשה";
-    }
+    // הגדרות Firebase - יש להחליף בפרטי הפרויקט שלך
+    const firebaseConfig = { /* הקונפיגורציה שלך כאן */ };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    function selectImport(type) {
-        document.getElementById('type-section').classList.toggle('hidden', type !== 'type');
-        document.getElementById('file-section').classList.toggle('hidden', type !== 'file');
+    let currentUser = JSON.parse(localStorage.getItem('user')) || { firstName: "חזי", schools: ["ביה״ס אדנים", "ביה״ס דקלים"], id: "teacher123" };
+    let currentSchool = currentUser.schools[0];
+    let allClasses = [];
+
+    // אתחול דף
+    function init() {
+        document.getElementById('teacher-greeting').textContent = `שלום ${currentUser.firstName},`;
         
-        document.getElementById('opt-type').classList.toggle('selected', type === 'type');
-        document.getElementById('opt-file').classList.toggle('selected', type === 'file');
+        // טעינת בתי ספר ל-Dropdown
+        const schoolSelector = document.getElementById('school-selector');
+        schoolSelector.innerHTML = currentUser.schools.map(s => `<option value="${s}">${s}</option>`).join('');
+        
+        loadClasses();
     }
 
-    function removeClass(id) {
-        if(confirm("האם למחוק את הכיתה הזו? לא ניתן יהיה לשחזר את נתוני התלמידים.")) {
-            document.getElementById(id).remove();
+    async function loadClasses() {
+        // שאילתה ל-Firestore שמביאה כיתות של המורה בבית הספר הנבחר
+        const snapshot = await db.collection('classes')
+            .where('teacherId', '==', currentUser.id)
+            .where('school', '==', currentSchool)
+            .get();
+
+        allClasses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderTabs();
+    }
+
+    function renderTabs() {
+        const tabsContainer = document.getElementById('class-tabs');
+        tabsContainer.innerHTML = allClasses.map((c, index) => `
+            <button onclick="selectClass('${c.id}')" id="tab-${c.id}" class="px-8 py-5 text-sm font-bold border-b-4 border-transparent hover:bg-slate-100 transition-all whitespace-nowrap">
+                כיתה ${c.className}
+            </button>
+        `).join('');
+        
+        if (allClasses.length > 0) selectClass(allClasses[0].id);
+    }
+
+    async function selectClass(classId) {
+        // עדכון ויזואלי של הלשוניות
+        document.querySelectorAll('#class-tabs button').forEach(b => b.classList.remove('tab-active'));
+        document.getElementById(`tab-${classId}`).classList.add('tab-active');
+
+        const cls = allClasses.find(c => c.id === classId);
+        
+        // טעינת ביצועי תלמידים (סימולציה של נתונים)
+        const content = document.getElementById('tab-content');
+        content.innerHTML = `
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800">כיתה ${cls.className} (${cls.grade})</h3>
+                    <p class="text-slate-500 font-medium">ריכוז ביצועים והתקדמות</p>
+                </div>
+                <button onclick="openEditModal('${cls.id}')" class="text-blue-600 font-bold hover:underline">ערוך הגדרות כיתה</button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="text-slate-400 text-sm border-b border-slate-100">
+                            <th class="pb-4 font-bold">שם התלמיד</th>
+                            <th class="pb-4 font-bold">יחידה אחרונה</th>
+                            <th class="pb-4 font-bold">ציון</th>
+                            <th class="pb-4 font-bold">סטטוס</th>
+                            <th class="pb-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                        <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4 font-bold">ישראל ישראלי</td>
+                            <td class="py-4">Unit 2: Colors</td>
+                            <td class="py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-black">95</span></td>
+                            <td class="py-4">🟢 הושלם</td>
+                            <td class="py-4 text-left"><button class="text-blue-500 font-bold text-sm italic hover:underline">פירוט מלא</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function switchSchool() {
+        currentSchool = document.getElementById('school-selector').value;
+        loadClasses();
+    }
+
+    function openEditModal(id) {
+        const cls = allClasses.find(c => c.id === id);
+        document.getElementById('modal-title').textContent = "עריכת כיתה";
+        document.getElementById('input-class-name').value = cls.className;
+        document.getElementById('input-class-grade').value = cls.grade;
+        document.getElementById('btn-save-class').onclick = () => saveClass(id);
+        document.getElementById('class-modal').classList.remove('hidden');
+    }
+
+    async function saveClass(id) {
+        const name = document.getElementById('input-class-name').value;
+        const grade = document.getElementById('input-class-grade').value;
+
+        if (id) {
+            // עדכון
+            await db.collection('classes').doc(id).update({ className: name, grade: grade });
+        } else {
+            // הוספה חדשה
+            await db.collection('classes').add({
+                className: name,
+                grade: grade,
+                teacherId: currentUser.id,
+                school: currentSchool,
+                createdAt: new Date()
+            });
         }
+        closeModal();
+        loadClasses();
     }
 
-    function editClass(name) {
-        document.getElementById('modalTitle').innerText = "עריכת כיתה: " + name;
-        document.getElementById('className').value = name;
-        toggleModal('newClassModal', true);
+    function logout() {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
     }
 
-    function saveClass() {
-        const name = document.getElementById('className').value;
-        if (!name) return alert("חובה לתת שם לכיתה");
-        // כאן תבוא לוגיקת השמירה מול השרת
-        toggleModal('newClassModal', false);
+    function closeModal() { document.getElementById('class-modal').classList.add('hidden'); }
+    function openAddClassModal() { 
+        document.getElementById('modal-title').textContent = "כיתה חדשה";
+        document.getElementById('input-class-name').value = '';
+        document.getElementById('btn-save-class').onclick = () => saveClass();
+        document.getElementById('class-modal').classList.remove('hidden'); 
     }
+
+    init();
 </script>
-
 </body>
 </html>
